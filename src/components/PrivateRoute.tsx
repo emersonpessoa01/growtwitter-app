@@ -1,6 +1,17 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { SpinnerContainer, StyledSpinner } from "../components/Spinner/style";
 
 export default function PrivateRoute() {
-  const token = localStorage.getItem("token");
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  const { signed, loading } = useAuth();
+  // Enquanto estiver lendo o localStorage, não redireciona nem mostra nada
+  if (loading){
+    return (
+      <SpinnerContainer>
+        <StyledSpinner />
+      </SpinnerContainer>
+    )
+  }
+  // Se estiver logado, renderiza o conteúdo da rota (Outlet)
+  return signed ? <Outlet /> : <Navigate to="/login" replace />;
 }

@@ -1,18 +1,34 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { LoginPage } from "./pages/LoginPage";
-import { HomePage } from "./pages/HomePage";
 import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./contexts/AuthContext";
+import GlobalStyles from "./Global/syles";
+import lightTheme from "./themes/index";
+import { ThemeProvider } from "styled-components";
+import { Login } from "./pages/Login";
+import { Home } from "./pages/Home";
 
 export function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
+    //O ThemeProvider injeta as cores/fontes
+    <ThemeProvider theme={lightTheme.light}>
+      <GlobalStyles />
+      {/* O AuthProvider permite que as rotas saibam quem está logado*/}
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
-      <Route element={<PrivateRoute />}>
-        <Route path="/" element={<HomePage />} />
-      </Route>
+          {/* Rota Protegida */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
+            {/* Para adicionar as outras rotas (Perfil/Explorar) aqui dentro depois */}
+          </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

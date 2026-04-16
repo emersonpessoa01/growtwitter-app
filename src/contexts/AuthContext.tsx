@@ -3,6 +3,7 @@ import React, {
   useState,
   useEffect,
   useContext,
+  type ReactNode,
 } from "react";
 import { api } from "../services/api";
 
@@ -19,6 +20,7 @@ interface AuthContextData {
   user: User | null;
   signIn(credentials: object): Promise<void>;
   signOut(): void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextData>(
@@ -26,38 +28,58 @@ const AuthContext = createContext<AuthContextData>(
 );
 
 export const AuthProvider: React.FC<{
-  children: React.ReactNode;
+  children: ReactNode;
 }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Ao carregar o app, verifica se já existe um usuário salvo no navegador [cite: 28]
-    const storagedUser = localStorage.getItem(
-      "@Growtwitter:user",
-    );
-    const storagedToken = localStorage.getItem(
-      "@Growtwitter:token",
-    );
+    async function loadingStorageData() {
+      // Cria uma promessa de 800ms
+      const delay = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
 
-    if (storagedUser && storagedToken) {
-      setUser(JSON.parse(storagedUser));
-      api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+      // Ao carregar o app, verifica se já existe um usuário salvo no navegador [cite: 28]
+      const storagedUser = localStorage.getItem(
+        "@Growtwitter:user",
+      );
+      const storagedToken = localStorage.getItem(
+        "@Growtwitter:token",
+      );
+
+      // Executa a leitura e o dealy em paralelo
+      await delay(2000);
+
+      if (
+        storagedUser &&
+        storagedToken !== "undefined" &&
+        storagedToken
+      ) {
+        setUser(JSON.parse(storagedUser));
+        api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+      }
+      setLoading(false);
     }
+    loadingStorageData();
   }, []);
 
   async function signIn(credentials: object) {
-    const response = await api.post("/login", credentials); // Rota de login da API [cite: 26]
+    const response = await api.post(
+      "/auth/login",
+      credentials,
+    );
 
-    const { user, token } = response.data.data;
+    // Ajuste aqui para bater com o retorno da sua API (visto no seu log)
+    const { authUser, authToken } = response.data.data;
 
-    setUser(user);
-    api.defaults.headers.Authorization = `Bearer ${token}`;
+    setUser(authUser);
+    api.defaults.headers.Authorization = `Bearer ${authToken}`;
 
     localStorage.setItem(
       "@Growtwitter:user",
-      JSON.stringify(user),
+      JSON.stringify(authUser),
     );
-    localStorage.setItem("@Growtwitter:token", token);
+    localStorage.setItem("@Growtwitter:token", authToken);
   }
 
   function signOut() {
@@ -67,7 +89,13 @@ export const AuthProvider: React.FC<{
 
   return (
     <AuthContext.Provider
-      value={{ signed: !!user, user, signIn, signOut }}
+      value={{
+        signed: !!user,
+        user,
+        loading,
+        signIn,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>
