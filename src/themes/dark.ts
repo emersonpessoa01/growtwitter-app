@@ -4,7 +4,7 @@ export const dark = {
     secondary: "#16181c",
     backgroundColor: "#0B0707",
     textColor:"#626161",
-    title: "fff",
+    title: "#fff",
     border: "#3C3B3B",
   },
 };

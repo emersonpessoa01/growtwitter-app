@@ -23,6 +23,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
     font-family: "Kumbh Sans", sans-serif;
     line-height: 140%;
+    color: ${(props) => props.theme.colors.title};
 }
 
 img{
