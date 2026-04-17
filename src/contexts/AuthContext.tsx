@@ -35,11 +35,7 @@ export const AuthProvider: React.FC<{
 
   useEffect(() => {
     async function loadingStorageData() {
-      // Cria uma promessa de 800ms
-      const delay = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
-
-      // Ao carregar o app, verifica se já existe um usuário salvo no navegador [cite: 28]
+      // Ao carregar o app, verifica se já existe um usuário salvo no navegador
       const storagedUser = localStorage.getItem(
         "@Growtwitter:user",
       );
@@ -47,16 +43,21 @@ export const AuthProvider: React.FC<{
         "@Growtwitter:token",
       );
 
-      // Executa a leitura e o dealy em paralelo
-      await delay(2000);
+      // Executa a leitura e o delay em paralelo
 
-      if (
-        storagedUser &&
-        storagedToken !== "undefined" &&
-        storagedToken
-      ) {
-        setUser(JSON.parse(storagedUser));
-        api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+      if (storagedUser && storagedToken) {
+        try {
+          if (
+            storagedUser !== "undefined" &&
+            storagedToken !== "undefined"
+          ) {
+            api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+            setUser(JSON.parse(storagedUser));
+          }
+        } catch (error) {
+          console.error(`Erro no parse do storage: ${error}`);
+          localStorage.clear();
+        }
       }
       setLoading(false);
     }
@@ -69,7 +70,10 @@ export const AuthProvider: React.FC<{
       credentials,
     );
 
-    // Ajuste aqui para bater com o retorno da sua API (visto no seu log)
+    // Para bater com o retorno da API, verifica se o status é 200
+    if (response.status !== 200) {
+      throw new Error("Falha na autenticação");
+    }
     const { authUser, authToken } = response.data.data;
 
     setUser(authUser);
