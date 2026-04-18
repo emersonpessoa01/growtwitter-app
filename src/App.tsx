@@ -10,7 +10,7 @@ import { Home } from "./pages/Home";
 export function App() {
   return (
     //O ThemeProvider injeta as cores/fontes
-    <ThemeProvider theme={lightTheme.dark}>
+    <ThemeProvider theme={lightTheme.light}>
       <GlobalStyles />
       {/* O AuthProvider permite que as rotas saibam quem está logado*/}
       <AuthProvider>

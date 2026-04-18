@@ -54,11 +54,10 @@ export const Home = () => {
           {/* Se estiver carregando os tweets, mostra o spinner só aqui no meio */}
           {loadingFeed ? (
             <S.LoadingContainer>
-              <ButtonSpinner
-                style={{
-                  borderTopColor: "#1DA1F2",
-                  borderLeftColor: "#eee",
-                }}
+              <S.ButtonSpinner
+                size="2.5rem"
+                borderTopColor="#1DA1F2"
+                borderLeftColor="#adc8d2"
               />
               <p>Buscando tweets...</p>
             </S.LoadingContainer>
