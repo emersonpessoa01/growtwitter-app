@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { Button } from "../../components/Button"; // Importe o novo componente
 import { LoginForm } from "./style";
 
 export function Login() {
@@ -10,25 +11,20 @@ export function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  async function handleLogin(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsLoggingIn(true);
-    // Validar se os campos estão preenchidos
     if (!username || !password) {
-      alert("Preencha todos os campos.");
+      alert("Preencha todos os campos!");
       return;
     }
+
+    setIsLoggingIn(true);
     try {
-      await signIn({
-        username,
-        password,
-      })
+      await signIn({ username, password });
       navigate("/");
-    } catch {
+    } catch (err) {
       alert("Login falhou. Verifique usuário e senha.");
-    }finally{
+    } finally {
       setIsLoggingIn(false);
     }
   }
@@ -37,10 +33,10 @@ export function Login() {
     <LoginForm onSubmit={handleLogin}>
       <h2>Login</h2>
       <input
+        autoFocus
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         placeholder="Usuário"
-        type="text"
         disabled={isLoggingIn}
       />
       <input
@@ -50,9 +46,11 @@ export function Login() {
         placeholder="Senha"
         disabled={isLoggingIn}
       />
-      <button type="submit"disabled={isLoggingIn}>
-        {isLoggingIn ? "Entrando..." : "Entrar"}
-      </button>
+      
+      {/* Usamos o novo componente Button com a prop loading */}
+      <Button type="submit" loading={isLoggingIn}>
+        Entrar
+      </Button>
     </LoginForm>
   );
 }
