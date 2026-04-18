@@ -60,5 +60,5 @@ export const ButtonSpinner = styled.div`
   border: 3px solid rgba(255, 255, 255, 0.3); /* Fundo semi-transparente */
   border-top: 3px solid #ffffff; /* A parte que gira (branca) */
   border-radius: 50%;
-  animation: ${rotate} 0.6s linear infinite; /* Rotação rápida */
+  animation: ${rotate} 0.8s linear infinite; /* Rotação rápida */
 `;

@@ -11,7 +11,9 @@ export function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(
+    e: React.FormEvent<HTMLFormElement>,
+  ) {
     e.preventDefault();
     if (!username || !password) {
       alert("Preencha todos os campos!");
@@ -22,8 +24,8 @@ export function Login() {
     try {
       await signIn({ username, password });
       navigate("/");
-    } catch (err) {
-      alert("Login falhou. Verifique usuário e senha.");
+    } catch {
+      alert("Login falhou. Verifique usuário e senha");
     } finally {
       setIsLoggingIn(false);
     }
@@ -46,7 +48,7 @@ export function Login() {
         placeholder="Senha"
         disabled={isLoggingIn}
       />
-      
+
       {/* Usamos o novo componente Button com a prop loading */}
       <Button type="submit" loading={isLoggingIn}>
         Entrar
