@@ -8,6 +8,8 @@ import * as S from "./style"; // Vamos criar o style.ts em seguida
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   children: ReactNode;
+  widht?: string;
+  marginTop?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({

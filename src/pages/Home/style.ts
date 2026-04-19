@@ -3,9 +3,10 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background-color: ${(props) => props.theme.colors.backgroundColor};
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
   color: ${(props) => props.theme.colors.textColor};
-  justify-content: center; 
+  justify-content: center;
 `;
 
 export const SideBar = styled.aside`
@@ -17,10 +18,15 @@ export const SideBar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid ${(props) => props.theme.colors.border};
+  border-right: 1px solid
+    ${(props) => props.theme.colors.border};
 
-  .logo img{
-    width:6rem
+  .logo {
+    padding: 1rem;
+  }
+
+  .logo img {
+    width: 8rem;
   }
 `;
 
@@ -33,16 +39,26 @@ export const NavMenu = styled.nav`
       align-items: center;
       gap: 1rem;
       font-size: 1.1rem;
-      padding: 0.8rem 0;
+      padding: 0.75rem 1.5rem;
       cursor: pointer;
       color: ${(props) => props.theme.colors.textColor};
-      
+
+      svg {
+        stroke-width: 0.2px;
+        transition: all 0.2s;
+      }
+
       &.active {
         font-weight: bold;
       }
-      
+
       &:hover {
-        opacity: 0.7;
+        /* opacity: 0.7; */
+        color: ${(props) => props.theme.colors.buttonText};
+        font-weight: bold;
+        background-color: ${(props) =>
+          props.theme.colors.primaryHover};
+        border-radius: 9999px;
       }
     }
   }
@@ -51,7 +67,7 @@ export const NavMenu = styled.nav`
 export const UserInfo = styled.div`
   padding-bottom: 1rem;
   cursor: pointer;
-  
+
   strong {
     display: block;
     margin-bottom: 2px;
@@ -65,13 +81,15 @@ export const UserInfo = styled.div`
 
 export const MainContent = styled.main`
   flex: 1;
-  max-width: 600px; 
-  border-right: 1px solid ${(props) => props.theme.colors.border};
+  max-width: 600px;
+  border-right: 1px solid
+    ${(props) => props.theme.colors.border};
 `;
 
 export const PageHeader = styled.header`
   padding: 1rem;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
 
   h3 {
     font-size: 1.25rem;
@@ -80,10 +98,15 @@ export const PageHeader = styled.header`
 
 export const TabsContainer = styled.div`
   display: flex;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
   position: sticky;
   top: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.2)
+  );
   backdrop-filter: blur(5px);
   z-index: 10;
 `;
@@ -93,20 +116,24 @@ export const Tab = styled.div<{ active?: boolean }>`
   text-align: center;
   padding: 1rem 0;
   cursor: pointer;
-  font-weight: ${(props) => (props.active ? "bold" : "normal")};
-  color: ${(props) => (props.active ? props.theme.colors.primary : "#71767b")};
+  font-weight: ${(props) =>
+    props.active ? "bold" : "normal"};
+  color: ${(props) =>
+    props.active ? props.theme.colors.primary : "#71767b"};
   position: relative;
 
   /* A linha azul embaixo da aba ativa */
   &::after {
     content: "";
-    display: ${(props) => (props.active ? "block" : "none")};
+    display: ${(props) =>
+      props.active ? "block" : "none"};
     position: absolute;
     bottom: 0;
     left: 25%;
     width: 50%;
     height: 4px;
-    background-color: ${(props) => props.theme.colors.primary};
+    background-color: ${(props) =>
+      props.theme.colors.primary};
     border-radius: 2px;
   }
 

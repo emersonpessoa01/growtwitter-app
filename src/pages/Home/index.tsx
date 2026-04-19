@@ -24,7 +24,7 @@ export const Home = () => {
               <li><BsPerson size={24} /> Perfil</li>
             </ul>
           </S.NavMenu>
-          <Button style={{ width: "100%", marginTop: "1rem" }}>Tweetar</Button>
+          <Button widht="100%" marginTop="1rem">Tweetar</Button>
         </div>
 
         <S.UserInfo onClick={signOut}>
