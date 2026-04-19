@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../../components/Button";
 import * as S from "./style";
 import logo from "../../assets/logo_growtweet.svg";
+import { TweetCard } from "../../components/TweetCard";
 
 export const Home = () => {
   const { user, signOut } = useAuth();
@@ -77,11 +78,15 @@ export const Home = () => {
         </S.TabsContainer>
 
         <S.FeedSection>
-          {activeTab === "forYou" ? (
-            <p>Mostrando tweets globais...</p>
-          ) : (
-            <p>Mostrando tweets de quem você segue...</p>
-          )}
+          <TweetCard
+            name="Emerson Pessoa"
+            username="emersonpessoa"
+            content="Acabei de refatorar o menu lateral do Growtweet com Styled Components"
+            avatarUrl="https://github.com/emersonpessoa01.png"
+            likes={10}
+            comments={5}
+            isLiked ={true}
+           />
         </S.FeedSection>
       </S.MainContent>
 

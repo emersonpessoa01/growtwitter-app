@@ -143,7 +143,7 @@ export const Tab = styled.div<{ active?: boolean }>`
     bottom: 0;
     left: 25%;
     width: 50%;
-    height: 4px;
+    height: 3px;
     background-color: ${(props) =>
       props.theme.colors.primary};
     border-radius: 2px;
