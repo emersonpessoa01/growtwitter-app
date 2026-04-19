@@ -1,81 +1,70 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { RiHome7Fill } from "react-icons/ri";
+import { BsHash, BsPerson } from "react-icons/bs";
 import { useAuth } from "../../contexts/AuthContext";
-import { ButtonSpinner } from "../../components/Button/style";
+import { Button } from "../../components/Button";
 import * as S from "./style";
+import logo from "../../assets/logo_growtweet.svg";
 
 export const Home = () => {
-  const { user } = useAuth();
-  const [loadingFeed, setLoadingFeed] = useState(true);
-  const [tweets, setTweets] = useState([]);
-
-  useEffect(() => {
-    async function fetchTweets() {
-      try {
-        setLoadingFeed(true);
-        // Agora o carregamento acontece em segundo plano
-        // const response = await api.get("/tweets");
-        // setTweets(response.data.data);
-
-        // Adicionado este delay artificial de 2s para testar o spinner
-        await new Promise((resolve) =>
-          setTimeout(resolve, 2000),
-        );
-      } catch (error) {
-        console.error("Erro ao carregar feed:", error);
-      } finally {
-        // Mesmo que demore ou dê erro, paramos o loading para liberar a tela
-        setLoadingFeed(false);
-      }
-    }
-    fetchTweets();
-  }, []);
+  const { user, signOut } = useAuth();
+  const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
 
   return (
     <S.Container>
-      {/* Menu Lateral (Exemplo simples) */}
-      <S.Sidebar>
-        <h2>Growtwitter</h2>
-        <nav>
-          <ul>
-            <li>Página Inicial</li>
-            <li>Explorar</li>
-            <li>Perfil</li>
-          </ul>
-        </nav>
-      </S.Sidebar>
+      <S.SideBar>
+        <div>
+          <div className="logo">
+            <img src={logo} alt="growtweet" />
+          </div>
+          <S.NavMenu>
+            <ul>
+              <li className="active"><RiHome7Fill size={24} /> Página Inicial</li>
+              <li><BsHash size={24} /> Explorar</li>
+              <li><BsPerson size={24} /> Perfil</li>
+            </ul>
+          </S.NavMenu>
+          <Button style={{ width: "100%", marginTop: "1rem" }}>Tweetar</Button>
+        </div>
 
-      {/* Área Central do Feed */}
+        <S.UserInfo onClick={signOut}>
+          <strong>{user?.name}</strong>
+          <span>@{user?.username}</span>
+        </S.UserInfo>
+      </S.SideBar>
+
       <S.MainContent>
-        <S.Header>
+        <S.PageHeader>
           <h3>Página Inicial</h3>
-        </S.Header>
+        </S.PageHeader>
+
+        <S.TabsContainer>
+          <S.Tab 
+            active={activeTab === "forYou"} 
+            onClick={() => setActiveTab("forYou")}
+          >
+            Para você
+          </S.Tab>
+          <S.Tab 
+            active={activeTab === "following"} 
+            onClick={() => setActiveTab("following")}
+          >
+            Seguindo
+          </S.Tab>
+        </S.TabsContainer>
 
         <S.FeedSection>
-          {/* Se estiver carregando os tweets, mostra o spinner só aqui no meio */}
-          {loadingFeed ? (
-            <S.LoadingContainer>
-              <S.ButtonSpinner
-                size="2.5rem"
-                borderTopColor="#1DA1F2"
-                borderLeftColor="#adc8d2"
-              />
-              <p>Buscando tweets...</p>
-            </S.LoadingContainer>
+          {activeTab === "forYou" ? (
+            <p>Mostrando tweets globais...</p>
           ) : (
-            <div>
-              <p>
-                Olá, {user?.name}! O que está acontecendo?
-              </p>
-              {/* Aqui virá o seu .map(tweet => ...) */}
-              {tweets.length === 0 && (
-                <p style={{ color: "#666" }}>
-                  Nenhum tweet por aqui ainda.
-                </p>
-              )}
-            </div>
+            <p>Mostrando tweets de quem você segue...</p>
           )}
         </S.FeedSection>
       </S.MainContent>
+
+      <S.WidgetsAside>
+         {/* Conteúdo "O que está acontecendo" virá aqui */}
+      </S.WidgetsAside>
     </S.Container>
   );
 };

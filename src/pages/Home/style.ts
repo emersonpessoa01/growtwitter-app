@@ -1,127 +1,130 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
-//1. Definir o que o componente pode receber
-interface SpinnerProps {
-  borderTopColor?: string;
-  borderLeftColor?: string;
-  size?: string;
-}
-
-const rotate = keyframes`
-    from{
-        transform: rotate(0deg);
-
-    }to{
-        transform: rotate(360deg);
-    }
-`;
-
-//2. Usar a função para ler a prop ou usar um valor padrão
-export const ButtonSpinner = styled.div<SpinnerProps>`
-  /* Usa o valor da prop size ou o padrão de 1.25rem */
-  width: ${(props) => props.size || "2.5rem"};
-  height: ${(props) => props.size || "2.5rem"};
-
-  border-radius: 50%;
-  animation: ${rotate} 0.8s linear infinite;
-
-  border: 3px solid
-    ${(props) =>
-      props.borderLeftColor || "rgba(255, 255, 255, 0.3)"};
-
-  border-top: 3px solid
-    ${(props) =>
-      props.borderTopColor || props.theme.colors.primary};
-`;
 export const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  max-width: 1200px;
-  margin: 0 auto;
+  background-color: ${(props) => props.theme.colors.backgroundColor};
+  color: ${(props) => props.theme.colors.textColor};
+  justify-content: center; 
 `;
-export const Sidebar = styled.aside`
-  width: 250px;
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
-  padding: 1rem;
 
-  h2 {
-    margin-bottom: 2rem;
-    color: ${(props) => props.theme.colors.primary};
+export const SideBar = styled.aside`
+  width: 280px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid ${(props) => props.theme.colors.border};
+
+  .logo img{
+    width:6rem
   }
-  nav ul {
+`;
+
+export const NavMenu = styled.nav`
+  ul {
     list-style: none;
     padding: 0;
-    display: flex;
-    flex-flow: column wrap;
-
     li {
-      flex: 1;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
-      transition: all 0.2s;
-      padding: 0.5rem;
-      border-radius: 5px;
-
+      gap: 1rem;
+      font-size: 1.1rem;
+      padding: 0.8rem 0;
+      cursor: pointer;
+      color: ${(props) => props.theme.colors.textColor};
+      
+      &.active {
+        font-weight: bold;
+      }
+      
       &:hover {
-        color: ${(props) => props.theme.colors.buttonText};
-        background-color: ${(props) =>
-          props.theme.colors.primaryHover};
+        opacity: 0.7;
       }
     }
   }
 `;
 
-export const MainContent = styled.main`
-  flex: 1 1 auto;
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
-  padding: 1rem 0;
+export const UserInfo = styled.div`
+  padding-bottom: 1rem;
+  cursor: pointer;
+  
+  strong {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  span {
+    color: ${(props) => props.theme.colors.textColor};
+    font-size: 0.9rem;
+  }
 `;
 
-export const Header = styled.header`
+export const MainContent = styled.main`
+  flex: 1;
+  max-width: 600px; 
+  border-right: 1px solid ${(props) => props.theme.colors.border};
+`;
+
+export const PageHeader = styled.header`
   padding: 1rem;
-  border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
-  position: sticky;
-  top: 0;
-  background-color: ${(props) =>
-    props.theme.colors.backgroundColor};
-  z-index: 10;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 
   h3 {
     font-size: 1.25rem;
-    font-weight: bold;
   }
 `;
 
+export const TabsContainer = styled.div`
+  display: flex;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  position: sticky;
+  top: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+  backdrop-filter: blur(5px);
+  z-index: 10;
+`;
+
+export const Tab = styled.div<{ active?: boolean }>`
+  flex: 1;
+  text-align: center;
+  padding: 1rem 0;
+  cursor: pointer;
+  font-weight: ${(props) => (props.active ? "bold" : "normal")};
+  color: ${(props) => (props.active ? props.theme.colors.primary : "#71767b")};
+  position: relative;
+
+  /* A linha azul embaixo da aba ativa */
+  &::after {
+    content: "";
+    display: ${(props) => (props.active ? "block" : "none")};
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 4px;
+    background-color: ${(props) => props.theme.colors.primary};
+    border-radius: 2px;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+`;
+
+// Novo: Seção de conteúdo do feed
 export const FeedSection = styled.section`
   padding: 1rem;
 `;
-
-export const LoadingContainer = styled.div`
-  min-height: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-
-  p {
-    color: ${(props) => props.theme.colors.textColor};
-    font-weight: 500;
-  }
-`;
-
-// Coluna da direita (Widgets/Trends)
-export const RightSide = styled.aside`
-  width: 300px;
+// Novo: Coluna de Widgets (Terceira Coluna)
+export const WidgetsAside = styled.aside`
+  width: 350px;
   padding: 1rem;
-  @media (max-width: 1000px) {
+
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
