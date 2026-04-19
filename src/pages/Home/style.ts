@@ -29,41 +29,53 @@ export const SideBar = styled.aside`
     width: 8rem;
   }
 `;
-
 export const NavMenu = styled.nav`
+  margin-top: 1rem;
+`;
+
+export const NavList = styled.ul`
   ul {
     list-style: none;
     padding: 0;
-    li {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 1.1rem;
-      padding: 0.75rem 1.5rem;
-      cursor: pointer;
-      color: ${(props) => props.theme.colors.textColor};
-
-      svg {
-        stroke-width: 0.2px;
-        transition: all 0.2s;
-      }
-
-      &.active {
-        font-weight: bold;
-      }
-
-      &:hover {
-        /* opacity: 0.7; */
-        color: ${(props) => props.theme.colors.buttonText};
-        font-weight: bold;
-        background-color: ${(props) =>
-          props.theme.colors.primaryHover};
-        border-radius: 9999px;
-      }
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 `;
 
+export const MenuItem = styled.li<{ active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  color: ${(props) => props.theme.colors.textColor};
+
+  font-weight: ${(props) =>
+    props.active ? "bold" : "normal"};
+
+  svg {
+    stroke: currentColor;
+    stroke-width: ${(props) =>
+      props.active ? "0.6px" : "0.2px"};
+    transition: all 0.2s;
+  }
+
+  &:hover {
+    color: ${(props) => props.theme.colors.buttonText};
+    font-weight: bold;
+    background-color: ${(props) =>
+      props.theme.colors.primaryHover};
+    border-radius: 9999px;
+
+    svg {
+      stroke-width: 0.8px;
+    }
+  }
+`;
 export const UserInfo = styled.div`
   padding-bottom: 1rem;
   cursor: pointer;

@@ -8,7 +8,9 @@ import logo from "../../assets/logo_growtweet.svg";
 
 export const Home = () => {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
+  const [activeTab, setActiveTab] = useState<
+    "forYou" | "following"
+  >("forYou");
 
   return (
     <S.Container>
@@ -17,14 +19,35 @@ export const Home = () => {
           <div className="logo">
             <img src={logo} alt="growtweet" />
           </div>
+
           <S.NavMenu>
-            <ul>
-              <li className="active"><RiHome7Fill size={24} /> Página Inicial</li>
-              <li><BsHash size={24} /> Explorar</li>
-              <li><BsPerson size={24} /> Perfil</li>
-            </ul>
+            <S.NavList>
+              <S.MenuItem
+                active={activeTab === "forYou"}
+                onClick={() => setActiveTab("forYou")}
+              >
+                <RiHome7Fill size={24} /> Página Inicial
+              </S.MenuItem>
+
+              <S.MenuItem
+                active={activeTab === "following"}
+                onClick={() => setActiveTab("following")}
+              >
+                <BsHash size={24} /> Explorar
+              </S.MenuItem>
+
+              <S.MenuItem
+                active={activeTab === "profile"}
+                onClick={() => setActiveTab("profile")}
+              >
+                <BsPerson size={24} /> Perfil
+              </S.MenuItem>
+            </S.NavList>
           </S.NavMenu>
-          <Button widht="100%" marginTop="1rem">Tweetar</Button>
+
+          <Button widht="100%" marginTop="1rem">
+            Tweetar
+          </Button>
         </div>
 
         <S.UserInfo onClick={signOut}>
@@ -39,14 +62,14 @@ export const Home = () => {
         </S.PageHeader>
 
         <S.TabsContainer>
-          <S.Tab 
-            active={activeTab === "forYou"} 
+          <S.Tab
+            active={activeTab === "forYou"}
             onClick={() => setActiveTab("forYou")}
           >
             Para você
           </S.Tab>
-          <S.Tab 
-            active={activeTab === "following"} 
+          <S.Tab
+            active={activeTab === "following"}
             onClick={() => setActiveTab("following")}
           >
             Seguindo
@@ -63,7 +86,7 @@ export const Home = () => {
       </S.MainContent>
 
       <S.WidgetsAside>
-         {/* Conteúdo "O que está acontecendo" virá aqui */}
+        {/* Conteúdo "O que está acontecendo" virá aqui */}
       </S.WidgetsAside>
     </S.Container>
   );
