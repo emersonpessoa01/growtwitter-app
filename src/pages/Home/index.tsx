@@ -7,6 +7,7 @@ import logo from "../../assets/logo_growtweet.svg";
 import { RiHome7Fill } from "react-icons/ri";
 import { BsHash, BsPerson } from "react-icons/bs";
 import { Button } from "../../components/Button";
+import { TweetModal } from "../../components/TweetModal";
 
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
@@ -19,7 +20,7 @@ interface Tweet {
     username: string;
     imageUrl?: string;
   };
-  likes: number[]; 
+  likes: number[];
   replies: number[];
 }
 
@@ -32,6 +33,8 @@ export const Home = () => {
   const [activeTab, setActiveTab] = useState<
     "forYou" | "following"
   >("forYou");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadTweets = useCallback(async () => {
     if (!user?.id) return;
@@ -88,6 +91,15 @@ export const Home = () => {
     }
   };
 
+  // Função para abrir e fechar o modal de publicar tweet
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <S.Container>
       <S.SideBar>
@@ -114,7 +126,11 @@ export const Home = () => {
               </S.MenuItem>
             </S.NavList>
           </S.NavMenu>
-          <Button $width="100%" $marginTop="1rem">
+          <Button
+            $width="100%"
+            $marginTop="1rem"
+            onClick={handleOpenModal}
+          >
             Tweetar
           </Button>
         </div>
@@ -145,34 +161,7 @@ export const Home = () => {
           </S.Tab>
         </S.TabsContainer>
 
-        <S.FormContainer onSubmit={handleSubmit}>
-          <S.AvatarImg
-            src={
-              user?.imageUrl ||
-              "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
-            }
-            alt={user?.name}
-          />
-          <S.FormContent>
-            <textarea
-              placeholder="O que está acontecendo?"
-              value={newTweet}
-              onChange={(e) => setNewTweet(e.target.value)}
-              rows={3}
-            />
-            <div className="form-actions">
-              <Button
-                type="submit"
-                $width="100px"
-                $marginTop="0"
-                disabled={!newTweet.trim() || isPublishing}
-                loading={isPublishing}
-              >
-                Tweetar
-              </Button>
-            </div>
-          </S.FormContent>
-        </S.FormContainer>
+        
 
         <S.FeedSection>
           {loading ? (
@@ -207,6 +196,15 @@ export const Home = () => {
       </S.MainContent>
 
       <S.WidgetsAside />
+      {/* O resto do código da Home continua igual, apenas removemos o form fixo e adicionamos o modal aqui */}
+      <TweetModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        value={newTweet}
+        onChange={setNewTweet}
+        isPublishing={isPublishing}
+      />
     </S.Container>
   );
 };

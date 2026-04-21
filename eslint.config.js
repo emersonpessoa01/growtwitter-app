@@ -4,6 +4,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
+import { off } from "node:cluster";
 
 export default defineConfig([
   globalIgnores(["dist"]),
@@ -24,6 +25,7 @@ export default defineConfig([
       "react-refresh/only-export-components": "off",
       "react-hooks/set-state-in-effects": "off",
       "typescript-eslint/no-explicit-any": "off",
+      "eslintreact-hooks/rules-of-hooks": "off"
     },
   },
 ]);

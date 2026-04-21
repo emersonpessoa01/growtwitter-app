@@ -114,8 +114,9 @@ export const TabsContainer = styled.div`
   top: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.2)
+    ${(props) => props.theme.colors.secondary} 0%,
+    ${(props) => props.theme.colors.secondary} 70%,
+    ${(props) => props.theme.colors.secondary} 100%
   );
   backdrop-filter: blur(5px);
   z-index: 10;
