@@ -8,7 +8,10 @@ import { RiHome7Fill } from "react-icons/ri";
 import { BsHash, BsPerson } from "react-icons/bs";
 import { Button } from "../../components/Button";
 import { TweetModal } from "../../components/TweetModal";
-import { SpinnerContainer, StyledSpinner } from "../../components/Spinner/style";
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
 
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
@@ -84,6 +87,7 @@ export const Home = () => {
       setNewTweet("");
       // Recarrega a lista para mostrar o novo tweet imediatamente
       loadTweets();
+      handleCloseModal();
     } catch (error) {
       console.error("Erro ao publicar tweet:", error);
       alert("Não foi possível publicar o tweet");
@@ -164,7 +168,13 @@ export const Home = () => {
 
         <S.FeedSection>
           {loading ? (
-            <SpinnerContainer style={{ height: "500px", width: "100%" }}>
+            <SpinnerContainer
+              style={{
+                height: "500px",
+                width: "100%",
+                backgroundColor: "transparent",
+              }}
+            >
               <StyledSpinner />
             </SpinnerContainer>
           ) : tweets.length > 0 ? (

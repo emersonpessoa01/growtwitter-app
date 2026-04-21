@@ -30,16 +30,18 @@ export const TweetModal: React.FC<TweetModalProps> = ({
     <S.Overlay onClick={onClose}>
       <S.ModalBox onClick={(e) => e.stopPropagation()}>
         <S.ModalHeader>
-          <button type="button" onClick={onClose}>&times;</button>
+          <button type="button" onClick={onClose}>
+            &times;
+          </button>
         </S.ModalHeader>
 
         {/* Aqui usamos os mesmos estilos que você já tinha na Home */}
-        <HomeS.FormContainer onSubmit={(e) => {
-          onSubmit(e);
-          onClose(); // Fecha o modal após enviar
-        }}>
+        <HomeS.FormContainer onSubmit={onSubmit}>
           <HomeS.AvatarImg
-            src={user?.imageUrl || "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"}
+            src={
+              user?.imageUrl ||
+              "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+            }
             alt={user?.name}
           />
           <HomeS.FormContent>
