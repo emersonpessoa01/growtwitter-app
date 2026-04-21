@@ -1,17 +1,92 @@
-import { useState } from "react";
-import { RiHome7Fill } from "react-icons/ri";
-import { BsHash, BsPerson } from "react-icons/bs";
+import { useEffect, useState, useCallback } from "react";
+import { api } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
-import { Button } from "../../components/Button";
+import { TweetCard } from "../../components/TweetCard";
 import * as S from "./style";
 import logo from "../../assets/logo_growtweet.svg";
-import { TweetCard } from "../../components/TweetCard";
+import { RiHome7Fill } from "react-icons/ri";
+import { BsHash, BsPerson } from "react-icons/bs";
+import { Button } from "../../components/Button";
+
+// Interface ajustada para refletir o autor e as listas (likes/replies)
+interface Tweet {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: {
+    id: string;
+    name: string;
+    username: string;
+    imageUrl?: string;
+  };
+  likes: number[]; 
+  replies: number[];
+}
 
 export const Home = () => {
   const { user, signOut } = useAuth();
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [newTweet, setNewTweet] = useState("");
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
     "forYou" | "following"
   >("forYou");
+
+  const loadTweets = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+
+      // Decidindo a rota baseada na aba
+      // Para "Para você", usamos os tweets do próprio usuário logado
+      const url =
+        activeTab === "following"
+          ? "/feed"
+          : `/users/${user.id}/tweets`;
+
+      const response = await api.get(url);
+
+      const tweetsData = response.data.data || [];
+      setTweets(tweetsData);
+
+      console.log("Tweets carregados:", tweetsData);
+    } catch (error) {
+      console.error("Erro ao carregar tweets:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, user?.id]);
+
+  useEffect(() => {
+    loadTweets();
+  }, [loadTweets]);
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
+    e.preventDefault();
+    if (!newTweet.trim()) return;
+
+    try {
+      setIsPublishing(true);
+
+      // Endpoint POST /tweets conforme a documentação
+      await api.post("/tweets", {
+        content: newTweet,
+      });
+
+      setNewTweet("");
+      // Recarrega a lista para mostrar o novo tweet imediatamente
+      loadTweets();
+    } catch (error) {
+      console.error("Erro ao publicar tweet:", error);
+      alert("Não foi possível publicar o tweet");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   return (
     <S.Container>
@@ -20,33 +95,26 @@ export const Home = () => {
           <div className="logo">
             <img src={logo} alt="growtweet" />
           </div>
-
           <S.NavMenu>
             <S.NavList>
               <S.MenuItem
-                active={activeTab === "forYou"}
+                $active={activeTab === "forYou"}
                 onClick={() => setActiveTab("forYou")}
               >
                 <RiHome7Fill size={24} /> Página Inicial
               </S.MenuItem>
-
               <S.MenuItem
-                active={activeTab === "following"}
+                $active={activeTab === "following"}
                 onClick={() => setActiveTab("following")}
               >
                 <BsHash size={24} /> Explorar
               </S.MenuItem>
-
-              <S.MenuItem
-                active={activeTab === "profile"}
-                onClick={() => setActiveTab("profile")}
-              >
+              <S.MenuItem $active={false}>
                 <BsPerson size={24} /> Perfil
               </S.MenuItem>
             </S.NavList>
           </S.NavMenu>
-
-          <Button widht="100%" marginTop="1rem">
+          <Button $width="100%" $marginTop="1rem">
             Tweetar
           </Button>
         </div>
@@ -64,35 +132,81 @@ export const Home = () => {
 
         <S.TabsContainer>
           <S.Tab
-            active={activeTab === "forYou"}
+            $active={activeTab === "forYou"}
             onClick={() => setActiveTab("forYou")}
           >
             Para você
           </S.Tab>
           <S.Tab
-            active={activeTab === "following"}
+            $active={activeTab === "following"}
             onClick={() => setActiveTab("following")}
           >
             Seguindo
           </S.Tab>
         </S.TabsContainer>
 
+        <S.FormContainer onSubmit={handleSubmit}>
+          <S.AvatarImg
+            src={
+              user?.imageUrl ||
+              "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+            }
+            alt={user?.name}
+          />
+          <S.FormContent>
+            <textarea
+              placeholder="O que está acontecendo?"
+              value={newTweet}
+              onChange={(e) => setNewTweet(e.target.value)}
+              rows={3}
+            />
+            <div className="form-actions">
+              <Button
+                type="submit"
+                $width="100px"
+                $marginTop="0"
+                disabled={!newTweet.trim() || isPublishing}
+                loading={isPublishing}
+              >
+                Tweetar
+              </Button>
+            </div>
+          </S.FormContent>
+        </S.FormContainer>
+
         <S.FeedSection>
-          <TweetCard
-            name="Emerson Pessoa"
-            username="emersonpessoa"
-            content="Acabei de refatorar o menu lateral do Growtweet com Styled Components"
-            avatarUrl="https://github.com/emersonpessoa01.png"
-            likes={10}
-            comments={5}
-            isLiked ={true}
-           />
+          {loading ? (
+            <p>Carregando...</p>
+          ) : tweets.length > 0 ? (
+            tweets.map((tweet) => (
+              <TweetCard
+                key={tweet.id}
+                name={tweet.author?.name || "Usuário"}
+                username={
+                  tweet.author?.username || "usuario"
+                }
+                content={tweet.content}
+                avatarUrl={tweet.author?.imageUrl}
+                likes={tweet.likes?.length || 0}
+                comments={tweet.replies?.length || 0}
+                isLiked={false} // Você poderá implementar a lógica de check depois
+              />
+            ))
+          ) : (
+            <p
+              style={{
+                padding: "20px",
+                textAlign: "center",
+              }}
+            >
+              Nenhum tweet encontrado. Que tal postar o
+              primeiro?
+            </p>
+          )}
         </S.FeedSection>
       </S.MainContent>
 
-      <S.WidgetsAside>
-        {/* Conteúdo "O que está acontecendo" virá aqui */}
-      </S.WidgetsAside>
+      <S.WidgetsAside />
     </S.Container>
   );
 };

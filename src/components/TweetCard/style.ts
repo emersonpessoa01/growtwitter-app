@@ -57,12 +57,12 @@ export const Actions = styled.div`
   gap: 4rem; /* Espaçamento entre comentário e curtida */
 `;
 
-export const ActionItem = styled.div<{ active?: boolean; variant?: "like" | "comment" }>`
+export const ActionItem = styled.div<{ $active?: boolean; $variant?: "like" | "comment" }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: ${(props) => (props.active && props.variant === "like" ? "#f91880" : "#71767b")};
+  color: ${(props) => (props.$active && props.$variant === "like" ? "#f91880" : "#71767b")};
   cursor: pointer;
   transition: color 0.2s;
 
@@ -71,6 +71,6 @@ export const ActionItem = styled.div<{ active?: boolean; variant?: "like" | "com
   }
 
   &:hover {
-    color: ${(props) => (props.variant === "like" ? "#f91880" : "#1d9bf0")};
+    color: ${(props) => (props.$variant === "like" ? "#f91880" : "#1d9bf0")};
   }
 `;

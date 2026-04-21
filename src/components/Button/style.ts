@@ -1,9 +1,11 @@
-import styled, { keyframes} from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 interface ButtonProps {
-  width?: string;
-  marginTop?: string;
-  
+  $width?: string;
+  $marginTop?: string;
+  $active?: boolean;
+  $loading?: boolean;
+ 
 }
 
 // Animação de rotação para o spinner
@@ -38,8 +40,8 @@ export const StyledButton = styled.button<ButtonProps>`
   color: ${(props) => props.theme.colors.buttonText};
 
   /* Aplicando largura e margem para o botão */
-  width: ${(props) => props.width || "100%"};
-  margin-top: ${(props) => props.marginTop || "1rem"};
+  width: ${(props) => props.$width || "100%"};
+  margin-top: ${(props) => props.$marginTop || "1rem"};
 
   /* Efeito de Hover */
   &:hover:not(:disabled) {

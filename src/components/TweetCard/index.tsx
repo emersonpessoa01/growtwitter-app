@@ -39,12 +39,12 @@ export const TweetCard: React.FC<TweetCardProps> = ({
 
         <S.TweetText>{content}</S.TweetText>
         <S.Actions>
-          <S.ActionItem variant="comment">
+          <S.ActionItem $variant="comment">
             <FaRegComment />
             {comments}
           </S.ActionItem>
 
-          <S.ActionItem variant="like" active={isLiked}>
+          <S.ActionItem $variant="like" $active={isLiked}>
             {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
             {likes}
           </S.ActionItem>

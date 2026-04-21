@@ -8,27 +8,35 @@ import * as S from "./style"; // Vamos criar o style.ts em seguida
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   children: ReactNode;
-  widht?: string;
-  marginTop?: string;
+  $width?: string;
+  $marginTop?: string;
+  $active?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   loading,
   children,
+  $width,
+  $marginTop,
+  $active,
+ 
   ...rest
 }) => {
   return (
     <S.StyledButton
+      
+      $width={$width}
+      $marginTop={$marginTop}
+      $active={$active}
+      $loading={loading}
       disabled={loading || rest.disabled}
       {...rest}
     >
       {loading ? (
-        // Se estiver carregando, mostra o spinner centralizado
         <S.SpinnerWrapper>
           <S.ButtonSpinner />
         </S.SpinnerWrapper>
       ) : (
-        // Se não, mostra o texto/conteúdo normal (o children)
         children
       )}
     </S.StyledButton>

@@ -34,16 +34,14 @@ export const NavMenu = styled.nav`
 `;
 
 export const NavList = styled.ul`
-  ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-export const MenuItem = styled.li<{ active: boolean }>`
+export const MenuItem = styled.li<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -55,12 +53,12 @@ export const MenuItem = styled.li<{ active: boolean }>`
   color: ${(props) => props.theme.colors.textColor};
 
   font-weight: ${(props) =>
-    props.active ? "bold" : "normal"};
+    props.$active ? "bold" : "normal"};
 
   svg {
     stroke: currentColor;
     stroke-width: ${(props) =>
-      props.active ? "0.6px" : "0.2px"};
+      props.$active ? "0.6px" : "0.2px"};
     transition: all 0.2s;
   }
 
@@ -123,34 +121,30 @@ export const TabsContainer = styled.div`
   z-index: 10;
 `;
 
-export const Tab = styled.div<{ active?: boolean }>`
+export const Tab = styled.div<{ $active: boolean }>` // Removido o '?' para evitar undefined
   flex: 1;
   text-align: center;
   padding: 1rem 0;
   cursor: pointer;
-  font-weight: ${(props) =>
-    props.active ? "bold" : "normal"};
-  color: ${(props) =>
-    props.active ? props.theme.colors.primary : "#71767b"};
+  font-weight: ${(props) => (props.$active ? "bold" : "500")};
+  color: ${(props) => (props.$active ? props.theme.colors.primary : "#71767b")};
   position: relative;
+  transition: background-color 0.2s;
 
-  /* A linha azul embaixo da aba ativa */
   &::after {
     content: "";
-    display: ${(props) =>
-      props.active ? "block" : "none"};
+    display: ${(props) => (props.$active ? "block" : "none")};
     position: absolute;
     bottom: 0;
-    left: 25%;
+    left: 25%; // Centraliza a linha azul
     width: 50%;
-    height: 3px;
-    background-color: ${(props) =>
-      props.theme.colors.primary};
+    height: 3px; 
+    background-color: ${(props) => props.theme.colors.primary};
     border-radius: 2px;
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 `;
 
@@ -165,5 +159,49 @@ export const WidgetsAside = styled.aside`
 
   @media (max-width: 1024px) {
     display: none;
+  }
+`;
+
+export const FormContainer = styled.form`
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+`;
+
+export const AvatarImg = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+export const FormContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: ${(props) => props.theme.colors.textColor};
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+
+    &::placeholder {
+      color: ${(props) => props.theme.colors.textColor};
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    border-top: 1px solid
+      ${(props) => props.theme.colors.border};
   }
 `;

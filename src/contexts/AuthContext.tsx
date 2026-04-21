@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { api } from "../services/api";
 
-// Defina a estrutura do usuário baseada na API do Growtwitter [cite: 30]
+// Defina a estrutura do usuário baseada na API do Growtwitter 
 interface User {
   id: string;
   name: string;
@@ -69,6 +69,7 @@ export const AuthProvider: React.FC<{
       "/auth/login",
       credentials,
     );
+    console.log("RES LOGIN:", response.data)
 
     // Para bater com o retorno da API, verifica se o status é 200
     if (response.status !== 200) {
