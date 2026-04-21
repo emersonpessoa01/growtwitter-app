@@ -8,6 +8,7 @@ import { RiHome7Fill } from "react-icons/ri";
 import { BsHash, BsPerson } from "react-icons/bs";
 import { Button } from "../../components/Button";
 import { TweetModal } from "../../components/TweetModal";
+import { SpinnerContainer, StyledSpinner } from "../../components/Spinner/style";
 
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
@@ -161,11 +162,11 @@ export const Home = () => {
           </S.Tab>
         </S.TabsContainer>
 
-        
-
         <S.FeedSection>
           {loading ? (
-            <p>Carregando...</p>
+            <SpinnerContainer style={{ height: "500px", width: "100%" }}>
+              <StyledSpinner />
+            </SpinnerContainer>
           ) : tweets.length > 0 ? (
             tweets.map((tweet) => (
               <TweetCard

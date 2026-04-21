@@ -30,7 +30,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
     <S.Overlay onClick={onClose}>
       <S.ModalBox onClick={(e) => e.stopPropagation()}>
         <S.ModalHeader>
-          <button onClick={onClose}>&times;</button>
+          <button type="button" onClick={onClose}>&times;</button>
         </S.ModalHeader>
 
         {/* Aqui usamos os mesmos estilos que você já tinha na Home */}
@@ -44,7 +44,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
           />
           <HomeS.FormContent>
             <textarea
-              placeholder="O que está acontecendo?"
+              placeholder="O que está pensando?"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               rows={5}
