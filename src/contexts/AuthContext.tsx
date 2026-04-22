@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<{
       throw new Error("Falha na autenticação");
     }
     const { authUser, authToken } = response.data.data;
+    console.log(authUser,authToken)
 
     setUser(authUser);
     api.defaults.headers.Authorization = `Bearer ${authToken}`;

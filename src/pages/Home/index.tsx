@@ -146,7 +146,7 @@ export const Home = () => {
           <Avatar
             src={
               user?.imageUrl ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || user?.username || "User")}&background=random`
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`
             }
             alt={user?.name}
           />
@@ -213,7 +213,7 @@ export const Home = () => {
       </S.MainContent>
 
       <S.WidgetsAside />
-      {/* O resto do código da Home continua igual, apenas removemos o form fixo e adicionamos o modal aqui */}
+      {/* O resto do código da Home continua igual, apenas foi removido o form fixo e adicionado o modal aqui */}
       <TweetModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -221,7 +221,11 @@ export const Home = () => {
         value={newTweet}
         onChange={setNewTweet}
         isPublishing={isPublishing}
-        avatarUrl={tweets[0]?.author?.imageUrl} // Passa o avatar do usuário logado (ou do primeiro tweet, se disponível)
+        // Agora o modal olha para o dono da conta ou gera as iniciais dele
+        avatarUrl={
+          user?.imageUrl ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=random`
+        }
       />
     </S.Container>
   );
