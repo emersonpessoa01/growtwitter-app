@@ -2,6 +2,7 @@
 import React from "react";
 import * as S from "./style";
 import * as HomeS from "../../pages/Home/style"; // Reaproveitamos os estilos do form
+import { Avatar } from "../TweetCard/style";
 import { Button } from "../Button";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -12,6 +13,7 @@ interface TweetModalProps {
   value: string;
   onChange: (value: string) => void;
   isPublishing: boolean;
+  avatarUrl?: string;
 }
 
 export const TweetModal: React.FC<TweetModalProps> = ({
@@ -21,6 +23,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
   value,
   onChange,
   isPublishing,
+  avatarUrl,
 }) => {
   if (!isOpen) return null;
 
@@ -37,12 +40,13 @@ export const TweetModal: React.FC<TweetModalProps> = ({
 
         {/* Aqui usamos os mesmos estilos que você já tinha na Home */}
         <HomeS.FormContainer onSubmit={onSubmit}>
-          <HomeS.AvatarImg
+          <Avatar
             src={
-              user?.imageUrl ||
-              "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+              avatarUrl ||
+              "https://ui-avatars.com/api/?name=Emerson+Pessoa&background=random"
             }
             alt={user?.name}
+            style={{ flexShrink: 0 }}
           />
           <HomeS.FormContent>
             <textarea

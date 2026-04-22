@@ -176,6 +176,7 @@ export const AvatarImg = styled.img`
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
+  z-index: 100;
 `;
 export const FormContent = styled.div`
   flex: 1;

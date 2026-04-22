@@ -215,6 +215,7 @@ export const Home = () => {
         value={newTweet}
         onChange={setNewTweet}
         isPublishing={isPublishing}
+        avatarUrl={tweets[0]?.author?.imageUrl} // Passa o avatar do usuário logado (ou do primeiro tweet, se disponível)
       />
     </S.Container>
   );
