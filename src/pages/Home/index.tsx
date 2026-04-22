@@ -12,6 +12,7 @@ import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
+import { Avatar } from "../../components/TweetCard/style";
 
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
@@ -141,8 +142,18 @@ export const Home = () => {
         </div>
 
         <S.UserInfo onClick={signOut}>
-          <strong>{user?.name}</strong>
-          <span>@{user?.username}</span>
+          <Avatar
+            src={
+              user?.imageUrl ||
+              tweets[0]?.author?.imageUrl ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`
+            }
+            alt={user?.name}
+          />
+          <S.NameContainer>
+            <strong>{user?.name || "User"}</strong>
+            <span>@{user?.username}</span>
+          </S.NameContainer>
         </S.UserInfo>
       </S.SideBar>
 
@@ -193,12 +204,7 @@ export const Home = () => {
               />
             ))
           ) : (
-            <p
-              style={{
-                padding: "20px",
-                textAlign: "center",
-              }}
-            >
+            <p>
               Nenhum tweet encontrado. Que tal postar o
               primeiro?
             </p>

@@ -27,8 +27,13 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   return (
     <S.CardContainer>
       <S.Avatar
-        src={avatarUrl || "https://github.com/emersonpessoa01.png"}
-        alt={name} title={username}
+        src={
+          avatarUrl
+            ? avatarUrl
+            : name
+              ? `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&border=2px%20solid%20${encodeURIComponent("#" + Math.floor(Math.random() * 16777215).toString(16))}`
+              : "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+        }
       />
 
       <S.ContentWrapper>

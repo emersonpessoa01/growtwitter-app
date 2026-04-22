@@ -43,7 +43,9 @@ export const TweetModal: React.FC<TweetModalProps> = ({
           <Avatar
             src={
               avatarUrl ||
-              "https://ui-avatars.com/api/?name=Emerson+Pessoa&background=random"
+              (user?.name
+                ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`
+                : "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png")
             }
             alt={user?.name}
             style={{ flexShrink: 0 }}

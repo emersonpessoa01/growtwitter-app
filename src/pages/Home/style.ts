@@ -75,9 +75,18 @@ export const MenuItem = styled.li<{ $active: boolean }>`
   }
 `;
 export const UserInfo = styled.div`
+  display: flex;
+  align-items:center;
   padding-bottom: 1rem;
   cursor: pointer;
+  gap:.5rem;
 
+  
+`;
+
+export const NameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   strong {
     display: block;
     margin-bottom: 2px;
@@ -88,6 +97,7 @@ export const UserInfo = styled.div`
     font-size: 0.9rem;
   }
 `;
+
 
 export const MainContent = styled.main`
   flex: 1;
@@ -122,25 +132,30 @@ export const TabsContainer = styled.div`
   z-index: 10;
 `;
 
-export const Tab = styled.div<{ $active: boolean }>` // Removido o '?' para evitar undefined
+export const Tab = styled.div<{ $active: boolean }>`
+  // Removido o '?' para evitar undefined
   flex: 1;
   text-align: center;
   padding: 1rem 0;
   cursor: pointer;
-  font-weight: ${(props) => (props.$active ? "bold" : "500")};
-  color: ${(props) => (props.$active ? props.theme.colors.primary : "#71767b")};
+  font-weight: ${(props) =>
+    props.$active ? "bold" : "500"};
+  color: ${(props) =>
+    props.$active ? props.theme.colors.primary : "#71767b"};
   position: relative;
   transition: background-color 0.2s;
 
   &::after {
     content: "";
-    display: ${(props) => (props.$active ? "block" : "none")};
+    display: ${(props) =>
+      props.$active ? "block" : "none"};
     position: absolute;
     bottom: 0;
     left: 25%; // Centraliza a linha azul
     width: 50%;
-    height: 3px; 
-    background-color: ${(props) => props.theme.colors.primary};
+    height: 3px;
+    background-color: ${(props) =>
+      props.theme.colors.primary};
     border-radius: 2px;
   }
 
@@ -152,6 +167,11 @@ export const Tab = styled.div<{ $active: boolean }>` // Removido o '?' para evit
 // Novo: Seção de conteúdo do feed
 export const FeedSection = styled.section`
   padding: 1rem;
+
+  p {
+    padding: 10px;
+    text-align: center;
+  }
 `;
 // Novo: Coluna de Widgets (Terceira Coluna)
 export const WidgetsAside = styled.aside`
