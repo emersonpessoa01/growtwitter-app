@@ -55,6 +55,7 @@ export const Home = () => {
           : `/users/${user.id}/tweets`;
 
       const response = await api.get(url);
+      console.log(response.data);
 
       const tweetsData = response.data.data || [];
       setTweets(tweetsData);
@@ -145,8 +146,7 @@ export const Home = () => {
           <Avatar
             src={
               user?.imageUrl ||
-              tweets[0]?.author?.imageUrl ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || user?.username || "User")}&background=random`
             }
             alt={user?.name}
           />

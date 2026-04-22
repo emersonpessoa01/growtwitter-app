@@ -170,7 +170,7 @@ export const FeedSection = styled.section`
 
   p {
     padding: 10px;
-    text-align: center;
+    
   }
 `;
 // Novo: Coluna de Widgets (Terceira Coluna)
