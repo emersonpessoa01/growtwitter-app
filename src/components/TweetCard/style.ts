@@ -17,9 +17,9 @@ export const CardContainer = styled.div<CardContainerProps>`
   }
 `;
 
-export const Avatar = styled.img`
-  width: 48px;
-  height: 48px;
+export const Avatar = styled.img<CardContainerProps>`
+  width: ${(props) => (props.$isReply ? "36px" : "48px")};
+  height: ${(props) => (props.$isReply ? "36px" : "48px")};
   border-radius: 50%;
   border: 2px solid ${(props) => props.theme.colors.primary};
   background-color: #333;
@@ -58,7 +58,7 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
 
   /* Lógica condicional: Estiliza apenas se for um comentário */
   ${(props) => props.$isReply &&`
-    background: #4f4f4f0a;
+    background: ${props.theme.colors.secondary};
     padding: 10px;
     border-radius: 8px;
     font-size: 0.9rem;
