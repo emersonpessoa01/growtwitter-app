@@ -304,11 +304,9 @@ export const Home = () => {
                 );
 
                 return (
-                  <div
+                  <S.TweetWrapper
                     key={tweet.id}
-                    style={{
-                      borderBottom: "1px solid #eee",
-                    }}
+                   
                   >
                     {/* TWEET PRINCIPAL */}
                     <TweetCard
@@ -335,12 +333,7 @@ export const Home = () => {
                     {/* EXPOSIÇÃO DOS COMENTÁRIOS (Estilo Thread) */}
                     {tweet.replies &&
                       tweet.replies.length > 0 && (
-                        <div
-                          style={{
-                            marginLeft: "50px",
-                            borderLeft:
-                              "2px solid #1d9bf01a",
-                          }}
+                        <S.TweetContainer
                         >
                           {tweet.replies.map((reply) => (
                             <TweetCard
@@ -369,9 +362,9 @@ export const Home = () => {
                               }
                             />
                           ))}
-                        </div>
+                        </S.TweetContainer>
                       )}
-                  </div>
+                  </S.TweetWrapper>
                 );
               })
           ) : (

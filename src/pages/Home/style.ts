@@ -182,6 +182,16 @@ export const FeedSection = styled.section`
     
   }
 `;
+
+export const TweetWrapper = styled.div`
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+`;
+
+export const TweetContainer = styled.div`
+  margin-left: 50px;
+  border-left: 2px solid ${(props) => props.theme.colors.border};
+`;
 // Novo: Coluna de Widgets (Terceira Coluna)
 export const WidgetsAside = styled.aside`
   width: 350px;
