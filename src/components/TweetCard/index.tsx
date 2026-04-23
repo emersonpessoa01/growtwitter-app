@@ -14,6 +14,7 @@ interface TweetCardProps {
   comments?: number;
   isLiked?: boolean;
   onLike?: () => void; // Callback para quando o usuário clicar no like
+  onReply?: () => void; // Callback para quando o usuário clicar no botão de resposta
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
@@ -24,7 +25,8 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   likes,
   comments = 0,
   isLiked = false,
-  onLike, // Recebendo a função
+  onLike, // Recebendo a função de callback para o clique de like
+  onReply, // Recebendo a função de callback para o clique de reply
 }) => {
   return (
     <S.CardContainer>
@@ -49,6 +51,10 @@ export const TweetCard: React.FC<TweetCardProps> = ({
           <S.ActionItem
             $variant="comment"
             $active={isLiked}
+            onClick={(e) => {
+              e.stopPropagation(); // Evita que o clique se propague para o card
+              onReply?.(); // Dispara a abertura do modal de resposta
+            }}
           >
             <FaRegComment />
             {comments}

@@ -20,6 +20,18 @@ interface Like {
   tweetId: string;
 }
 
+interface Reply {
+  id: string;
+  content: string;
+  userId: string;
+  tweetId: string; // ID do tweet "pai"
+  author: {
+    name: string;
+    username: string;
+    imageUrl?: string;
+  };
+}
+
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
   id: string;
@@ -32,7 +44,7 @@ interface Tweet {
     imageUrl?: string;
   };
   likes: Like[];
-  replies: any[];
+  replies: Reply[];
 }
 
 export const Home = () => {
@@ -46,6 +58,10 @@ export const Home = () => {
   >("forYou");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedTweetId, setSelectedTweetId] = useState<
+    string | null
+  >(null);
 
   const loadTweets = useCallback(
     async (silent = false) => {
@@ -93,14 +109,22 @@ export const Home = () => {
     try {
       setIsPublishing(true);
 
-      // Endpoint POST /tweets conforme a documentação
-      await api.post("/tweets", {
-        content: newTweet,
-      });
+      if (selectedTweetId) {
+        await api.post(
+          `/tweets/${selectedTweetId}/replies`,
+          {
+            content: newTweet,
+          },
+        );
+      } else {
+        await api.post("/tweets", {
+          content: newTweet,
+        });
+      }
 
-      setNewTweet("");
+      // setNewTweet("");
       // Recarrega a lista para mostrar o novo tweet imediatamente
-      loadTweets();
+      loadTweets(true);
       handleCloseModal();
     } catch (error) {
       console.error("Erro ao publicar tweet:", error);
@@ -117,6 +141,11 @@ export const Home = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleOpenReplyModal = (tweetId: string) => {
+    setSelectedTweetId(tweetId);
+    setIsModalOpen(true);
   };
 
   const handleLikeTweet = async (
@@ -169,7 +198,9 @@ export const Home = () => {
     } catch (error) {
       console.error("Erro ao processar like: ", error);
       loadTweets(true); // Recarrega os dados para corrigir o estado otimista em caso de erro
-      alert("Não foi possível processar o like. Tente novamente.");
+      alert(
+        "Não foi possível processar o like. Tente novamente.",
+      );
     }
   };
 
@@ -279,7 +310,8 @@ export const Home = () => {
                   isLiked={isLikedByMe} // Passa o valor correto
                   onLike={() =>
                     handleLikeTweet(tweet.id, isLikedByMe)
-                  } // Passa a função com o estado atual
+                  } 
+                  onReply={() => handleOpenReplyModal(tweet.id)}
                 />
               );
             })
