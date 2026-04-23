@@ -13,6 +13,7 @@ interface TweetCardProps {
   likes: number;
   comments?: number;
   isLiked?: boolean;
+  onLike?: () => void; // Callback para quando o usuário clicar no like
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
@@ -23,6 +24,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   likes,
   comments = 0,
   isLiked = false,
+  onLike, // Recebendo a função
 }) => {
   return (
     <S.CardContainer>
@@ -44,12 +46,22 @@ export const TweetCard: React.FC<TweetCardProps> = ({
 
         <S.TweetText>{content}</S.TweetText>
         <S.Actions>
-          <S.ActionItem $variant="comment">
+          <S.ActionItem
+            $variant="comment"
+            $active={isLiked}
+          >
             <FaRegComment />
             {comments}
           </S.ActionItem>
 
-          <S.ActionItem $variant="like" $active={isLiked}>
+          <S.ActionItem
+            $variant="like"
+            $active={isLiked}
+            onClick={(e) => {
+              e.stopPropagation(); // Importante para não disparar cliques do card pai
+              onLike?.();
+            }}
+          >
             {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
             {likes}
           </S.ActionItem>

@@ -104,12 +104,21 @@ export const MainContent = styled.main`
   max-width: 600px;
   border-right: 1px solid
     ${(props) => props.theme.colors.border};
+    
 `;
 
 export const PageHeader = styled.header`
   padding: 1rem;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
+    background-color: ${(props) => props.theme.colors.backgroundColor};
+    position: sticky;
+    left: 0;
+    right: 0;
+    top: 0;
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    
 
   h3 {
     font-size: 1.25rem;

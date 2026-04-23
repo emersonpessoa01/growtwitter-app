@@ -35,20 +35,20 @@ export const ModalHeader = styled.header`
     align-items: center;
 
     button{
-      background-color:none;
+      background:rgba(255, 255, 255, 0.2);
       border:none;
-      color: ${(props) => props.theme.colors.textColor};
+      color: ${(props) => props.theme.colors.primaryHover};
       font-size: 20px;
       cursor: pointer;
       border-radius: 50%;
-      width: 35px;
-      height: 35px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
 
       &:hover{
-        background-color: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
       }
     }
 
