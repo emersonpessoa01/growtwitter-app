@@ -14,6 +14,8 @@ interface TweetModalProps {
   onChange: (value: string) => void;
   isPublishing: boolean;
   avatarUrl?: string;
+  title?: string;
+  buttonText?: string;
 }
 
 export const TweetModal: React.FC<TweetModalProps> = ({
@@ -24,6 +26,8 @@ export const TweetModal: React.FC<TweetModalProps> = ({
   onChange,
   isPublishing,
   avatarUrl,
+  title = "Tweet",
+  buttonText = "Tweetar",
 }) => {
   if (!isOpen) return null;
 
@@ -36,6 +40,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
           <button type="button" onClick={onClose}>
             &times;
           </button>
+          <h2>{title}</h2>
         </S.ModalHeader>
 
         {/* Aqui usamos os mesmos estilos que você já tinha na Home */}
@@ -66,7 +71,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
                 disabled={!value.trim() || isPublishing}
                 loading={isPublishing}
               >
-                Tweetar
+                {buttonText}
               </Button>
             </div>
           </HomeS.FormContent>

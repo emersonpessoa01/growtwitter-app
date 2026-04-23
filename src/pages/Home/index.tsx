@@ -108,21 +108,26 @@ export const Home = () => {
 
     try {
       setIsPublishing(true);
+      console.log(
+        "Tentando enviar . ID Pai: ",
+        selectedTweetId,
+      );
+      console.log("Conteúdo: ", newTweet);
 
       if (selectedTweetId) {
-        await api.post(
-          `/tweets/${selectedTweetId}/replies`,
-          {
-            content: newTweet,
-          },
-        );
+        const responseReply = await api.post("/replies", {
+          content: newTweet,
+          replyTo: selectedTweetId,
+        });
+        console.log("Enviado com sucesso", responseReply);
       } else {
-        await api.post("/tweets", {
+        const responseTweet = await api.post("/tweets", {
           content: newTweet,
         });
+        console.log("responseTweet: Enviado com sucesso", responseTweet);
       }
 
-      // setNewTweet("");
+      setNewTweet("");
       // Recarrega a lista para mostrar o novo tweet imediatamente
       loadTweets(true);
       handleCloseModal();
@@ -136,7 +141,9 @@ export const Home = () => {
 
   // Função para abrir e fechar o modal de publicar tweet
   const handleOpenModal = () => {
-    setIsModalOpen(true);
+    setIsModalOpen(false);
+    setSelectedTweetId(null);
+    setNewTweet("");
   };
 
   const handleCloseModal = () => {
@@ -310,8 +317,10 @@ export const Home = () => {
                   isLiked={isLikedByMe} // Passa o valor correto
                   onLike={() =>
                     handleLikeTweet(tweet.id, isLikedByMe)
-                  } 
-                  onReply={() => handleOpenReplyModal(tweet.id)}
+                  }
+                  onReply={() =>
+                    handleOpenReplyModal(tweet.id)
+                  }
                 />
               );
             })
@@ -337,6 +346,12 @@ export const Home = () => {
         avatarUrl={
           user?.imageUrl ||
           `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=random`
+        }
+        title={
+          selectedTweetId ? "Reply" : "O que está pensando?"
+        }
+        buttonText={
+          selectedTweetId ? "Responder" : "Tweetar"
         }
       />
     </S.Container>
