@@ -1,10 +1,14 @@
 import styled from "styled-components";
+interface CardContainerProps {
+  $isReply?: boolean;
+}
 
-export const CardContainer = styled.div`
+export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
   padding: 1rem;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-  gap: 0.75rem;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  gap: ${(props) => (props.$isReply ? "8px" : "12px")};
   transition: background 0.2s;
   cursor: pointer;
 
@@ -41,7 +45,8 @@ export const TweetHeader = styled.div`
 
   span {
     font-size: 0.9rem;
-    color: ${(props) => props.theme.colors.textColorSecondary};
+    color: ${(props) =>
+      props.theme.colors.textColorSecondary};
   }
 `;
 
@@ -58,12 +63,18 @@ export const Actions = styled.div`
   gap: 4rem; /* Espaçamento entre comentário e curtida */
 `;
 
-export const ActionItem = styled.div<{ $active?: boolean; $variant?: "like" | "comment" }>`
+export const ActionItem = styled.div<{
+  $active?: boolean;
+  $variant?: "like" | "comment";
+}>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: ${(props) => (props.$active && props.$variant === "like" ? "#f91880" : "#71767b")};
+  color: ${(props) =>
+    props.$active && props.$variant === "like"
+      ? "#f91880"
+      : "#71767b"};
   cursor: pointer;
   transition: color 0.2s;
 
@@ -72,6 +83,7 @@ export const ActionItem = styled.div<{ $active?: boolean; $variant?: "like" | "c
   }
 
   &:hover {
-    color: ${(props) => (props.$variant === "like" ? "#f91880" : "#1d9bf0")};
+    color: ${(props) =>
+      props.$variant === "like" ? "#f91880" : "#1d9bf0"};
   }
 `;

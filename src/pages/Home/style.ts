@@ -117,7 +117,7 @@ export const PageHeader = styled.header`
     right: 0;
     top: 0;
     backdrop-filter: blur(5px);
-    z-index: 100;
+    z-index: 20;
     
 
   h3 {

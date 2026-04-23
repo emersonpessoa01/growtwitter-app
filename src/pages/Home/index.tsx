@@ -124,13 +124,17 @@ export const Home = () => {
         const responseTweet = await api.post("/tweets", {
           content: newTweet,
         });
-        console.log("responseTweet: Enviado com sucesso", responseTweet);
+        console.log(
+          "responseTweet: Enviado com sucesso",
+          responseTweet,
+        );
       }
 
       setNewTweet("");
       // Recarrega a lista para mostrar o novo tweet imediatamente
       loadTweets(true);
       handleCloseModal();
+      setSelectedTweetId(null);
     } catch (error) {
       console.error("Erro ao publicar tweet:", error);
       alert("Não foi possível publicar o tweet");
@@ -141,9 +145,9 @@ export const Home = () => {
 
   // Função para abrir e fechar o modal de publicar tweet
   const handleOpenModal = () => {
-    setIsModalOpen(false);
-    setSelectedTweetId(null);
-    setNewTweet("");
+    setSelectedTweetId(null); // Garante que não é uma resposta
+    setNewTweet(""); // Limpa o texto
+    setIsModalOpen(true); // ABRE o modal
   };
 
   const handleCloseModal = () => {
@@ -195,7 +199,6 @@ export const Home = () => {
         });
       } else {
         // No POST, o segundo parâmetro É o body.
-        // REMOVA a chave 'data' daqui!
         await api.post("/likes", {
           tweetId,
         });
@@ -293,37 +296,84 @@ export const Home = () => {
               <StyledSpinner />
             </SpinnerContainer>
           ) : tweets.length > 0 ? (
-            tweets.map((tweet) => {
-              const isLikedByMe = tweet.likes?.some(
-                (like: any) => {
-                  return (
-                    like.author?.id === user?.id ||
-                    like.userId === user?.id
-                  );
-                },
-              );
+            tweets
+              .filter((tweet: any) => !tweet.replyTo) // Filtra apenas os tweets "pais", sem mostrar as respostas como itens principais
+              .map((tweet) => {
+                const isLikedByMe = tweet.likes?.some(
+                  (like: any) => like.userId === user?.id,
+                );
 
-              return (
-                <TweetCard
-                  key={tweet.id}
-                  name={tweet.author?.name || "Usuário"}
-                  username={
-                    tweet.author?.username || "usuario"
-                  }
-                  content={tweet.content}
-                  avatarUrl={tweet.author?.imageUrl}
-                  likes={tweet.likes?.length || 0}
-                  comments={tweet.replies?.length || 0}
-                  isLiked={isLikedByMe} // Passa o valor correto
-                  onLike={() =>
-                    handleLikeTweet(tweet.id, isLikedByMe)
-                  }
-                  onReply={() =>
-                    handleOpenReplyModal(tweet.id)
-                  }
-                />
-              );
-            })
+                return (
+                  <div
+                    key={tweet.id}
+                    style={{
+                      borderBottom: "1px solid #eee",
+                    }}
+                  >
+                    {/* TWEET PRINCIPAL */}
+                    <TweetCard
+                      name={tweet.author?.name || "Usuário"}
+                      username={
+                        tweet.author?.username || "usuario"
+                      }
+                      content={tweet.content}
+                      avatarUrl={tweet.author?.imageUrl}
+                      likes={tweet.likes?.length || 0}
+                      comments={tweet.replies?.length || 0}
+                      isLiked={isLikedByMe}
+                      onLike={() =>
+                        handleLikeTweet(
+                          tweet.id,
+                          isLikedByMe,
+                        )
+                      }
+                      onReply={() =>
+                        handleOpenReplyModal(tweet.id)
+                      }
+                    />
+
+                    {/* EXPOSIÇÃO DOS COMENTÁRIOS (Estilo Thread) */}
+                    {tweet.replies &&
+                      tweet.replies.length > 0 && (
+                        <div
+                          style={{
+                            marginLeft: "50px",
+                            borderLeft:
+                              "2px solid #1d9bf01a",
+                          }}
+                        >
+                          {tweet.replies.map((reply) => (
+                            <TweetCard
+                              key={reply.id}
+                              name={
+                                reply.author?.name ||
+                                "Usuário"
+                              }
+                              username={
+                                reply.author?.username ||
+                                "usuario"
+                              }
+                              content={reply.content}
+                              avatarUrl={
+                                reply.author?.imageUrl
+                              }
+                              // Comentários de comentários costumam ter UI reduzida,
+                              // mas você pode reutilizar o card para teste rápido
+                              likes={0}
+                              comments={0}
+                              isReply // Se você tiver essa prop para diminuir o tamanho da fonte/avatar
+                              onReply={() =>
+                                handleOpenReplyModal(
+                                  tweet.id,
+                                )
+                              }
+                            />
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                );
+              })
           ) : (
             <p>
               Nenhum tweet encontrado. Que tal postar o
