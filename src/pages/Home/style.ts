@@ -190,7 +190,7 @@ export const TweetWrapper = styled.div`
 
 export const TweetContainer = styled.div`
   margin-left: 50px;
-  border-left: 2px solid ${(props) => props.theme.colors.border};
+  /* border-left: 2px solid ${(props) => props.theme.colors.border}; */
 `;
 // Novo: Coluna de Widgets (Terceira Coluna)
 export const WidgetsAside = styled.aside`

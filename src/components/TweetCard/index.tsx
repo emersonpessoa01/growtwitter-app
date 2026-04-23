@@ -47,7 +47,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
           <strong>{name}</strong>
           <span>@{username}</span>
         </S.TweetHeader>
-        <S.TweetText>{content}</S.TweetText>
+        <S.TweetText  $isReply={isReply}>{content}</S.TweetText>
         {!isReply && (
           <S.Actions>
             <S.ActionItem

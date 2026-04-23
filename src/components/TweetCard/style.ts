@@ -8,7 +8,7 @@ export const CardContainer = styled.div<CardContainerProps>`
   padding: 1rem;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
-  gap: ${(props) => (props.$isReply ? "8px" : "12px")};
+  gap: ${(props) => (props.$isReply ? "16px" : "1.5rem")};
   transition: background 0.2s;
   cursor: pointer;
 
@@ -50,11 +50,19 @@ export const TweetHeader = styled.div`
   }
 `;
 
-export const TweetText = styled.p`
+export const TweetText = styled.p<{ $isReply?: boolean }>`
   font-size: 0.95rem;
   line-height: 1.3;
   color: ${(props) => props.theme.colors.title};
   word-break: break-word;
+
+  /* Lógica condicional: Estiliza apenas se for um comentário */
+  ${(props) => props.$isReply &&`
+    background: #4f4f4f0a;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  `}
 `;
 
 export const Actions = styled.div`
