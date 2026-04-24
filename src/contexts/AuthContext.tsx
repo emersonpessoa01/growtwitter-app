@@ -65,7 +65,8 @@ export const AuthProvider: React.FC<{
   }, []);
 
   async function signIn(credentials: object) {
-    const response = await api.post(
+    try {
+      const response = await api.post(
       "/auth/login",
       credentials,
     );
@@ -86,6 +87,10 @@ export const AuthProvider: React.FC<{
       JSON.stringify(authUser),
     );
     localStorage.setItem("@Growtwitter:token", authToken);
+    } catch (error) {
+      console.error(`Erro no login: ${error}`);
+      throw error; // Re-throw para que a UI possa lidar com isso (exibir mensagem de erro, etc.)
+    }
   }
 
   function signOut() {
