@@ -9,8 +9,8 @@ export const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  width: 100vw;
+  height: 500vh;
+  width: 100%;
   background-color: ${(props) =>
     props.theme.colors.backgroundColor};
 `;

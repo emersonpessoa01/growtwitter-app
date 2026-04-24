@@ -33,7 +33,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   return (
     <S.CardContainer $isReply={isReply}>
       <S.Avatar
-      $isReply={isReply}
+        $isReply={isReply}
         src={
           avatarUrl
             ? avatarUrl
@@ -48,7 +48,9 @@ export const TweetCard: React.FC<TweetCardProps> = ({
           <strong>{name}</strong>
           <span>@{username}</span>
         </S.TweetHeader>
-        <S.TweetText  $isReply={isReply}>{content}</S.TweetText>
+        <S.TweetText $isReply={isReply}>
+          {content}
+        </S.TweetText>
         {!isReply && (
           <S.Actions>
             <S.ActionItem

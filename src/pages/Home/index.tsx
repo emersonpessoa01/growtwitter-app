@@ -20,18 +20,6 @@ interface Like {
   tweetId: string;
 }
 
-interface Reply {
-  id: string;
-  content: string;
-  userId: string;
-  tweetId: string; // ID do tweet "pai"
-  author: {
-    name: string;
-    username: string;
-    imageUrl?: string;
-  };
-}
-
 // Interface ajustada para refletir o autor e as listas (likes/replies)
 interface Tweet {
   id: string;
@@ -44,7 +32,8 @@ interface Tweet {
     imageUrl?: string;
   };
   likes: Like[];
-  replies: Reply[];
+  replies: any[];
+  replyTo?: string; // ID do tweet original, se for uma resposta
 }
 
 export const Home = () => {
@@ -58,7 +47,6 @@ export const Home = () => {
   >("forYou");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [selectedTweetId, setSelectedTweetId] = useState<
     string | null
   >(null);
@@ -108,33 +96,23 @@ export const Home = () => {
 
     try {
       setIsPublishing(true);
-      console.log(
-        "Tentando enviar . ID Pai: ",
-        selectedTweetId,
-      );
-      console.log("Conteúdo: ", newTweet);
 
+      // Se tiver selectedTweetId, envia para a rota de replies, se não, para tweets
       if (selectedTweetId) {
-        const responseReply = await api.post("/replies", {
+        await api.post("/replies", {
           content: newTweet,
           replyTo: selectedTweetId,
         });
-        console.log("Enviado com sucesso", responseReply);
       } else {
-        const responseTweet = await api.post("/tweets", {
+        await api.post("/tweets", {
           content: newTweet,
         });
-        console.log(
-          "responseTweet: Enviado com sucesso",
-          responseTweet,
-        );
       }
 
       setNewTweet("");
       // Recarrega a lista para mostrar o novo tweet imediatamente
-      loadTweets(true);
+      loadTweets();
       handleCloseModal();
-      setSelectedTweetId(null);
     } catch (error) {
       console.error("Erro ao publicar tweet:", error);
       alert("Não foi possível publicar o tweet");
@@ -143,20 +121,18 @@ export const Home = () => {
     }
   };
 
-  // Função para abrir e fechar o modal de publicar tweet
-  const handleOpenModal = () => {
-    setSelectedTweetId(null); // Garante que não é uma resposta
-    setNewTweet(""); // Limpa o texto
-    setIsModalOpen(true); // ABRE o modal
+  // Função para abrir o modal (pode receber ID do tweet para reply)
+  const handleOpenModal = (tweetId: string | null = null) => {
+    // Se clicar no botão lateral, tweetId vem como evento ou undefined, 
+    // então garantimos que seja null se não for string.
+    const id = typeof tweetId === 'string' ? tweetId : null;
+    setSelectedTweetId(id);
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleOpenReplyModal = (tweetId: string) => {
-    setSelectedTweetId(tweetId);
-    setIsModalOpen(true);
+    setSelectedTweetId(null); // Limpa a seleção ao fechar o modal
   };
 
   const handleLikeTweet = async (
@@ -199,6 +175,7 @@ export const Home = () => {
         });
       } else {
         // No POST, o segundo parâmetro É o body.
+        // REMOVA a chave 'data' daqui!
         await api.post("/likes", {
           tweetId,
         });
@@ -243,13 +220,13 @@ export const Home = () => {
           <Button
             $width="100%"
             $marginTop="1rem"
-            onClick={handleOpenModal}
+            onClick={() => handleOpenModal(null)}
           >
             Tweetar
           </Button>
         </div>
 
-        <S.UserInfo onClick={signOut}>
+        <S.UserInfo onClick={signOut} style={{ cursor: 'pointer' }}>
           <Avatar
             src={
               user?.imageUrl ||
@@ -297,87 +274,62 @@ export const Home = () => {
             </SpinnerContainer>
           ) : tweets.length > 0 ? (
             tweets
-              .filter((tweet: any) => !tweet.replyTo) // Filtra apenas os tweets "pais", sem mostrar as respostas como itens principais
+              .filter((t) => !t.replyTo)
               .map((tweet) => {
                 const isLikedByMe = tweet.likes?.some(
-                  (like: any) => like.userId === user?.id,
+                  (like: any) => (like.author?.id === user?.id || like.userId === user?.id)
                 );
 
                 return (
-                  <S.TweetWrapper
-                    key={tweet.id}
-                   
-                  >
-                    {/* TWEET PRINCIPAL */}
+                  <S.TweetWrapper key={tweet.id}>
+                    {/* Tweet Principal */}
                     <TweetCard
                       name={tweet.author?.name || "Usuário"}
-                      username={
-                        tweet.author?.username || "usuario"
-                      }
+                      username={tweet.author?.username || "usuario"}
                       content={tweet.content}
                       avatarUrl={tweet.author?.imageUrl}
                       likes={tweet.likes?.length || 0}
                       comments={tweet.replies?.length || 0}
-                      isLiked={isLikedByMe}
-                      onLike={() =>
-                        handleLikeTweet(
-                          tweet.id,
-                          isLikedByMe,
-                        )
-                      }
-                      onReply={() =>
-                        handleOpenReplyModal(tweet.id)
-                      }
+                      isLiked={!!isLikedByMe}
+                      onLike={() => handleLikeTweet(tweet.id, !!isLikedByMe)}
+                      onReply={() => handleOpenModal(tweet.id)}
                     />
 
-                    {/* EXPOSIÇÃO DOS COMENTÁRIOS (Estilo Thread) */}
-                    {tweet.replies &&
-                      tweet.replies.length > 0 && (
-                        <S.TweetContainer
-                        >
-                          {tweet.replies.map((reply) => (
+                    {/* Renderização dos Comentários (Replies) */}
+                    {tweet.replies && tweet.replies.length > 0 && (
+                      <S.TweetContainer>
+                        {tweet.replies.map((reply: any) => {
+                          const isReplyLiked = reply.likes?.some(
+                            (l: any) => l.userId === user?.id,
+                          );
+                          return (
                             <TweetCard
                               key={reply.id}
-                              name={
-                                reply.author?.name ||
-                                "Usuário"
-                              }
-                              username={
-                                reply.author?.username ||
-                                "usuario"
-                              }
+                              isReply
+                              name={reply.author?.name || "Usuário"}
+                              username={reply.author?.username || "usuario"}
                               content={reply.content}
-                              avatarUrl={
-                                reply.author?.imageUrl
-                              }
-                              // Comentários de comentários costumam ter UI reduzida,
-                              // mas você pode reutilizar o card para teste rápido
-                              likes={0}
-                              comments={0}
-                              isReply // Se você tiver essa prop para diminuir o tamanho da fonte/avatar
-                              onReply={() =>
-                                handleOpenReplyModal(
-                                  tweet.id,
-                                )
-                              }
+                              avatarUrl={reply.author?.imageUrl}
+                              likes={reply.likes?.length || 0}
+                              isLiked={!!isReplyLiked}
+                              onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
+                              onReply={() => handleOpenModal(reply.id)}
                             />
-                          ))}
-                        </S.TweetContainer>
-                      )}
+                          );
+                        })}
+                      </S.TweetContainer>
+                    )}
                   </S.TweetWrapper>
                 );
               })
           ) : (
-            <p>
-              Nenhum tweet encontrado. Que tal postar o
-              primeiro?
-            </p>
+            <p>Nenhum tweet encontrado. Que tal postar o primeiro?</p>
           )}
         </S.FeedSection>
       </S.MainContent>
 
       <S.WidgetsAside />
-      {/* O resto do código da Home continua igual, apenas foi removido o form fixo e adicionado o modal aqui */}
+
       <TweetModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -385,17 +337,11 @@ export const Home = () => {
         value={newTweet}
         onChange={setNewTweet}
         isPublishing={isPublishing}
-        // Agora o modal olha para o dono da conta ou gera as iniciais dele
         avatarUrl={
           user?.imageUrl ||
           `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=random`
         }
-        title={
-          selectedTweetId ? "Reply" : "O que está pensando?"
-        }
-        buttonText={
-          selectedTweetId ? "Responder" : "Tweetar"
-        }
+        title={selectedTweetId ? "Responder Tweet" : "Criar Tweet"}
       />
     </S.Container>
   );
