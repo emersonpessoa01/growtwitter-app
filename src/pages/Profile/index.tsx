@@ -8,12 +8,13 @@ import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
-import { TabsContainer } from "../Home/style";
+import { FiArrowLeft } from "react-icons/fi";
 
 export const Profile = () => {
   const { user } = useAuth();
   const [myTweets, setMyTweets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("tweets");
 
   useEffect(() => {
     async function loadProfileData() {
@@ -37,20 +38,39 @@ export const Profile = () => {
   return (
     <S.Container>
       <S.MainContent>
+        <S.TopNav>
+          <div
+            className="back-button"
+            onClick={() => navigate("/home")}
+          >
+            <FiArrowLeft />
+          </div>
+          <div className="user-info">
+            <h2>{user?.name}</h2>
+            <span>{myTweets.length} Tweets</span>
+          </div>
+        </S.TopNav>
         <S.ProfileHeader>
           <div className="banner" />
           <div className="info">
-            <Avatar
-              src={
-                user?.imageUrl ||
-                `https://ui-avatars.com/api/?name=${user?.name}`
-              }
-              style={{
-                width: 100,
-                height: 100,
-                border: "4px solid white",
-              }}
-            />
+            <div className="avatar-row">
+              <Avatar
+                src={
+                  user?.imageUrl ||
+                  `https://ui-avatars.com/api/?name=${user?.name}`
+                }
+                style={{
+                  width: 133,
+                  height: 133,
+                  border: "4px solid white",
+                }}
+              />
+              <S.EditButton
+                onClick={() => console.log("Abrir Modal")}
+              >
+                Editar Perfil
+              </S.EditButton>
+            </div>
             <strong>{user?.name}</strong>
             <span>@{user?.username}</span>
 
@@ -65,10 +85,25 @@ export const Profile = () => {
           </div>
         </S.ProfileHeader>
         <S.TabsContainer>
-          <div>Tweets</div>
-          <div>Respostas</div>
-          <div>Curtidas</div>
-        </S.TabsContainer>
+            <div 
+              className={activeTab === "tweets" ? "active" : ""} 
+              onClick={() => setActiveTab("tweets")}
+            >
+              Tweets
+            </div>
+            <div 
+              className={activeTab === "replies" ? "active" : ""} 
+              onClick={() => setActiveTab("replies")}
+            >
+              Respostas
+            </div>
+            <div 
+              className={activeTab === "likes" ? "active" : ""} 
+              onClick={() => setActiveTab("likes")}
+            >
+              Curtidas
+            </div>
+          </S.TabsContainer>
 
         <div>
           {loading ? (
