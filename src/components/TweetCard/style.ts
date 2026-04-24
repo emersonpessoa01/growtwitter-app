@@ -35,18 +35,43 @@ export const ContentWrapper = styled.div`
 
 export const TweetHeader = styled.div`
   display: flex;
+  align-items: flex-start; /* Alinha os itens pelo topo */
   gap: 0.5rem;
-  align-items: center;
+  width: 100%;
 
   strong {
-    font-size: 1rem;
-    color: ${(props) => props.theme.colors.textColor};
+    white-space: nowrap; /* Impede o nome de quebrar e empurrar tudo */
   }
 
   span {
-    font-size: 0.9rem;
-    color: ${(props) =>
-      props.theme.colors.textColorSecondary};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Ajuste conforme necessário para não cobrir a lixeira */
+  }
+`;
+export const NameContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+export const DeleteIcon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: ${(props) =>
+    props.theme.colors.textColorSecondary};
+  cursor: pointer;
+  flex-shrink: 0; /* Impede o ícone de ser esmagado */
+
+  svg {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    color: #f4212e;
   }
 `;
 
@@ -57,7 +82,9 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   word-break: break-word;
 
   /* Lógica condicional: Estiliza apenas se for um comentário */
-  ${(props) => props.$isReply &&`
+  ${(props) =>
+    props.$isReply &&
+    `
     background: ${props.theme.colors.secondary};
     padding: 10px;
     border-radius: 8px;
@@ -67,6 +94,7 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
 
 export const Actions = styled.div`
   display: flex;
+  justify-content: space-between;
   margin-top: 0.75rem;
   gap: 4rem; /* Espaçamento entre comentário e curtida */
 `;

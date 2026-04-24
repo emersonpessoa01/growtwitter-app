@@ -1,6 +1,7 @@
 import {
   AiOutlineHeart,
   AiFillHeart,
+  AiOutlineDelete,
 } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import * as S from "./style";
@@ -13,9 +14,12 @@ interface TweetCardProps {
   likes: number;
   comments?: number;
   isLiked?: boolean;
-  onLike?: () => void; // Callback para quando o usuário clicar no like
-  onReply?: () => void; // Callback para quando o usuário clicar no botão de resposta
-  isReply?: boolean; // Se você tiver essa prop para diminuir o tamanho da fonte/avatar
+  onLike?: () => void;
+  onReply?: () => void;
+  onDelete?: () => void;
+  isAuthor?: boolean;
+  isReply?: boolean;
+  
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
@@ -26,60 +30,49 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   likes,
   comments = 0,
   isLiked = false,
-  onLike, // Recebendo a função de callback para o clique de like
-  onReply, // Recebendo a função de callback para o clique de reply
-  isReply = false, // Valor padrão é falso
+  onLike,
+  onReply,
+  onDelete,
+  isAuthor = false,
+  isReply = false,
 }) => {
   return (
     <S.CardContainer $isReply={isReply}>
       <S.Avatar
         $isReply={isReply}
-        src={
-          avatarUrl
-            ? avatarUrl
-            : name
-              ? `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&border=2px%20solid%20${encodeURIComponent("#" + Math.floor(Math.random() * 16777215).toString(16))}`
-              : "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
-        }
+        src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`}
       />
 
       <S.ContentWrapper>
         <S.TweetHeader>
-          <strong>{name}</strong>
-          <span>@{username}</span>
+          {/* Agora usando o NameContainer que você sugeriu */}
+          <S.NameContainer>
+            <strong>{name}</strong>
+            <span>@{username}</span>
+          </S.NameContainer>
         </S.TweetHeader>
-        <S.TweetText $isReply={isReply}>
-          {content}
-        </S.TweetText>
+
+        <S.TweetText $isReply={isReply}>{content}</S.TweetText>
+
+        {/* As ações só aparecem no tweet principal */}
         {!isReply && (
           <S.Actions>
-            <S.ActionItem
-              $variant="comment"
-              $active={isLiked}
-              onClick={(e) => {
-                e.stopPropagation(); // Evita que o clique se propague para o card
-                onReply?.(); // Dispara a abertura do modal de resposta
-              }}
-            >
+            <S.ActionItem $variant="comment" onClick={(e) => { e.stopPropagation(); onReply?.(); }}>
               <FaRegComment />
               {comments}
             </S.ActionItem>
 
-            <S.ActionItem
-              $variant="like"
-              $active={isLiked}
-              onClick={(e) => {
-                e.stopPropagation(); // Importante para não disparar cliques do card pai
-                onLike?.();
-              }}
-            >
-              {isLiked ? (
-                <AiFillHeart />
-              ) : (
-                <AiOutlineHeart />
-              )}
+            <S.ActionItem $variant="like" $active={isLiked} onClick={(e) => { e.stopPropagation(); onLike?.(); }}>
+              {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
               {likes}
             </S.ActionItem>
+
+            {/* A lixeira entra aqui: ao lado dos ícones, apenas se for autor e NÃO for reply */}
+            {isAuthor && (
+              <S.DeleteIcon onClick={(e) => { e.stopPropagation(); onDelete?.(); }}>
+                <AiOutlineDelete />
+              </S.DeleteIcon>
+            )}
           </S.Actions>
         )}
       </S.ContentWrapper>

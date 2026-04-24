@@ -122,10 +122,12 @@ export const Home = () => {
   };
 
   // Função para abrir o modal (pode receber ID do tweet para reply)
-  const handleOpenModal = (tweetId: string | null = null) => {
-    // Se clicar no botão lateral, tweetId vem como evento ou undefined, 
+  const handleOpenModal = (
+    tweetId: string | null = null,
+  ) => {
+    // Se clicar no botão lateral, tweetId vem como evento ou undefined,
     // então garantimos que seja null se não for string.
-    const id = typeof tweetId === 'string' ? tweetId : null;
+    const id = typeof tweetId === "string" ? tweetId : null;
     setSelectedTweetId(id);
     setIsModalOpen(true);
   };
@@ -191,6 +193,26 @@ export const Home = () => {
     }
   };
 
+  const handleDeleteTweet = async (tweetId: string) => {
+    if (
+      !window.confirm(
+        "Deseja realmente excluir este tweet?",
+      )
+    )
+      return;
+
+    try {
+      await api.delete(`/tweets/${tweetId}`);
+      // Atualização otimista: remove da lista sem precisar de reload total
+      setTweets((prev) =>
+        prev.filter((t) => t.id !== tweetId),
+      );
+    } catch (error) {
+      console.error("Erro ao deletar:", error);
+      alert("Não foi possível deletar o tweet.");
+    }
+  };
+
   return (
     <S.Container>
       <S.SideBar>
@@ -226,7 +248,10 @@ export const Home = () => {
           </Button>
         </div>
 
-        <S.UserInfo onClick={signOut} style={{ cursor: 'pointer' }}>
+        <S.UserInfo
+          onClick={signOut}
+          style={{ cursor: "pointer" }}
+        >
           <Avatar
             src={
               user?.imageUrl ||
@@ -277,7 +302,9 @@ export const Home = () => {
               .filter((t) => !t.replyTo)
               .map((tweet) => {
                 const isLikedByMe = tweet.likes?.some(
-                  (like: any) => (like.author?.id === user?.id || like.userId === user?.id)
+                  (like: any) =>
+                    like.author?.id === user?.id ||
+                    like.userId === user?.id,
                 );
 
                 return (
@@ -285,45 +312,98 @@ export const Home = () => {
                     {/* Tweet Principal */}
                     <TweetCard
                       name={tweet.author?.name || "Usuário"}
-                      username={tweet.author?.username || "usuario"}
+                      username={
+                        tweet.author?.username || "usuario"
+                      }
                       content={tweet.content}
                       avatarUrl={tweet.author?.imageUrl}
                       likes={tweet.likes?.length || 0}
                       comments={tweet.replies?.length || 0}
                       isLiked={!!isLikedByMe}
-                      onLike={() => handleLikeTweet(tweet.id, !!isLikedByMe)}
-                      onReply={() => handleOpenModal(tweet.id)}
+                      onLike={() =>
+                        handleLikeTweet(
+                          tweet.id,
+                          !!isLikedByMe,
+                        )
+                      }
+                      onReply={() =>
+                        handleOpenModal(tweet.id)
+                      }
+                      isAuthor={
+                        String(tweet.author?.id) ===
+                        String(user?.id)
+                      }
+                      onDelete={() =>
+                        handleDeleteTweet(tweet.id)
+                      }
                     />
 
                     {/* Renderização dos Comentários (Replies) */}
-                    {tweet.replies && tweet.replies.length > 0 && (
-                      <S.TweetContainer>
-                        {tweet.replies.map((reply: any) => {
-                          const isReplyLiked = reply.likes?.some(
-                            (l: any) => l.userId === user?.id,
-                          );
-                          return (
-                            <TweetCard
-                              key={reply.id}
-                              isReply
-                              name={reply.author?.name || "Usuário"}
-                              username={reply.author?.username || "usuario"}
-                              content={reply.content}
-                              avatarUrl={reply.author?.imageUrl}
-                              likes={reply.likes?.length || 0}
-                              isLiked={!!isReplyLiked}
-                              onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
-                              onReply={() => handleOpenModal(reply.id)}
-                            />
-                          );
-                        })}
-                      </S.TweetContainer>
-                    )}
+                    {tweet.replies &&
+                      tweet.replies.length > 0 && (
+                        <S.TweetContainer>
+                          {tweet.replies.map(
+                            (reply: any) => {
+                              const isReplyLiked =
+                                reply.likes?.some(
+                                  (l: any) =>
+                                    l.userId === user?.id,
+                                );
+                              return (
+                                <TweetCard
+                                  key={reply.id}
+                                  isReply
+                                  name={
+                                    reply.author?.name ||
+                                    "Usuário"
+                                  }
+                                  username={
+                                    reply.author
+                                      ?.username ||
+                                    "usuario"
+                                  }
+                                  content={reply.content}
+                                  avatarUrl={
+                                    reply.author?.imageUrl
+                                  }
+                                  likes={
+                                    reply.likes?.length || 0
+                                  }
+                                  isLiked={!!isReplyLiked}
+                                  onLike={() =>
+                                    handleLikeTweet(
+                                      reply.id,
+                                      !!isReplyLiked,
+                                    )
+                                  }
+                                  onReply={() =>
+                                    handleOpenModal(
+                                      reply.id,
+                                    )
+                                  }
+                                  isAuthor={
+                                    tweet.author?.id ===
+                                    user?.id
+                                  } // Verifica se o tweet é seu
+                                  onDelete={() =>
+                                    handleDeleteTweet(
+                                      tweet.id,
+                                    )
+                                  }
+                                />
+                              );
+                            },
+                          )}
+                        </S.TweetContainer>
+                      )}
                   </S.TweetWrapper>
                 );
               })
           ) : (
-            <p>Nenhum tweet encontrado. Que tal postar o primeiro?</p>
+            <p>
+              Nenhum tweet encontrado. Que tal postar o
+              primeiro?
+            </p>
           )}
         </S.FeedSection>
       </S.MainContent>
@@ -341,7 +421,11 @@ export const Home = () => {
           user?.imageUrl ||
           `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=random`
         }
-        title={selectedTweetId ? "Responder Tweet" : "Criar Tweet"}
+        title={
+          selectedTweetId
+            ? "Responder Tweet"
+            : "Criar Tweet"
+        }
       />
     </S.Container>
   );
