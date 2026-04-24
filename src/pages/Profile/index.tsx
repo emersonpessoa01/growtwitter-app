@@ -41,105 +41,97 @@ export const Profile = () => {
         <S.TopNav>
           <div
             className="back-button"
-            onClick={() => navigate("/home")}
+            onClick={() => window.location.href = "/home"}
           >
-            <FiArrowLeft />
+            <FiArrowLeft size={20} />
           </div>
           <div className="user-info">
             <h2>{user?.name}</h2>
             <span>{myTweets.length} Tweets</span>
           </div>
         </S.TopNav>
-        <S.ProfileHeader>
-          <div className="banner" />
-          <div className="info">
-            <div className="avatar-row">
-              <Avatar
-                src={
-                  user?.imageUrl ||
-                  `https://ui-avatars.com/api/?name=${user?.name}`
-                }
-                style={{
-                  width: 133,
-                  height: 133,
-                  border: "4px solid white",
-                }}
-              />
-              <S.EditButton
-                onClick={() => console.log("Abrir Modal")}
+
+        {/* O Spinner agora engloba todo o conteúdo abaixo do TopNav durante o loading */}
+        {loading ? (
+          <SpinnerContainer
+            style={{
+              height: "calc(100vh - 60px)", // Ocupa o restante da tela
+              width: "100%",
+              backgroundColor: "transparent",
+            }}
+          >
+            <StyledSpinner />
+          </SpinnerContainer>
+        ) : (
+          <>
+            <S.ProfileHeader>
+              <div className="banner" />
+              <div className="info">
+                <div className="avatar-row">
+                  <Avatar
+                    src={user?.imageUrl || `https://ui-avatars.com/api/?name=${user?.name}`}
+                    style={{
+                      width: 133,
+                      height: 133,
+                      border: "4px solid white",
+                    }}
+                  />
+                  <S.EditButton onClick={() => console.log("Abrir Modal")}>
+                    Editar Perfil
+                  </S.EditButton>
+                </div>
+                <strong>{user?.name}</strong>
+                <span className="username">@{user?.username}</span>
+
+                <S.StatsContainer>
+                  <span><strong>0</strong> Seguindo</span>
+                  <span><strong>0</strong> Seguidores</span>
+                </S.StatsContainer>
+              </div>
+            </S.ProfileHeader>
+
+            <S.TabsContainer>
+              <div 
+                className={activeTab === "tweets" ? "active" : ""} 
+                onClick={() => setActiveTab("tweets")}
               >
-                Editar Perfil
-              </S.EditButton>
-            </div>
-            <strong>{user?.name}</strong>
-            <span>@{user?.username}</span>
+                Tweets
+              </div>
+              <div 
+                className={activeTab === "replies" ? "active" : ""} 
+                onClick={() => setActiveTab("replies")}
+              >
+                Respostas
+              </div>
+              <div 
+                className={activeTab === "likes" ? "active" : ""} 
+                onClick={() => setActiveTab("likes")}
+              >
+                Curtidas
+              </div>
+            </S.TabsContainer>
 
-            <S.StatsContainer>
-              <span>
-                <strong>0</strong> Seguindo
-              </span>
-              <span>
-                <strong>0</strong> Seguidores
-              </span>
-            </S.StatsContainer>
-          </div>
-        </S.ProfileHeader>
-        <S.TabsContainer>
-            <div 
-              className={activeTab === "tweets" ? "active" : ""} 
-              onClick={() => setActiveTab("tweets")}
-            >
-              Tweets
+            <div>
+              {myTweets.length > 0 ? (
+                myTweets.map((tweet: any) => (
+                  <TweetCard
+                    key={tweet.id}
+                    name={user?.name || ""}
+                    username={user?.username || ""}
+                    content={tweet.content}
+                    avatarUrl={user?.imageUrl}
+                    likes={tweet.likes?.length || 0}
+                    isAuthor={true}
+                  />
+                ))
+              ) : (
+                <p style={{ padding: "2rem", textAlign: "center" }}>
+                  Você ainda não tweetou nada.
+                </p>
+              )}
             </div>
-            <div 
-              className={activeTab === "replies" ? "active" : ""} 
-              onClick={() => setActiveTab("replies")}
-            >
-              Respostas
-            </div>
-            <div 
-              className={activeTab === "likes" ? "active" : ""} 
-              onClick={() => setActiveTab("likes")}
-            >
-              Curtidas
-            </div>
-          </S.TabsContainer>
-
-        <div>
-          {loading ? (
-            <SpinnerContainer
-              style={{
-                height: "350px",
-                width: "100%",
-                backgroundColor: "transparent",
-              }}
-            >
-              <StyledSpinner />
-            </SpinnerContainer>
-          ) : myTweets.length > 0 ? (
-            myTweets.map((tweet: any) => (
-              <TweetCard
-                key={tweet.id}
-                name={user?.name || ""}
-                username={user?.username || ""}
-                content={tweet.content}
-                avatarUrl={user?.imageUrl}
-                likes={tweet.likes?.length || 0}
-                isAuthor={true} // No perfil próprio, todos são autor
-                // Reaproveite a função de delete que criamos na Home aqui também
-              />
-            ))
-          ) : (
-            <p
-              style={{
-                padding: "2rem",
-                textAlign: "center",
-              }}
-            >
-              Você ainda não tweetou nada.
-            </p>
-          )}
-        </div>
+          </>
+        )}
       </S.MainContent>
     </S.Container>
   );
