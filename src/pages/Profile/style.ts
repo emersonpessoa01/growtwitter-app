@@ -135,7 +135,7 @@ export const TabsContainer = styled.div`
 
   div {
     flex: 1;
-    padding: 24px;
+    padding: 18px;
     text-align: center;
     font-weight: bold;
     color: ${(props) =>

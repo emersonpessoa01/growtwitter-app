@@ -9,9 +9,11 @@ import {
   StyledSpinner,
 } from "../../components/Spinner/style";
 import { FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [myTweets, setMyTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("tweets");
@@ -41,7 +43,7 @@ export const Profile = () => {
         <S.TopNav>
           <div
             className="back-button"
-            onClick={() => window.location.href = "/home"}
+            onClick={() => navigate("/home")}
           >
             <FiArrowLeft size={20} />
           </div>
@@ -69,64 +71,102 @@ export const Profile = () => {
               <div className="info">
                 <div className="avatar-row">
                   <Avatar
-                    src={user?.imageUrl || `https://ui-avatars.com/api/?name=${user?.name}`}
+                    src={
+                      user?.imageUrl ||
+                      `https://ui-avatars.com/api/?name=${user?.name}`
+                    }
                     style={{
                       width: 133,
                       height: 133,
                       border: "4px solid white",
                     }}
                   />
-                  <S.EditButton onClick={() => console.log("Abrir Modal")}>
+                  <S.EditButton
+                    onClick={() =>
+                      console.log("Abrir Modal")
+                    }
+                  >
                     Editar Perfil
                   </S.EditButton>
                 </div>
                 <strong>{user?.name}</strong>
-                <span className="username">@{user?.username}</span>
+                <span className="username">
+                  @{user?.username}
+                </span>
 
                 <S.StatsContainer>
-                  <span><strong>0</strong> Seguindo</span>
-                  <span><strong>0</strong> Seguidores</span>
+                  <span>
+                    <strong>0</strong> Seguindo
+                  </span>
+                  <span>
+                    <strong>0</strong> Seguidores
+                  </span>
                 </S.StatsContainer>
               </div>
             </S.ProfileHeader>
 
             <S.TabsContainer>
-              <div 
-                className={activeTab === "tweets" ? "active" : ""} 
+              <div
+                className={
+                  activeTab === "tweets" ? "active" : ""
+                }
                 onClick={() => setActiveTab("tweets")}
               >
                 Tweets
               </div>
-              <div 
-                className={activeTab === "replies" ? "active" : ""} 
+              <div
+                className={
+                  activeTab === "replies" ? "active" : ""
+                }
                 onClick={() => setActiveTab("replies")}
               >
                 Respostas
               </div>
-              <div 
-                className={activeTab === "likes" ? "active" : ""} 
+              <div
+                className={
+                  activeTab === "likes" ? "active" : ""
+                }
                 onClick={() => setActiveTab("likes")}
               >
                 Curtidas
               </div>
             </S.TabsContainer>
 
+            {/* Renderização Condicional de Conteúdo */}
             <div>
-              {myTweets.length > 0 ? (
-                myTweets.map((tweet: any) => (
-                  <TweetCard
-                    key={tweet.id}
-                    name={user?.name || ""}
-                    username={user?.username || ""}
-                    content={tweet.content}
-                    avatarUrl={user?.imageUrl}
-                    likes={tweet.likes?.length || 0}
-                    isAuthor={true}
-                  />
-                ))
+              {activeTab === "tweets" ? (
+                myTweets.length > 0 ? (
+                  myTweets.map((tweet: any) => (
+                    <TweetCard
+                      key={tweet.id}
+                      name={user?.name || ""}
+                      username={user?.username || ""}
+                      content={tweet.content}
+                      avatarUrl={user?.imageUrl}
+                      likes={tweet.likes?.length || 0}
+                      isAuthor={true}
+                    />
+                  ))
+                ) : (
+                  <p
+                    style={{
+                      padding: "2rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    Você ainda não tweetou nada.
+                  </p>
+                )
               ) : (
-                <p style={{ padding: "2rem", textAlign: "center" }}>
-                  Você ainda não tweetou nada.
+                <p
+                  style={{
+                    padding: "2rem",
+                    textAlign: "center",
+                    color: "#536471",
+                  }}
+                >
+                  Ainda não há nada para mostrar em{" "}
+                  {activeTab}.
                 </p>
               )}
             </div>

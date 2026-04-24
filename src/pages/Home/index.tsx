@@ -13,6 +13,7 @@ import {
   StyledSpinner,
 } from "../../components/Spinner/style";
 import { Avatar } from "../../components/TweetCard/style";
+import { useNavigate } from "react-router-dom";
 
 interface Like {
   id: string;
@@ -50,6 +51,7 @@ export const Home = () => {
   const [selectedTweetId, setSelectedTweetId] = useState<
     string | null
   >(null);
+  const navigate = useNavigate();
 
   const loadTweets = useCallback(
     async (silent = false) => {
@@ -234,7 +236,7 @@ export const Home = () => {
               >
                 <BsHash size={24} /> Explorar
               </S.MenuItem>
-              <S.MenuItem $active={false} onClick={() => window.location.href = "/profile"}>
+              <S.MenuItem $active={false} onClick={() => navigate("/profile")}>
                 <BsPerson size={24} /> Perfil
               </S.MenuItem>
             </S.NavList>
