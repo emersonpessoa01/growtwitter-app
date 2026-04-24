@@ -6,6 +6,7 @@ import lightTheme from "./themes/index";
 import { ThemeProvider } from "styled-components";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
+import { Profile } from "./pages/Profile";
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             {/* Para adicionar as outras rotas (Perfil/Explorar) aqui dentro depois */}
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           <Route

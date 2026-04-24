@@ -234,7 +234,7 @@ export const Home = () => {
               >
                 <BsHash size={24} /> Explorar
               </S.MenuItem>
-              <S.MenuItem $active={false}>
+              <S.MenuItem $active={false} onClick={() => window.location.href = "/profile"}>
                 <BsPerson size={24} /> Perfil
               </S.MenuItem>
             </S.NavList>
