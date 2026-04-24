@@ -8,6 +8,7 @@ import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
+import { TabsContainer } from "../Home/style";
 
 export const Profile = () => {
   const { user } = useAuth();
@@ -47,7 +48,7 @@ export const Profile = () => {
               style={{
                 width: 100,
                 height: 100,
-                border: "4px solid black",
+                border: "4px solid white",
               }}
             />
             <strong>{user?.name}</strong>
@@ -63,6 +64,11 @@ export const Profile = () => {
             </S.StatsContainer>
           </div>
         </S.ProfileHeader>
+        <S.TabsContainer>
+          <div>Tweets</div>
+          <div>Respostas</div>
+          <div>Curtidas</div>
+        </S.TabsContainer>
 
         <div>
           {loading ? (
