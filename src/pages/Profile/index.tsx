@@ -54,7 +54,7 @@ export const Profile = () => {
         setTimeout(resolve, 2000),
       ); // Simulação
       setIsModalOpen(false);
-      console.log("Salvando...")
+      console.log("Salvando...");
     } catch (error) {
       console.error(error);
     } finally {
@@ -176,6 +176,7 @@ export const Profile = () => {
 
                           <S.FloatingInputGroup>
                             <input
+                              autoFocus
                               type="text"
                               id="name"
                               value={tempName}

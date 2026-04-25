@@ -299,6 +299,7 @@ export const FloatingInputGroup = styled.div`
   &:focus-within {
     border-color: ${colors.accent};
     box-shadow: 0 0 0 1px ${colors.accent};
+    
   }
 
   label {
