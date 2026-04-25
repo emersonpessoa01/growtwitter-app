@@ -10,7 +10,6 @@ import {
 } from "../../components/Spinner/style";
 import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { SpinnerWrapper } from "../../components/Button/style";
 
 export const Profile = () => {
   const { user } = useAuth();
