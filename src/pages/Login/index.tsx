@@ -47,6 +47,7 @@ export function Login() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Senha"
         disabled={isLoggingIn}
+        autoComplete="current-password"
       />
 
       {/* Usamos o novo componente Button com a prop loading */}
