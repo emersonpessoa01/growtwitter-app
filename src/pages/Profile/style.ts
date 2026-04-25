@@ -1,5 +1,15 @@
 import styled from "styled-components";
 
+const colors = {
+  background: "#FFFFFF",
+  overlay: "rgba(0, 0, 0, 0.4)",
+  border: "rgba(0, 0, 0, 0.12)",
+  textPrimary: "#0F1419",
+  textSecondary: "#536471",
+  accent: "#1D9BF0",
+  saveBtnText: "#FFFFFF",
+};
+
 export const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -127,7 +137,6 @@ export const StatsContainer = styled.div`
   }
 `;
 
-// Adicione as Abas (Tabs) apenas se quiser o visual da Dani
 export const TabsContainer = styled.div`
   display: flex;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -162,6 +171,137 @@ export const TabsContainer = styled.div`
         background-color: #1d9bf0;
         border-radius: 9999px;
       }
+    }
+  }
+`;
+
+
+// Cores baseadas no Light Mode profissional da referência
+
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: ${colors.overlay};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(2px); /* Efeito opcional de desfoque sutil no fundo */
+`;
+
+export const ModalContent = styled.div`
+  background-color: ${colors.background};
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15); /* Sombra profissional */
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid ${colors.border};
+
+    div.left-content {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem; /* Reduzi o gap para alinhar melhor */
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: ${colors.textPrimary};
+      margin: 0;
+    }
+
+    button.close-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      padding: 8px;
+      border-radius: 50%;
+      color: ${colors.textPrimary};
+      transition: background-color 0.2s;
+      &:hover { background-color: rgba(15, 20, 25, 0.1); }
+    }
+
+    button.save-button {
+      background-color: ${colors.accent}; /* Botão Azul */
+      color: ${colors.saveBtnText};
+      border: none;
+      padding: 8px 20px;
+      border-radius: 9999px; /* Formato Pílula */
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:hover { opacity: 0.9; }
+      
+      svg { font-size: 1.1rem; } /* Tamanho do ícone de salvar */
+    }
+  }
+
+  form {
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+`;
+
+// ESTILO DO INPUT FLUTUANTE (CHAVE DO VISUAL DA DANI)
+export const FloatingInputGroup = styled.div`
+  position: relative;
+  border: 1px solid ${colors.border};
+  border-radius: 4px;
+  padding: 1.25rem 0.75rem 0.5rem 0.75rem; /* Espaço para o label subir */
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: ${colors.accent};
+    box-shadow: 0 0 0 1px ${colors.accent};
+  }
+
+  label {
+    position: absolute;
+    top: 1.25rem;
+    left: 0.75rem;
+    font-size: 1.1rem;
+    color: ${colors.textSecondary};
+    transition: all 0.2s ease-out;
+    pointer-events: none; /* Garante que o clique passe para o input */
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    width: 100%;
+    outline: none;
+    color: ${colors.textPrimary};
+    padding: 0;
+
+    /* Lógica para o label subir quando focado ou tiver texto */
+    &:focus + label,
+    &:not(:placeholder-shown) + label {
+      top: 0.25rem;
+      font-size: 0.8rem;
+      color: ${colors.accent};
+      font-weight: 600;
     }
   }
 `;

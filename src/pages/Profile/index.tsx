@@ -8,7 +8,7 @@ import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiX,FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
@@ -17,6 +17,13 @@ export const Profile = () => {
   const [myTweets, setMyTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("tweets");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tempName, setTempName] = useState(
+    user?.name || "",
+  );
+  const [tempImageUrl, setTempImageUrl] = useState(
+    user?.imageUrl || "",
+  );
 
   useEffect(() => {
     async function loadProfileData() {
@@ -36,6 +43,14 @@ export const Profile = () => {
     }
     loadProfileData();
   }, [user?.id]);
+
+  const handleSave = () => {
+    console.log("Salvando: ", {
+      tempName,
+      tempImageUrl,
+    });
+    setIsModalOpen(false);
+  };
 
   return (
     <S.Container>
@@ -82,12 +97,79 @@ export const Profile = () => {
                     }}
                   />
                   <S.EditButton
-                    onClick={() =>
-                      console.log("Abrir Modal")
-                    }
+                    onClick={() => setIsModalOpen(true)}
                   >
                     Editar Perfil
                   </S.EditButton>
+                  {/* ESTRUTURA DO MODAL REFATORADA */}
+                  {isModalOpen && (
+                    <S.ModalOverlay>
+                      <S.ModalContent>
+                        <header>
+                          {/* Agrupamento da esquerda (fechar + título) */}
+                          <div className="left-content">
+                            <button
+                              className="close-button"
+                              onClick={() =>
+                                setIsModalOpen(false)
+                              }
+                            >
+                              <FiX size={22} />
+                            </button>
+                            <h3>Editar Perfil</h3>
+                          </div>
+
+                          {/* Botão Salvar Pílula Azul */}
+                          <button
+                            className="save-button"
+                            onClick={handleSave}
+                          >
+                            <FiSave />
+                            Salvar
+                          </button>
+                        </header>
+
+                        <form
+                          onSubmit={(e) =>
+                            e.preventDefault()
+                          }
+                        >
+                          {/* Use FloatingInputGroup e o label APÓS o input */}
+                          <S.FloatingInputGroup>
+                            <input
+                              type="text"
+                              id="name"
+                              value={tempName}
+                              placeholder=" " /* Necessário para a lógica do CSS */
+                              onChange={(e) =>
+                                setTempName(e.target.value)
+                              }
+                            />
+                            <label htmlFor="name">
+                              Nome
+                            </label>
+                          </S.FloatingInputGroup>
+
+                          <S.FloatingInputGroup>
+                            <input
+                              type="text"
+                              id="imageUrl"
+                              value={tempImageUrl}
+                              placeholder=" "
+                              onChange={(e) =>
+                                setTempImageUrl(
+                                  e.target.value,
+                                )
+                              }
+                            />
+                            <label htmlFor="imageUrl">
+                              URL da Imagem de Perfil
+                            </label>
+                          </S.FloatingInputGroup>
+                        </form>
+                      </S.ModalContent>
+                    </S.ModalOverlay>
+                  )}
                 </div>
                 <strong>{user?.name}</strong>
                 <span className="username">
