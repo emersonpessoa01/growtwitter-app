@@ -8,7 +8,7 @@ import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
-import { FiArrowLeft, FiX,FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
@@ -134,7 +134,21 @@ export const Profile = () => {
                             e.preventDefault()
                           }
                         >
-                          {/* Use FloatingInputGroup e o label APÓS o input */}
+                          <S.AvatarRow>
+                          <Avatar
+                            src={
+                              tempImageUrl ||
+                              `https://ui-avatars.com/api/?name=${tempName}`
+                            }
+                            style={{
+                              width: 133,
+                              height: 133,
+                              border: "4px solid white",
+                              marginBottom: "1rem", // Espaço extra abaixo da imagem
+                            }}
+                          />
+                          </S.AvatarRow>
+
                           <S.FloatingInputGroup>
                             <input
                               type="text"
@@ -165,7 +179,9 @@ export const Profile = () => {
                             <label htmlFor="imageUrl">
                               URL da Imagem de Perfil
                             </label>
+                            
                           </S.FloatingInputGroup>
+                          <span>Insira aqui o link direto da sua imagem (ex: https://github.com/seu-usuario-aqui.png)</span>
                         </form>
                       </S.ModalContent>
                     </S.ModalOverlay>

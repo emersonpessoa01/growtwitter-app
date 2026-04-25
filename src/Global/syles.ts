@@ -15,7 +15,7 @@ export default createGlobalStyle`
 
 body {
     color: ${(props) => props.theme.colors.textColor};
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Roboto", "Lexend","Fira Code", monospace;
     line-height:140%;
     background-color: ${(props) => props.theme.colors.backgroundColor};
   }

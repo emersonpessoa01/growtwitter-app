@@ -175,9 +175,7 @@ export const TabsContainer = styled.div`
   }
 `;
 
-
-// Cores baseadas no Light Mode profissional da referência
-
+// Modal
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -190,13 +188,15 @@ export const ModalOverlay = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
-  backdrop-filter: blur(2px); /* Efeito opcional de desfoque sutil no fundo */
+  backdrop-filter: blur(
+    2px
+  ); /* Efeito opcional de desfoque sutil no fundo */
 `;
 
 export const ModalContent = styled.div`
   background-color: ${colors.background};
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -232,7 +232,9 @@ export const ModalContent = styled.div`
       border-radius: 50%;
       color: ${colors.textPrimary};
       transition: background-color 0.2s;
-      &:hover { background-color: rgba(15, 20, 25, 0.1); }
+      &:hover {
+        background-color: rgba(15, 20, 25, 0.1);
+      }
     }
 
     button.save-button {
@@ -249,9 +251,13 @@ export const ModalContent = styled.div`
       align-items: center;
       gap: 0.5rem;
 
-      &:hover { opacity: 0.9; }
-      
-      svg { font-size: 1.1rem; } /* Tamanho do ícone de salvar */
+      &:hover {
+        opacity: 0.9;
+      }
+
+      svg {
+        font-size: 1.1rem;
+      } /* Tamanho do ícone de salvar */
     }
   }
 
@@ -260,16 +266,30 @@ export const ModalContent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
+    span {
+      font-size: 0.8rem;
+      color: ${(props) =>
+        props.theme.colors.textColorSecondary};
+    }
   }
 `;
 
-// ESTILO DO INPUT FLUTUANTE (CHAVE DO VISUAL DA DANI)
+export const AvatarRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+`;
 export const FloatingInputGroup = styled.div`
   position: relative;
   border: 1px solid ${colors.border};
   border-radius: 4px;
   padding: 1.25rem 0.75rem 0.5rem 0.75rem; /* Espaço para o label subir */
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   &:focus-within {
     border-color: ${colors.accent};

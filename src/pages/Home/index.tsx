@@ -3,7 +3,7 @@ import { api } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "./style";
-import logo from "../../assets/logo_growtweet.svg";
+import logo from "../../assets/images/logo_growtweet.svg";
 import { RiHome7Fill } from "react-icons/ri";
 import { BsHash, BsPerson } from "react-icons/bs";
 import { Button } from "../../components/Button";
