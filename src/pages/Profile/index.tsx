@@ -10,6 +10,7 @@ import {
 } from "../../components/Spinner/style";
 import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { SpinnerWrapper } from "../../components/Button/style";
 
 export const Profile = () => {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ export const Profile = () => {
   const [tempImageUrl, setTempImageUrl] = useState(
     user?.imageUrl || "",
   );
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     async function loadProfileData() {
@@ -44,12 +46,20 @@ export const Profile = () => {
     loadProfileData();
   }, [user?.id]);
 
-  const handleSave = () => {
-    console.log("Salvando: ", {
-      tempName,
-      tempImageUrl,
-    });
-    setIsModalOpen(false);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Simulação de delay
+      await new Promise((resolve) =>
+        setTimeout(resolve, 2000),
+      ); // Simulação
+      setIsModalOpen(false);
+      console.log("Salvando...")
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -109,10 +119,12 @@ export const Profile = () => {
                           {/* Agrupamento da esquerda (fechar + título) */}
                           <div className="left-content">
                             <button
+                              type="button"
                               className="close-button"
                               onClick={() =>
                                 setIsModalOpen(false)
                               }
+                              aria-label="Fechar"
                             >
                               <FiX size={22} />
                             </button>
@@ -123,8 +135,21 @@ export const Profile = () => {
                           <button
                             className="save-button"
                             onClick={handleSave}
+                            disabled={isSaving}
                           >
-                            <FiSave />
+                            {isSaving ? (
+                              <StyledSpinner
+                                style={{
+                                  width: 16,
+                                  height: 16,
+                                  border: "2px solid #fff",
+                                  borderTopColor:
+                                    "transparent",
+                                }}
+                              />
+                            ) : (
+                              <FiSave />
+                            )}
                             Salvar
                           </button>
                         </header>
@@ -135,18 +160,18 @@ export const Profile = () => {
                           }
                         >
                           <S.AvatarRow>
-                          <Avatar
-                            src={
-                              tempImageUrl ||
-                              `https://ui-avatars.com/api/?name=${tempName}`
-                            }
-                            style={{
-                              width: 133,
-                              height: 133,
-                              border: "4px solid white",
-                              marginBottom: "1rem", // Espaço extra abaixo da imagem
-                            }}
-                          />
+                            <Avatar
+                              src={
+                                tempImageUrl ||
+                                `https://ui-avatars.com/api/?name=${tempName}`
+                              }
+                              style={{
+                                width: 133,
+                                height: 133,
+                                border: "4px solid white",
+                                marginBottom: "1rem", // Espaço extra abaixo da imagem
+                              }}
+                            />
                           </S.AvatarRow>
 
                           <S.FloatingInputGroup>
@@ -179,9 +204,12 @@ export const Profile = () => {
                             <label htmlFor="imageUrl">
                               URL da Imagem de Perfil
                             </label>
-                            
                           </S.FloatingInputGroup>
-                          <span>Insira aqui o link direto da sua imagem (ex: https://github.com/seu-usuario-aqui.png)</span>
+                          <span>
+                            Insira aqui o link direto da sua
+                            imagem (ex:
+                            https://github.com/seu-usuario-aqui.png)
+                          </span>
                         </form>
                       </S.ModalContent>
                     </S.ModalOverlay>

@@ -249,10 +249,15 @@ export const ModalContent = styled.div`
       transition: opacity 0.2s;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
+      min-height: 40px;
 
       &:hover {
         opacity: 0.9;
+      }
+      &:disabled {
+        cursor: not-allowed;
       }
 
       svg {
