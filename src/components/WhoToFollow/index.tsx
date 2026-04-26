@@ -4,9 +4,15 @@ import { api } from "../../services/api";
 import { Avatar } from "../TweetCard/style";
 import { Button } from "../Button";
 import { StyledSpinner } from "../Spinner/style"; // Importe seu spinner existente
-import * as S from "./style";
+import * as S from "./style.ts";
 
-export const WhoToFollow = () => {
+interface WhoToFollowProps {
+  onFollowSuccess?: () => void;
+}
+
+export const WhoToFollow = ({
+  onFollowSuccess,
+}: WhoToFollowProps) => {
   const { user } = useAuth();
   const [suggestions, setSuggestions] = useState<any[]>([]);
   // Novo estado para controlar o loading por botão
@@ -32,29 +38,30 @@ export const WhoToFollow = () => {
   }, [user?.id]);
 
   const handleFollow = async (userId: string) => {
-    try {
-      setLoadingId(userId);
-      await api.post("/followers", { userId });
+  try {
+    setLoadingId(userId);
+    await api.post("/followers", { userId });
+    
+    // Se chegou aqui, deu 201 Created (Postman confirmou que funciona)
+    setSuggestions(prev => 
+      prev.map(u => u.id === userId ? { ...u, isFollowing: true } : u)
+    );
+    if (onFollowSuccess) await onFollowSuccess();
 
-      // Sucesso total: remove da lista
-      setSuggestions((prev) =>
-        prev.filter((u) => u.id !== userId),
+  } catch (error: any) {
+    if (error.response && error.response.status === 409) {
+      // Se deu 409, você JÁ segue. Então atualizamos o visual do mesmo jeito!
+      setSuggestions(prev => 
+        prev.map(u => u.id === userId ? { ...u, isFollowing: true } : u)
       );
-    } catch (error: any) {
-      // Se o erro for 409, significa que já seguimos.
-      // Podemos apenas remover da lista silenciosamente.
-      if (error.response && error.response.status === 409) {
-        setSuggestions((prev) =>
-          prev.filter((u) => u.id !== userId),
-        );
-      } else {
-        console.error("Erro ao seguir:", error);
-        alert("Não foi possível seguir o usuário.");
-      }
-    } finally {
-      setLoadingId(null);
+      if (onFollowSuccess) await onFollowSuccess();
+    } else {
+      console.error("Erro real na API:", error);
     }
-  };
+  } finally {
+    setLoadingId(null);
+  }
+};
 
   if (suggestions.length === 0) return null;
 
@@ -99,6 +106,8 @@ export const WhoToFollow = () => {
                   borderTop: "2px solid transparent",
                 }}
               />
+            ) : s.isFollowing ? (
+              "Seguindo"
             ) : (
               "Seguir"
             )}

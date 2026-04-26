@@ -419,7 +419,7 @@ export const Home = () => {
       {/* Para: */}
       <S.WidgetsAside>
         {/* Aqui você pode colocar uma barra de busca no futuro */}
-        <WhoToFollow />
+        <WhoToFollow onFollowSuccess={() => loadTweets(true)} />
       </S.WidgetsAside>
 
       <TweetModal
