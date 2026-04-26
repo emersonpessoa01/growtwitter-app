@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { api } from "../services/api";
 
-// Defina a estrutura do usuário baseada na API do Growtwitter 
+// Defina a estrutura do usuário baseada na API do Growtwitter
 interface User {
   id: string;
   name: string;
@@ -20,6 +20,7 @@ interface AuthContextData {
   user: User | null;
   signIn(credentials: object): Promise<void>;
   signOut(): void;
+  updateUser(newUser: User): void;
   loading: boolean;
 }
 
@@ -55,7 +56,9 @@ export const AuthProvider: React.FC<{
             setUser(JSON.parse(storagedUser));
           }
         } catch (error) {
-          console.error(`Erro no parse do storage: ${error}`);
+          console.error(
+            `Erro no parse do storage: ${error}`,
+          );
           localStorage.clear();
         }
       }
@@ -67,30 +70,41 @@ export const AuthProvider: React.FC<{
   async function signIn(credentials: object) {
     try {
       const response = await api.post(
-      "/auth/login",
-      credentials,
-    );
-    console.log("RES LOGIN:", response.data)
+        "/auth/login",
+        credentials,
+      );
+      console.log("RES LOGIN:", response.data);
 
-    // Para bater com o retorno da API, verifica se o status é 200
-    if (response.status !== 200) {
-      throw new Error("Falha na autenticação");
-    }
-    const { authUser, authToken } = response.data.data;
-    console.log(authUser,authToken)
+      // Para bater com o retorno da API, verifica se o status é 200
+      if (response.status !== 200) {
+        throw new Error("Falha na autenticação");
+      }
+      const { authUser, authToken } = response.data.data;
+      console.log(authUser, authToken);
 
-    setUser(authUser);
-    api.defaults.headers.Authorization = `Bearer ${authToken}`;
+      setUser(authUser);
+      api.defaults.headers.Authorization = `Bearer ${authToken}`;
 
-    localStorage.setItem(
-      "@Growtwitter:user",
-      JSON.stringify(authUser),
-    );
-    localStorage.setItem("@Growtwitter:token", authToken);
+      localStorage.setItem(
+        "@Growtwitter:user",
+        JSON.stringify(authUser),
+      );
+      localStorage.setItem("@Growtwitter:token", authToken);
     } catch (error) {
       console.error(`Erro no login: ${error}`);
       throw error; // Re-throw para que a UI possa lidar com isso (exibir mensagem de erro, etc.)
     }
+  }
+
+  function updateUser(newUser: User) {
+    // Atualiza o estado (faz o Sidebar e Profile mudarem na hora)
+    setUser(newUser);
+
+    // Atualiza o Storage (para quando der F5 continuar com os dados novos)
+    localStorage.setItem(
+      "@Growtwitter:user",
+      JSON.stringify(newUser),
+    );
   }
 
   function signOut() {
@@ -106,6 +120,7 @@ export const AuthProvider: React.FC<{
         loading,
         signIn,
         signOut,
+        updateUser,
       }}
     >
       {children}
