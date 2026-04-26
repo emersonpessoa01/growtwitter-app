@@ -194,8 +194,9 @@ export const TweetContainer = styled.div`
 `;
 // Novo: Coluna de Widgets (Terceira Coluna)
 export const WidgetsAside = styled.aside`
-  width: 350px;
+  width: 300px;
   padding: 1rem;
+  
 
   @media (max-width: 1024px) {
     display: none;

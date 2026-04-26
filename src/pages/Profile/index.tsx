@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { TweetModal } from "../../components/TweetModal";
 
 export const Profile = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [myTweets, setMyTweets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -175,21 +175,32 @@ export const Profile = () => {
   };
 
   const handleSaveProfile = async () => {
+    if (!user?.id) return;
     setIsSaving(true);
+
     try {
-      await api.put(`/users/${user?.id}`, {
+      // Ajuste da rota para incluir o ID do usuário
+      const response = await api.put(`/users/${user.id}`, {
         name: tempName,
         imageUrl: tempImageUrl,
       });
+
+      const updatedUser = response.data.data;
+
+      // Atualiza o usuário no contexto
+      updateUser(updatedUser);
+      
       setIsEditModalOpen(false);
-      window.location.reload();
+
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao atualizar perfil:", error);
+      alert(
+        "Não foi possível atualizar o perfil. Verifique a conexão com a API.",
+      );
     } finally {
       setIsSaving(false);
     }
   };
-
   return (
     <S.Container>
       <S.MainContent>

@@ -196,7 +196,7 @@ export const ModalOverlay = styled.div`
 export const ModalContent = styled.div`
   background-color: ${colors.background};
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;

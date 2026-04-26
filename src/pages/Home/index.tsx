@@ -14,6 +14,7 @@ import {
 } from "../../components/Spinner/style";
 import { Avatar } from "../../components/TweetCard/style";
 import { useNavigate } from "react-router-dom";
+import { WhoToFollow } from "../../components/WhoToFollow";
 
 interface Like {
   id: string;
@@ -236,7 +237,10 @@ export const Home = () => {
               >
                 <BsHash size={24} /> Explorar
               </S.MenuItem>
-              <S.MenuItem $active={false} onClick={() => navigate("/profile")}>
+              <S.MenuItem
+                $active={false}
+                onClick={() => navigate("/profile")}
+              >
                 <BsPerson size={24} /> Perfil
               </S.MenuItem>
             </S.NavList>
@@ -410,7 +414,13 @@ export const Home = () => {
         </S.FeedSection>
       </S.MainContent>
 
-      <S.WidgetsAside />
+      {/* De: <S.WidgetsAside /> */}
+
+      {/* Para: */}
+      <S.WidgetsAside>
+        {/* Aqui você pode colocar uma barra de busca no futuro */}
+        <WhoToFollow />
+      </S.WidgetsAside>
 
       <TweetModal
         isOpen={isModalOpen}
