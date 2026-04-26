@@ -24,44 +24,47 @@ export const WhoToFollow = ({
     async function loadUsers() {
       try {
         const response = await api.get("/users");
+
         if (response.data.success) {
+          // Filtra para NÃO mostrar você mesmo E NÃO mostrar quem você já segue
           const filtered = response.data.data.filter(
-            (u: any) => u.id !== user?.id,
+            (u: any) => u.id !== user?.id && !u.isFollowing,
           );
+
+          // Pega apenas os 3 primeiros da lista filtrada
           setSuggestions(filtered.slice(0, 3));
         }
       } catch (error) {
         console.error("Erro ao carregar sugestões:", error);
       }
     }
+
     if (user?.id) loadUsers();
   }, [user?.id]);
 
   const handleFollow = async (userId: string) => {
-  try {
-    setLoadingId(userId);
-    await api.post("/followers", { userId });
-    
-    // Se chegou aqui, deu 201 Created (Postman confirmou que funciona)
-    setSuggestions(prev => 
-      prev.map(u => u.id === userId ? { ...u, isFollowing: true } : u)
-    );
-    if (onFollowSuccess) await onFollowSuccess();
+    try {
+      setLoadingId(userId);
+      await api.post("/followers", { userId });
 
-  } catch (error: any) {
-    if (error.response && error.response.status === 409) {
-      // Se deu 409, você JÁ segue. Então atualizamos o visual do mesmo jeito!
-      setSuggestions(prev => 
-        prev.map(u => u.id === userId ? { ...u, isFollowing: true } : u)
+      // Em vez de apenas mudar o texto para "Seguindo",
+      // removemos ele da lista de sugestões:
+      setSuggestions((prev) =>
+        prev.filter((u) => u.id !== userId),
       );
+
       if (onFollowSuccess) await onFollowSuccess();
-    } else {
-      console.error("Erro real na API:", error);
+    } catch (error: any) {
+      // Se já segue (409), também removemos da lista de sugestões
+      if (error.response?.status === 409) {
+        setSuggestions((prev) =>
+          prev.filter((u) => u.id !== userId),
+        );
+      }
+    } finally {
+      setLoadingId(null);
     }
-  } finally {
-    setLoadingId(null);
-  }
-};
+  };
 
   if (suggestions.length === 0) return null;
 

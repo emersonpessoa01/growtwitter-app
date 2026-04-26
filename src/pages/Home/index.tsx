@@ -17,9 +17,11 @@ import { useNavigate } from "react-router-dom";
 import { WhoToFollow } from "../../components/WhoToFollow";
 
 interface Like {
-  id: string;
-  userId: string;
-  tweetId: string;
+  author: {
+    id: string;
+    userId: string;
+    tweetId: string;
+  };
 }
 
 // Interface ajustada para refletir o autor e as listas (likes/replies)
@@ -32,6 +34,7 @@ interface Tweet {
     name: string;
     username: string;
     imageUrl?: string;
+    createdAt: string;
   };
   likes: Like[];
   replies: any[];
@@ -66,10 +69,8 @@ export const Home = () => {
 
         // Decidindo a rota baseada na aba
         // Para "Para você", usamos os tweets do próprio usuário logado
-        const url =
-          activeTab === "following"
-            ? "/feed"
-            : `/users/${user.id}/tweets`;
+        const url = activeTab === "following" ? "/feed" : "/tweets"; 
+// Se /tweets continua dando 404, o seu Backend NÃO tem uma rota de listagem global.
 
         const response = await api.get(url);
         console.log(response.data);
@@ -150,19 +151,20 @@ export const Home = () => {
         if (tweet.id === tweetId) {
           return {
             ...tweet,
-            // Se estava curtido, remove um like fictício, se não, adiciona um
             likes: isCurrentlyLiked
-              ? tweet.likes.slice(0, -1) // Remove o último (simulação)
-              : user?.id
-                ? [
-                    ...tweet.likes,
-                    {
-                      id: `temp-${tweetId}-${user.id}`,
-                      userId: user.id,
+              ? tweet.likes.filter(
+                  (l) => l.author.id !== user?.id,
+                )
+              : [
+                  ...tweet.likes,
+                  {
+                    author: {
+                      id: user?.id || "",
+                      userId: user?.id || "",
                       tweetId,
                     },
-                  ]
-                : tweet.likes,
+                  },
+                ],
           };
         }
         return tweet;
@@ -172,7 +174,7 @@ export const Home = () => {
     try {
       if (isCurrentlyLiked) {
         // No DELETE, o segundo parâmetro são as configurações,
-        // por isso usamos a chave 'data' aqui (está correto na sua versão).
+        // por isso usá-se a chave 'data' aqui
         await api.delete("/likes", {
           data: {
             tweetId,
@@ -180,12 +182,12 @@ export const Home = () => {
         });
       } else {
         // No POST, o segundo parâmetro É o body.
-        // REMOVA a chave 'data' daqui!
+        // A chave 'data' não é necessária!
         await api.post("/likes", {
           tweetId,
         });
       }
-      // Passamos 'true' para carregar os dados sem ativar o spinner de tela cheia
+      // Passando 'true' para carregar os dados sem ativar o spinner de tela cheia
       await loadTweets(true);
     } catch (error) {
       console.error("Erro ao processar like: ", error);
@@ -419,7 +421,9 @@ export const Home = () => {
       {/* Para: */}
       <S.WidgetsAside>
         {/* Aqui você pode colocar uma barra de busca no futuro */}
-        <WhoToFollow onFollowSuccess={() => loadTweets(true)} />
+        <WhoToFollow
+          onFollowSuccess={() => loadTweets(true)}
+        />
       </S.WidgetsAside>
 
       <TweetModal
