@@ -1,19 +1,23 @@
 import styled from "styled-components";
 
 export const Container = styled.aside`
-  background-color: ${(props) => props.theme.colors.secondary};
+  background-color: #F2F5F7;
   border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 1rem;
-  margin-top: 1rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
 
   h3 {
-    font-size: 1.25rem;
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    color: #333;
+    margin-bottom: 8px;
+    // Se o Figma usa uma linha separadora:
+    border-bottom: 1px solid #E6E9EC;
+    padding-bottom: 8px;
   }
 `;
 
@@ -21,7 +25,8 @@ export const UserItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 12px;
+  padding: 4px 0;
 `;
 
 export const UserInfo = styled.div`
@@ -36,8 +41,8 @@ export const UserInfo = styled.div`
     min-width: 0; // Garante que a div interna também respeite o limite
 
     strong {
-      font-size: 0.9rem;
-      color: ${(props) => props.theme.colors.textColor};
+      font-size: 15px;
+      color: #0F1419;
       
       // REGRAS PARA AS RETICÊNCIAS:
       white-space: nowrap;      // Impede que o nome quebre em duas linhas
@@ -46,7 +51,7 @@ export const UserInfo = styled.div`
     }
 
     span {
-      font-size: 0.85rem;
+      font-size: 14px;
       color: ${(props) => props.theme.colors.textColorSecondary};
       // REGRAS PARA AS RETICÊNCIAS:
       white-space: nowrap;

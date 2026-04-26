@@ -169,8 +169,9 @@ export const Tab = styled.div<{ $active: boolean }>`
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
+      background-color: ${(props) =>
+        props.theme.colors.border};
+    }
 `;
 
 // Novo: Seção de conteúdo do feed

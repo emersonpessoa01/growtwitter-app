@@ -86,7 +86,7 @@ export const WhoToFollow = ({
 
           <Button
             onClick={() => handleFollow(s.id)}
-            $width="80px" // Largura fixa para o botão não mudar de tamanho com o spinner
+            $width="75px" // Largura fixa para o botão não mudar de tamanho com o spinner
             disabled={loadingId === s.id} // Desabilita enquanto carrega
             style={{
               padding: "4px 12px",
@@ -95,6 +95,7 @@ export const WhoToFollow = ({
               justifyContent: "center",
               alignItems: "center",
               minHeight: "30px",
+              borderRadius: "20px",
             }}
           >
             {loadingId === s.id ? (
