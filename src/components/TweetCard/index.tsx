@@ -5,10 +5,11 @@ import {
 } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import * as S from "./style";
-import { format, formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface TweetCardProps {
+  id: string;
   name: string;
   username: string;
   content: string;
@@ -25,6 +26,7 @@ interface TweetCardProps {
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
+  id,
   name,
   username,
   content,

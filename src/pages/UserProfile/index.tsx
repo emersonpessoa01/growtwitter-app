@@ -8,7 +8,11 @@ import { api } from "../../services/api";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "../Profile/style";
 import { Avatar } from "../../components/TweetCard/style";
-import { ButtonSpinner } from "./style"; // Import direto conforme seu ajuste
+import {
+  ButtonSpinner,
+  EmptyMessage,
+  ProfileAvatar,
+} from "./style"; // Import direto conforme seu ajuste
 import { FiArrowLeft } from "react-icons/fi";
 import {
   SpinnerContainer,
@@ -190,17 +194,11 @@ export const UserProfile = () => {
               <div className="banner" />
               <div className="info">
                 <div className="avatar-row">
-                  <Avatar
+                  <ProfileAvatar
                     src={
                       userData?.imageUrl ||
                       `https://ui-avatars.com/api/?name=${userData?.name}`
                     }
-                    style={{
-                      width: "133px",
-                      height: "133px",
-                      backgroundColor: "#fff",
-                      borderWidth:"3.5px"
-                    }}
                   />
 
                   {id !== me?.id && (
@@ -301,6 +299,7 @@ export const UserProfile = () => {
                       name={userData?.name}
                       username={userData?.username}
                       content={tweet.content}
+                      date={tweet.createdAt}
                       avatarUrl={userData?.imageUrl}
                       likes={tweet.likes?.length || 0}
                       isLiked={!!isLikedByMe}
@@ -315,15 +314,9 @@ export const UserProfile = () => {
                   );
                 })
               ) : (
-                <p
-                  style={{
-                    padding: "20px",
-                    textAlign: "center",
-                    color: "#657786",
-                  }}
-                >
+                <EmptyMessage>
                   Nenhum tweet para exibir.
-                </p>
+                </EmptyMessage>
               )}
             </div>
           </>

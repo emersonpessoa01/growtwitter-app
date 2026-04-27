@@ -320,6 +320,8 @@ export const Home = () => {
                   <S.TweetWrapper key={tweet.id}>
                     {/* Tweet Principal */}
                     <TweetCard
+                      key={tweet.id}
+                      id={tweet.id}
                       name={tweet.author?.name || "Usuário"}
                       username={
                         tweet.author?.username || "usuario"
@@ -362,6 +364,7 @@ export const Home = () => {
                               return (
                                 <TweetCard
                                   key={reply.id}
+                                  id={reply.id}
                                   isReply
                                   name={
                                     reply.author?.name ||
