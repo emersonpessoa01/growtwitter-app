@@ -326,6 +326,7 @@ export const Home = () => {
                       }
                       content={tweet.content}
                       avatarUrl={tweet.author?.imageUrl}
+                      date={tweet.createdAt}
                       likes={tweet.likes?.length || 0}
                       comments={tweet.replies?.length || 0}
                       isLiked={!!isLikedByMe}
@@ -372,6 +373,7 @@ export const Home = () => {
                                     "usuario"
                                   }
                                   content={reply.content}
+                                  date={reply.createdAt}
                                   avatarUrl={
                                     reply.author?.imageUrl
                                   }
