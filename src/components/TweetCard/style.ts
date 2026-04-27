@@ -44,7 +44,11 @@ export const TweetHeader = styled.div`
   }
 
   span {
+<<<<<<< HEAD
     font-size:14px; 
+=======
+    font-size:14px;
+>>>>>>> 9eef700018039bdec9d3857cc72f376aa59ff954
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
