@@ -15,6 +15,7 @@ import {
 import { Avatar } from "../../components/TweetCard/style";
 import { useNavigate } from "react-router-dom";
 import { WhoToFollow } from "../../components/WhoToFollow";
+import { LuLogOut } from "react-icons/lu";
 
 interface Like {
   author: {
@@ -393,6 +394,11 @@ export const Home = () => {
                                   onReply={() =>
                                     handleOpenModal(
                                       reply.id,
+                                    )
+                                  }
+                                  onClick={() =>
+                                    navigate(
+                                      `/profile/${user?.id}`,
                                     )
                                   }
                                   isAuthor={

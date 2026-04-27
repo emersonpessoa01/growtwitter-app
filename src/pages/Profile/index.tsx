@@ -57,22 +57,14 @@ export const Profile = () => {
             t.likes?.some((l: any) => l.userId === user.id),
           );
           setMyTweets(liked);
-          // No seu Profile.tsx, dentro do loadProfileData:
-          // No seu Profile.tsx, dentro do loadProfileData:
         } else {
-          // Para garantir que pegamos APENAS as respostas:
           response = await api.get(
             `/users/${user.id}/tweets`,
           );
-          const allData = response.data.data || [];
-
-          // Filtre por tweets que possuem um ID de destino (ou seja, são respostas)
-          const replies = allData.filter(
-            (t: any) =>
-              t.replyToId !== null &&
-              t.replyToId !== undefined,
+          const replies = response.data.data?.filter(
+            (t: any) => t.type === "REPLY",
           );
-          setMyTweets(replies);
+          setMyTweets(replies || []);
         }
       } catch (error) {
         console.error(error);
@@ -197,8 +189,9 @@ export const Profile = () => {
 
       // Atualiza o usuário no contexto
       updateUser(updatedUser);
-
+      
       setIsEditModalOpen(false);
+
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
       alert(

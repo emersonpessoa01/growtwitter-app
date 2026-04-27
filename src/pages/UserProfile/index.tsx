@@ -291,17 +291,28 @@ export const UserProfile = () => {
                       (l.author?.id || l.userId) === me?.id,
                   );
 
+                  // Se estivermos na aba de tweets do próprio usuário, usamos userData.
+                  // Se for a aba de curtidas, precisamos usar o autor original do tweet curtido.
+                  const tweetAuthor =
+                    activeTab === "likes"
+                      ? tweet.author
+                      : userData;
+
                   return (
                     <TweetCard
                       key={tweet.id}
                       id={tweet.id}
-                      name={userData?.name}
-                      username={userData?.username}
+                      name={tweetAuthor?.name || "Usuário"}
+                      username={
+                        tweetAuthor?.username || "usuario"
+                      }
                       content={tweet.content}
                       date={tweet.createdAt}
-                      avatarUrl={userData?.imageUrl}
+                      avatarUrl={tweetAuthor?.imageUrl}
                       likes={tweet.likes?.length || 0}
                       isLiked={!!isLikedByMe}
+                      // Verifica se o tweet atual é uma resposta (ajuste conforme sua API)
+                      isReply={!!tweet.parentTweetId}
                       onLike={() =>
                         handleToggleLike(
                           tweet.id,

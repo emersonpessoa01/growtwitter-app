@@ -40,6 +40,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   onDelete,
   isAuthor = false,
   isReply = false,
+
 }) => {
   const publishedDate = date
     ? format(

@@ -77,22 +77,40 @@ export const MenuItem = styled.li<{ $active: boolean }>`
 export const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 1rem;
+  /* padding-bottom: 1rem; */
+  padding: 1rem 2rem;
   cursor: pointer;
   gap: 0.5rem;
+  border-radius: 396px;
+  transition: background 0.4s;
+
+  &:hover {
+    background: ${(props) => props.theme.colors.border};
+  }
 `;
 
 export const NameContainer = styled.div`
   display: flex;
   flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   strong {
     display: block;
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
   }
 
   span {
     color: ${(props) => props.theme.colors.textColor};
     font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
