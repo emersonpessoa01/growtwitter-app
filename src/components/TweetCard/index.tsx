@@ -5,7 +5,7 @@ import {
 } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import * as S from "./style";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface TweetCardProps {
@@ -39,12 +39,14 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   isAuthor = false,
   isReply = false,
 }) => {
-  
   const publishedDate = date
-    ? formatDistanceToNow(new Date(date), {
-        addSuffix: true,
-        locale: ptBR,
-      })
+    ? format(
+        new Date(date),
+        "d 'de' MMM., HH:mm",
+        {
+          locale: ptBR,
+        },
+      )
     : "";
   return (
     <S.CardContainer $isReply={isReply}>
