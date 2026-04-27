@@ -7,7 +7,6 @@ import {
 import { api } from "../../services/api";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "../Profile/style";
-import { Avatar } from "../../components/TweetCard/style";
 import {
   ButtonSpinner,
   EmptyMessage,
