@@ -33,13 +33,15 @@ export const TopNav = styled.nav`
   gap: 2rem;
   padding: 0.5rem 1rem;
   background-color: ${(props) =>
-    props.theme.colors.backgroundColor};
+      props.theme.colors.backgroundColor}
+    40%;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
 
   .back-button {
     cursor: pointer;
@@ -299,7 +301,6 @@ export const FloatingInputGroup = styled.div`
   &:focus-within {
     border-color: ${colors.accent};
     box-shadow: 0 0 0 1px ${colors.accent};
-    
   }
 
   label {

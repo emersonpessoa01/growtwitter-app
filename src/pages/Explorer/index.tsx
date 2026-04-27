@@ -8,6 +8,11 @@ import {
   UserDetails,
   UserRow,
 } from "./style";
+// Importando os componentes de loading que você já usa no Profile
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
 
 export const Explorer = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -17,22 +22,15 @@ export const Explorer = () => {
   const loadExplorerData = useCallback(async () => {
     try {
       setLoading(true);
-      // 1. Busca a lista de usuários que você mostrou no Postman
       const response = await api.get("/users");
       const usersList = response.data.data;
 
-      // 2. Para cada usuário, buscamos o último tweet e seguidores
-      // Fazemos em paralelo para ser mais rápido
       const enrichedUsers = await Promise.all(
         usersList.map(async (u: any) => {
           try {
-            // Busca os tweets do usuário específico
-            const tweetsRes = await api.get(
-              `/users/${u.id}/tweets`,
-            );
+            const tweetsRes = await api.get(`/users/${u.id}/tweets`);
             const tweets = tweetsRes.data.data || [];
 
-            // Aqui pegamos o conteúdo do primeiro tweet da lista
             const lastTweetContent =
               tweets.length > 0
                 ? tweets[0].content
@@ -41,7 +39,7 @@ export const Explorer = () => {
             return {
               ...u,
               lastTweet: lastTweetContent,
-              followersCount: u.followers?.length || 0, // Se o back não trouxer, fica 0
+              followersCount: u.followers?.length || 0,
             };
           } catch {
             return {
@@ -50,7 +48,7 @@ export const Explorer = () => {
               followersCount: 0,
             };
           }
-        }),
+        })
       );
 
       setUsers(enrichedUsers);
@@ -65,64 +63,64 @@ export const Explorer = () => {
     loadExplorerData();
   }, [loadExplorerData]);
 
-  if (loading)
-    return (
-      <div style={{ padding: "20px" }}>
-        Carregando explorador...
-      </div>
-    );
-
   return (
     <ExplorerContainer>
+      {/* O Título agora é fixo no topo */}
       <PageTitle>Explorar usuários</PageTitle>
 
-      {users.map((user) => (
-        <UserRow
-          key={user.id}
-          onClick={() =>
-            navigate(`/profile/${user.id}`, {
-              state: {
-                username: user.username,
-              },
-            })
-          }
+      {loading ? (
+        /* Spinner centralizado logo abaixo do título */
+        <SpinnerContainer
+          style={{
+            height: "300px",
+            background: "transparent",
+          }}
         >
-          <Avatar
-            src={
-              user.imageUrl ||
-              `https://ui-avatars.com/api/?name=${user.name}`
+          <StyledSpinner />
+        </SpinnerContainer>
+      ) : (
+        /* Lista de usuários só aparece após o loading */
+        users.map((user) => (
+          <UserRow
+            key={user.id}
+            onClick={() =>
+              navigate(`/profile/${user.id}`, {
+                state: {
+                  username: user.username,
+                },
+              })
             }
-            alt={user.name}
-          />
+          >
+            <Avatar
+              src={
+                user.imageUrl ||
+                `https://ui-avatars.com/api/?name=${user.name}`
+              }
+              alt={user.name}
+            />
 
-          <UserDetails>
-            <div className="header">
-              <div>
-                <strong>{user.name}</strong>
-                <span>@{user.username}</span>
+            <UserDetails>
+              <div className="header">
+                <div>
+                  <strong>{user.name}</strong>
+                  <span>@{user.username}</span>
+                </div>
               </div>
-              {/* <FollowButton onClick={(e) => {
-                e.stopPropagation(); // Não deixa clicar no card e ir pro perfil
-                alert(`Seguindo ${user.name}`);
-              }}>
-                Seguir
-              </FollowButton> */}
-            </div>
 
-            <div className="last-tweet-box">
-              <small>Último tweet:</small>
-              {user.lastTweet}
-            </div>
+              <div className="last-tweet-box">
+                <small>Último tweet:</small>
+                {user.lastTweet}
+              </div>
 
-            <div className="stats">
-              <span>
-                <strong>{user.followersCount}</strong>{" "}
-                seguidores
-              </span>
-            </div>
-          </UserDetails>
-        </UserRow>
-      ))}
+              <div className="stats">
+                <span>
+                  <strong>{user.followersCount}</strong> seguidores
+                </span>
+              </div>
+            </UserDetails>
+          </UserRow>
+        ))
+      )}
     </ExplorerContainer>
   );
 };
