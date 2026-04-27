@@ -1,21 +1,19 @@
-import styled from "styled-components";
 
-export const EditButton = styled.button`
-  /* seus estilos atuais... */
-  transition: all 0.2s;
+import styled, { keyframes } from "styled-components";
 
-  &:disabled {
-    cursor: not-allowed;
-    /* Isso impede que o navegador force a cor cinza */
-    filter: brightness(0.9);
-  }
+const rotate = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
 
-  &.following {
-    border: 1px solid #cfd9de;
-    &:hover {
-      background-color: #ffe9e9 !important;
-      color: #f4212e !important;
-      border-color: #f4212e;
-    }
-  }
+export const ButtonSpinner = styled.div<{ $isFollowing: boolean }>`
+  width: 16px;
+  height: 16px;
+  /* Usamos propriedades separadas para evitar o conflito do React */
+  border-width: 2px;
+  border-style: solid;
+  border-color: ${props => props.$isFollowing ? "#1d9bf0" : "#ffffff"};
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ${rotate} 0.6s linear infinite;
 `;

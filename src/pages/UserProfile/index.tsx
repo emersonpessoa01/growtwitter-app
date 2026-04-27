@@ -4,6 +4,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+import styled, { keyframes } from "styled-components"; // Adicionado keyframes
 import { api } from "../../services/api";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "../Profile/style";
@@ -14,6 +15,7 @@ import {
   StyledSpinner,
 } from "../../components/Spinner/style";
 import { useAuth } from "../../contexts/AuthContext";
+import { ButtonSpinner } from "./style";
 
 export const UserProfile = () => {
   const { id } = useParams();
@@ -26,8 +28,6 @@ export const UserProfile = () => {
   const [userTweets, setUserTweets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("tweets");
-
-  // Estados para controle de Seguir
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,7 +40,6 @@ export const UserProfile = () => {
         userResponse.data.data || userResponse.data;
       setUserData(data);
 
-      // Sincroniza se você está na lista de seguidores dele
       const following = data.followers?.some(
         (f: any) =>
           f.followerId === me?.id || f.id === me?.id,
@@ -61,43 +60,31 @@ export const UserProfile = () => {
         setUserTweets(liked);
       }
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   }, [id, activeTab, me?.id]);
 
   const handleFollow = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Evita que a página recarregue
+    e.preventDefault();
     if (isSubmitting || !id) return;
 
     try {
       setIsSubmitting(true);
-
       if (isFollowing) {
-        // Conforme seu print: DELETE /followers enviando userId no body
         await api.delete("/followers", {
           data: { userId: id },
         });
       } else {
-        // Conforme seu print: POST /followers enviando userId no body
-        await api.post("/followers", {
-          userId: id,
-        });
+        await api.post("/followers", { userId: id });
       }
-
-      // Inverte o estado local para feedback imediato
       setIsFollowing(!isFollowing);
 
-      // Recarrega apenas os dados para atualizar os números de seguindo/seguidores
-      const refreshUser = await api.get(`/users/${id}`);
-      setUserData(
-        refreshUser.data.data || refreshUser.data,
-      );
-    } catch (error: any) {
-      console.error("Erro na ação:", error);
-      // Se der 409 (Conflict), significa que o estado já está correto no banco
-      if (error.response?.status === 409) loadData();
+      const refresh = await api.get(`/users/${id}`);
+      setUserData(refresh.data.data || refresh.data);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -145,9 +132,9 @@ export const UserProfile = () => {
                       `https://ui-avatars.com/api/?name=${userData?.name}`
                     }
                     style={{
-                      width: 133,
-                      height: 133,
-                      border: "4px solid white",
+                      width: "133px",
+                      height: "133px",
+                      backgroundColor: "#fff",
                     }}
                   />
 
@@ -165,20 +152,16 @@ export const UserProfile = () => {
                         color: isFollowing
                           ? "#0f1419"
                           : "#fff",
-                        minWidth: "100px",
+                        minWidth: "105px",
+                        height: "36px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                       }}
                     >
                       {isSubmitting ? (
-                        <StyledSpinner
-                          style={{
-                            width: 16,
-                            height: 16,
-                            border: `2px solid ${isFollowing ? "#1d9bf0" : "#fff"}`,
-                            borderTopColor: "transparent",
-                          }}
+                        <ButtonSpinner
+                          $isFollowing={isFollowing}
                         />
                       ) : isFollowing ? (
                         "Seguindo"
