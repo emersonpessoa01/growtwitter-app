@@ -51,7 +51,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
       )
     : "";
   return (
-    <S.CardContainer $isReply={isReply}>
+    <S.CardContainer $isReply={isReply} id={`tweet-${id}`}>
       <S.Avatar
         $isReply={isReply}
         src={
