@@ -9,30 +9,27 @@ import { Home } from "./pages/Home";
 import { Profile } from "./pages/Profile";
 import { Explorer } from "./pages/Explorer";
 import { UserProfile } from "./pages/UserProfile";
+import { DefaultLayout } from "./layouts/DefaultLayout"; // Certifique-se de que o caminho está correto
 
 export function App() {
   return (
-    //O ThemeProvider injeta as cores/fontes
     <ThemeProvider theme={lightTheme.light}>
       <GlobalStyles />
-      {/* O AuthProvider permite que as rotas saibam quem está logado*/}
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
 
-          {/* Rota Protegida */}
+          {/* Rotas Protegidas com Layout Padronizado */}
           <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/explorer" element={<Explorer />} />
-            <Route path="/profile/:id" element={<UserProfile />} />
-            {/* Para adicionar as outras rotas (Perfil/Explorar) aqui dentro depois */}
-            <Route path="/profile" element={<Profile />} />
+            <Route element={<DefaultLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/explorer" element={<Explorer />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:id" element={<UserProfile />} />
+            </Route>
           </Route>
 
-          <Route
-            path="*"
-            element={<Navigate to="/" replace />}
-          />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </ThemeProvider>
