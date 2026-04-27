@@ -33,6 +33,8 @@ export const UserProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [followingCount, setFollowingCount] = useState(0);
+
   const loadData = useCallback(async () => {
     if (!id) return;
     try {
@@ -47,6 +49,7 @@ export const UserProfile = () => {
           f.followerId === me?.id || f.id === me?.id,
       );
       setIsFollowing(!!following);
+      setFollowingCount(data.following?.length || 0);
 
       const tweetsRes = await api.get(
         `/users/${id}/tweets`,
@@ -63,6 +66,14 @@ export const UserProfile = () => {
             t.likes?.some((l: any) => l.userId === id),
         );
         setUserTweets(liked);
+      } else {
+        const response = await api.get(
+          `/users/${id}/tweets`,
+        );
+        const replies = response.data.data?.filter(
+          (t: any) => t.type === "REPLY",
+        );
+        setUserTweets(replies || []);
       }
     } catch (error) {
       console.error(error);
@@ -241,9 +252,7 @@ export const UserProfile = () => {
 
                 <S.StatsContainer>
                   <span>
-                    <strong>
-                      {userData?.followings?.length || 0}
-                    </strong>{" "}
+                    <strong>{followingCount}</strong>{" "}
                     Seguindo
                   </span>
                   <span>
@@ -325,7 +334,13 @@ export const UserProfile = () => {
                 })
               ) : (
                 <EmptyMessage>
-                  Nenhum tweet para exibir.
+                  Nenhum{" "}
+                  {activeTab === "tweets"
+                    ? "tweet"
+                    : activeTab === "replies"
+                      ? "resposta"
+                      : "curtida"}{" "}
+                  para exibir.
                 </EmptyMessage>
               )}
             </div>
