@@ -19,6 +19,12 @@ import {
 } from "../../components/Spinner/style";
 import { useAuth } from "../../contexts/AuthContext";
 
+const tabLabels: Record<string, string> = {
+  tweets: "tweet",
+  replies: "resposta",
+  likes: "curtida",
+};
+
 export const UserProfile = () => {
   const { id } = useParams();
   const { user: me } = useAuth();
@@ -334,13 +340,7 @@ export const UserProfile = () => {
                 })
               ) : (
                 <EmptyMessage>
-                  Nenhum{" "}
-                  {activeTab === "tweets"
-                    ? "tweet"
-                    : activeTab === "replies"
-                      ? "resposta"
-                      : "curtida"}{" "}
-                  para exibir.
+                  Nenhum {tabLabels[activeTab]} para exibir.
                 </EmptyMessage>
               )}
             </div>

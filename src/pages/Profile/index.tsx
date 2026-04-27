@@ -12,6 +12,13 @@ import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 // Importações adicionadas para o Modal
 import { TweetModal } from "../../components/TweetModal";
+import { EmptyMessage } from "../UserProfile/style";
+
+const tabLabels: Record<string, string> = {
+  tweets: "tweet",
+  replies: "resposta",
+  likes: "curtida",
+};
 
 export const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -189,9 +196,8 @@ export const Profile = () => {
 
       // Atualiza o usuário no contexto
       updateUser(updatedUser);
-      
-      setIsEditModalOpen(false);
 
+      setIsEditModalOpen(false);
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
       alert(
@@ -379,54 +385,62 @@ export const Profile = () => {
             </S.TabsContainer>
 
             <div>
-              {myTweets.map((tweet: any) => {
-                const isLikedByMe = tweet.likes?.some(
-                  (l: any) =>
-                    l.userId === user?.id ||
-                    l.author?.id === user?.id,
-                );
-                const isMyTweet =
-                  String(
-                    tweet.author?.id || tweet.authorId,
-                  ) === String(user?.id);
+              {myTweets.length > 0 ? (
+                myTweets.map((tweet: any) => {
+                  const isLikedByMe = tweet.likes?.some(
+                    (l: any) =>
+                      l.userId === user?.id ||
+                      l.author?.id === user?.id,
+                  );
+                  const isMyTweet =
+                    String(
+                      tweet.author?.id || tweet.authorId,
+                    ) === String(user?.id);
 
-                return (
-                  <TweetCard
-                    key={tweet.id}
-                    id={tweet.id}
-                    name={
-                      tweet.author?.name || user?.name || ""
-                    }
-                    username={
-                      tweet.author?.username ||
-                      user?.username ||
-                      ""
-                    }
-                    content={tweet.content}
-                    date={tweet.createdAt}
-                    avatarUrl={
-                      tweet.author?.imageUrl ||
-                      user?.imageUrl
-                    }
-                    likes={tweet.likes?.length || 0}
-                    comments={tweet.replies?.length || 0} // Adicionado contador de respostas
-                    isLiked={!!isLikedByMe}
-                    isAuthor={isMyTweet}
-                    onLike={() =>
-                      handleLikeTweet(
-                        tweet.id,
-                        !!isLikedByMe,
-                      )
-                    }
-                    onDelete={() =>
-                      handleDeleteTweet(tweet.id)
-                    }
-                    onReply={() =>
-                      handleOpenReplyModal(tweet.id)
-                    } // Agora abre o modal corretamente
-                  />
-                );
-              })}
+                  return (
+                    <TweetCard
+                      key={tweet.id}
+                      id={tweet.id}
+                      name={
+                        tweet.author?.name ||
+                        user?.name ||
+                        ""
+                      }
+                      username={
+                        tweet.author?.username ||
+                        user?.username ||
+                        ""
+                      }
+                      content={tweet.content}
+                      date={tweet.createdAt}
+                      avatarUrl={
+                        tweet.author?.imageUrl ||
+                        user?.imageUrl
+                      }
+                      likes={tweet.likes?.length || 0}
+                      comments={tweet.replies?.length || 0} // Adicionado contador de respostas
+                      isLiked={!!isLikedByMe}
+                      isAuthor={isMyTweet}
+                      onLike={() =>
+                        handleLikeTweet(
+                          tweet.id,
+                          !!isLikedByMe,
+                        )
+                      }
+                      onDelete={() =>
+                        handleDeleteTweet(tweet.id)
+                      }
+                      onReply={() =>
+                        handleOpenReplyModal(tweet.id)
+                      } // Agora abre o modal corretamente
+                    />
+                  );
+                })
+              ) : (
+                <EmptyMessage>
+                  Nenhum {tabLabels[activeTab]} para exibir.
+                </EmptyMessage>
+              )}
             </div>
           </>
         )}
