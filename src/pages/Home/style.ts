@@ -76,12 +76,10 @@ export const MenuItem = styled.li<{ $active: boolean }>`
 `;
 export const UserInfo = styled.div`
   display: flex;
-  align-items:center;
+  align-items: center;
   padding-bottom: 1rem;
   cursor: pointer;
-  gap:.5rem;
-
-  
+  gap: 0.5rem;
 `;
 
 export const NameContainer = styled.div`
@@ -98,27 +96,27 @@ export const NameContainer = styled.div`
   }
 `;
 
-
 export const MainContent = styled.main`
   flex: 1;
   max-width: 600px;
   border-right: 1px solid
     ${(props) => props.theme.colors.border};
-    
 `;
 
 export const PageHeader = styled.header`
   padding: 1rem;
+  background-color: ${(props) =>
+    props.theme.colors
+      .backgroundColor}40; /* 40 = 25% opacidade em hex */
   border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
-    background-color: transparent;
-    position: sticky;
-    left: 0;
-    right: 0;
-    top: 0;
-    backdrop-filter: blur(5px);
-    z-index: 20;
-    
+    ${(props) => props.theme.colors.border}60;
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
 
   h3 {
     font-size: 1.25rem;
@@ -169,9 +167,9 @@ export const Tab = styled.div<{ $active: boolean }>`
   }
 
   &:hover {
-      background-color: ${(props) =>
-        props.theme.colors.border};
-    }
+    background-color: ${(props) =>
+      props.theme.colors.border};
+  }
 `;
 
 // Novo: Seção de conteúdo do feed
@@ -180,7 +178,6 @@ export const FeedSection = styled.section`
 
   p {
     padding: 10px;
-    
   }
 `;
 
@@ -188,21 +185,21 @@ export const TweetWrapper = styled.div`
   border-bottom: 1px solid
     ${(props) => props.theme.colors.buttonText};
 
-    &:hover {
-      background-color: ${(props) =>
-        props.theme.colors.secondary};
-    }
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
+  }
 `;
 
 export const TweetContainer = styled.div`
   margin-left: 50px;
-  /* border-left: 2px solid ${(props) => props.theme.colors.border}; */
+  /* border-left: 2px solid ${(props) =>
+    props.theme.colors.border}; */
 `;
 // Novo: Coluna de Widgets (Terceira Coluna)
 export const WidgetsAside = styled.aside`
   width: 300px;
   padding: 1rem;
-  
 
   @media (max-width: 1024px) {
     display: none;

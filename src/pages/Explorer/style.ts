@@ -1,10 +1,11 @@
 import styled from "styled-components";
 
 export const ExplorerContainer = styled.div`
-   width: 100%;
+  width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  border-right: 1px solid ${(props) => props.theme.colors.border};
+  border-right: 1px solid
+    ${(props) => props.theme.colors.border};
   min-height: 100vh;
   border: 1px solid ${(props) => props.theme.colors.border};
 `;
@@ -15,27 +16,32 @@ export const PageTitle = styled.h2`
   font-weight: 700;
 
   padding: 1rem;
+  background-color: ${(props) =>
+    props.theme.colors
+      .backgroundColor}40; /* 40 = 25% opacidade em hex */
   border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
-    background-color: transparent;
-    position: sticky;
-    left: 0;
-    right: 0;
-    top: 0;
-    backdrop-filter: blur(5px);
-    z-index: 20;
+    ${(props) => props.theme.colors.border}60; /* 60 = 30% opacidade em hex */
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
 `;
 
 export const UserRow = styled.div`
   display: flex;
   padding: 12px 16px;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
   gap: 12px;
   transition: background 0.2s;
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
   }
 `;
 
@@ -44,7 +50,8 @@ export const Avatar = styled.img`
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  background-color:${(props) => props.theme.colors.backgroundColor};
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
 `;
 
 export const UserDetails = styled.div`
@@ -68,7 +75,8 @@ export const UserDetails = styled.div`
   }
 
   .last-tweet-box {
-    background-color: ${(props) => props.theme.colors.backgroundColor};
+    background-color: ${(props) =>
+      props.theme.colors.backgroundColor};
     border-radius: 12px;
     padding: 10px;
     margin: 8px 0;

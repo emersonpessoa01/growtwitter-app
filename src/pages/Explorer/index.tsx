@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api";
-import { Avatar, ExplorerContainer, FollowButton, PageTitle, UserDetails, UserRow } from "./style";
+import {
+  Avatar,
+  ExplorerContainer,
+  PageTitle,
+  UserDetails,
+  UserRow,
+} from "./style";
 
 export const Explorer = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -21,23 +27,30 @@ export const Explorer = () => {
         usersList.map(async (u: any) => {
           try {
             // Busca os tweets do usuário específico
-            const tweetsRes = await api.get(`/users/${u.id}/tweets`);
+            const tweetsRes = await api.get(
+              `/users/${u.id}/tweets`,
+            );
             const tweets = tweetsRes.data.data || [];
-            
-            // Aqui pegamos o conteúdo do primeiro tweet da lista
-            const lastTweetContent = tweets.length > 0 
-              ? tweets[0].content 
-              : "Este usuário ainda não tweetou.";
 
-            return { 
-              ...u, 
+            // Aqui pegamos o conteúdo do primeiro tweet da lista
+            const lastTweetContent =
+              tweets.length > 0
+                ? tweets[0].content
+                : "Este usuário ainda não tweetou.";
+
+            return {
+              ...u,
               lastTweet: lastTweetContent,
-              followersCount: u.followers?.length || 0 // Se o back não trouxer, fica 0
+              followersCount: u.followers?.length || 0, // Se o back não trouxer, fica 0
             };
           } catch {
-            return { ...u, lastTweet: "Informação indisponível.", followersCount: 0 };
+            return {
+              ...u,
+              lastTweet: "Informação indisponível.",
+              followersCount: 0,
+            };
           }
-        })
+        }),
       );
 
       setUsers(enrichedUsers);
@@ -52,19 +65,36 @@ export const Explorer = () => {
     loadExplorerData();
   }, [loadExplorerData]);
 
-  if (loading) return <div style={{ padding: "20px" }}>Carregando explorador...</div>;
+  if (loading)
+    return (
+      <div style={{ padding: "20px" }}>
+        Carregando explorador...
+      </div>
+    );
 
   return (
     <ExplorerContainer>
       <PageTitle>Explorar usuários</PageTitle>
 
       {users.map((user) => (
-        <UserRow key={user.id} onClick={() => navigate(`/profile/${user.id}`)}>
-          <Avatar 
-            src={user.imageUrl || `https://ui-avatars.com/api/?name=${user.name}`} 
-            alt={user.name} 
+        <UserRow
+          key={user.id}
+          onClick={() =>
+            navigate(`/profile/${user.id}`, {
+              state: {
+                username: user.username,
+              },
+            })
+          }
+        >
+          <Avatar
+            src={
+              user.imageUrl ||
+              `https://ui-avatars.com/api/?name=${user.name}`
+            }
+            alt={user.name}
           />
-          
+
           <UserDetails>
             <div className="header">
               <div>
@@ -85,7 +115,10 @@ export const Explorer = () => {
             </div>
 
             <div className="stats">
-              <span><strong>{user.followersCount}</strong> seguidores</span>
+              <span>
+                <strong>{user.followersCount}</strong>{" "}
+                seguidores
+              </span>
             </div>
           </UserDetails>
         </UserRow>
