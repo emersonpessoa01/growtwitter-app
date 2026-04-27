@@ -177,7 +177,10 @@ export const UserProfile = () => {
 
         {loading ? (
           <SpinnerContainer
-            style={{ background: "transparent" }}
+            style={{
+              background: "transparent",
+              height: "300px",
+            }}
           >
             <StyledSpinner />
           </SpinnerContainer>
@@ -196,6 +199,7 @@ export const UserProfile = () => {
                       width: "133px",
                       height: "133px",
                       backgroundColor: "#fff",
+                      borderWidth:"3.5px"
                     }}
                   />
 
@@ -283,32 +287,44 @@ export const UserProfile = () => {
             </S.TabsContainer>
 
             <div>
-              {userTweets.map((tweet: any) => (
-                <TweetCard
-                  key={tweet.id}
-                  id={tweet.id}
-                  name={userData?.name}
-                  username={userData?.username}
-                  content={tweet.content}
-                  avatarUrl={userData?.imageUrl}
-                  likes={tweet.likes?.length || 0}
-                  isLiked={tweet.likes?.some(
+              {userTweets.length > 0 ? (
+                userTweets.map((tweet: any) => {
+                  const isLikedByMe = tweet.likes?.some(
                     (l: any) =>
                       (l.author?.id || l.userId) === me?.id,
-                  )}
-                  onLike={() =>
-                    handleToggleLike(
-                      tweet.id,
-                      !!tweet.likes?.some(
-                        (l: any) =>
-                          (l.author?.id || l.userId) ===
-                          me?.id,
-                      ),
-                    )
-                  }
-                  isAuthor={tweet.authorId === me?.id}
-                />
-              ))}
+                  );
+
+                  return (
+                    <TweetCard
+                      key={tweet.id}
+                      id={tweet.id}
+                      name={userData?.name}
+                      username={userData?.username}
+                      content={tweet.content}
+                      avatarUrl={userData?.imageUrl}
+                      likes={tweet.likes?.length || 0}
+                      isLiked={!!isLikedByMe}
+                      onLike={() =>
+                        handleToggleLike(
+                          tweet.id,
+                          !!isLikedByMe,
+                        )
+                      }
+                      isAuthor={tweet.authorId === me?.id}
+                    />
+                  );
+                })
+              ) : (
+                <p
+                  style={{
+                    padding: "20px",
+                    textAlign: "center",
+                    color: "#657786",
+                  }}
+                >
+                  Nenhum tweet para exibir.
+                </p>
+              )}
             </div>
           </>
         )}
