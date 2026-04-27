@@ -111,7 +111,7 @@ export const PageHeader = styled.header`
   padding: 1rem;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
-    background-color: ${(props) => props.theme.colors.backgroundColor};
+    background-color: transparent;
     position: sticky;
     left: 0;
     right: 0;

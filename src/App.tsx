@@ -7,6 +7,7 @@ import { ThemeProvider } from "styled-components";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { Profile } from "./pages/Profile";
+import { Explorer } from "./pages/Explorer";
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
           {/* Rota Protegida */}
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
+            <Route path="/explorer" element={<Explorer />} />
             {/* Para adicionar as outras rotas (Perfil/Explorar) aqui dentro depois */}
             <Route path="/profile" element={<Profile />} />
           </Route>

@@ -235,7 +235,7 @@ export const Home = () => {
               </S.MenuItem>
               <S.MenuItem
                 $active={activeTab === "following"}
-                onClick={() => setActiveTab("following")}
+                onClick={() => navigate("/explorer")}
               >
                 <BsHash size={24} /> Explorar
               </S.MenuItem>
