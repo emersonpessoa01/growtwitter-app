@@ -15,7 +15,6 @@ import {
 import { Avatar } from "../../components/TweetCard/style";
 import { useNavigate } from "react-router-dom";
 import { WhoToFollow } from "../../components/WhoToFollow";
-import { LuLogOut } from "react-icons/lu";
 
 interface Like {
   author: {
@@ -220,6 +219,15 @@ export const Home = () => {
     }
   };
 
+  // Dentro do componente Home
+  const handleNavigateToProfile = (userId: string) => {
+    navigate(`/profile/${userId}`, {
+      state: {
+        username: user?.username,
+      },
+    });
+  };
+
   return (
     <S.Container>
       <S.SideBar>
@@ -349,6 +357,11 @@ export const Home = () => {
                       onDelete={() =>
                         handleDeleteTweet(tweet.id)
                       }
+                      onProfileClick={() =>
+                        handleNavigateToProfile(
+                          tweet.author.id,
+                        )
+                      }
                     />
 
                     {/* Renderização dos Comentários (Replies) */}
@@ -394,11 +407,6 @@ export const Home = () => {
                                   onReply={() =>
                                     handleOpenModal(
                                       reply.id,
-                                    )
-                                  }
-                                  onClick={() =>
-                                    navigate(
-                                      `/profile/${user?.id}`,
                                     )
                                   }
                                   isAuthor={

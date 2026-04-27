@@ -21,8 +21,8 @@ export const Avatar = styled.img<CardContainerProps>`
   width: ${(props) => (props.$isReply ? "36px" : "48px")};
   height: ${(props) => (props.$isReply ? "36px" : "48px")};
   border-radius: 50%;
-  border: 2px solid ${(props) => props.theme.colors.primary};
-  background-color: #333;
+  border: 3px solid ${(props) => props.theme.colors.primary};
+  background-color: transparent;
   object-fit: cover;
 `;
 

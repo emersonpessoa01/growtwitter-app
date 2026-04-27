@@ -21,6 +21,7 @@ interface TweetCardProps {
   onLike?: () => void;
   onReply?: () => void;
   onDelete?: () => void;
+  onProfileClick?: () => void;
   isAuthor?: boolean;
   isReply?: boolean;
 }
@@ -40,19 +41,19 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   onDelete,
   isAuthor = false,
   isReply = false,
-
+  onProfileClick,
 }) => {
   const publishedDate = date
-    ? format(
-        new Date(date),
-        "d 'de' MMM., HH:mm",
-        {
-          locale: ptBR,
-        },
-      )
+    ? format(new Date(date), "d 'de' MMM., HH:mm", {
+        locale: ptBR,
+      })
     : "";
   return (
-    <S.CardContainer $isReply={isReply} id={`tweet-${id}`}>
+    <S.CardContainer
+      $isReply={isReply}
+      id={`tweet-${id}`}
+      onClick={onProfileClick}
+    >
       <S.Avatar
         $isReply={isReply}
         src={
