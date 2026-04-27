@@ -85,7 +85,7 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   ${(props) =>
     props.$isReply &&
     `
-    background: ${props.theme.colors.secondary};
+    background: ${props.theme.colors.border};
     padding: 10px;
     border-radius: 8px;
     font-size: 0.9rem;

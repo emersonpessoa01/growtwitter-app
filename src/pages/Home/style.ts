@@ -176,7 +176,7 @@ export const Tab = styled.div<{ $active: boolean }>`
 
 // Novo: Seção de conteúdo do feed
 export const FeedSection = styled.section`
-  padding: 1rem;
+  padding: 0 0 1rem 0;
 
   p {
     padding: 10px;
@@ -186,7 +186,12 @@ export const FeedSection = styled.section`
 
 export const TweetWrapper = styled.div`
   border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
+    ${(props) => props.theme.colors.buttonText};
+
+    &:hover {
+      background-color: ${(props) =>
+        props.theme.colors.secondary};
+    }
 `;
 
 export const TweetContainer = styled.div`

@@ -45,7 +45,6 @@ export const TweetCard: React.FC<TweetCardProps> = ({
 
       <S.ContentWrapper>
         <S.TweetHeader>
-          {/* Agora usando o NameContainer que você sugeriu */}
           <S.NameContainer>
             <strong>{name}</strong>
             <span>@{username}</span>
