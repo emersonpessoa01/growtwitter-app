@@ -69,8 +69,9 @@ export const Home = () => {
 
         // Decidindo a rota baseada na aba
         // Para "Para você", usamos os tweets do próprio usuário logado
-        const url = activeTab === "following" ? "/feed" : "/tweets"; 
-// Se /tweets continua dando 404, o seu Backend NÃO tem uma rota de listagem global.
+        const url =
+          activeTab === "following" ? "/feed" : "/tweets";
+        // Se /tweets continua dando 404, o seu Backend NÃO tem uma rota de listagem global.
 
         const response = await api.get(url);
         console.log(response.data);

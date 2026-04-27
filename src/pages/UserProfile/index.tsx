@@ -4,18 +4,17 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import styled, { keyframes } from "styled-components"; // Adicionado keyframes
 import { api } from "../../services/api";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "../Profile/style";
 import { Avatar } from "../../components/TweetCard/style";
+import { ButtonSpinner } from "./style"; // Import direto conforme seu ajuste
 import { FiArrowLeft } from "react-icons/fi";
 import {
   SpinnerContainer,
   StyledSpinner,
 } from "../../components/Spinner/style";
 import { useAuth } from "../../contexts/AuthContext";
-import { ButtonSpinner } from "./style";
 
 export const UserProfile = () => {
   const { id } = useParams();
@@ -46,12 +45,15 @@ export const UserProfile = () => {
       );
       setIsFollowing(!!following);
 
+      const tweetsRes = await api.get(
+        `/users/${id}/tweets`,
+      );
+      const tweetsData = tweetsRes.data.data || [];
+
       if (activeTab === "tweets") {
-        const tweetsRes = await api.get(
-          `/users/${id}/tweets`,
-        );
-        setUserTweets(tweetsRes.data.data || []);
+        setUserTweets(tweetsData);
       } else if (activeTab === "likes") {
+        // Para a aba de curtidas, filtramos todos os tweets que esse usuário curtiu
         const allRes = await api.get("/tweets");
         const liked = (allRes.data.data || []).filter(
           (t: any) =>
@@ -66,10 +68,70 @@ export const UserProfile = () => {
     }
   }, [id, activeTab, me?.id]);
 
+  // Lógica de Curtida (Igual à da Home)
+  const handleToggleLike = async (
+    tweetId: string,
+    isCurrentlyLiked: boolean,
+  ) => {
+    // 1. ATUALIZAÇÃO OTIMISTA (Igual à sua Home)
+    setUserTweets((prevTweets) => {
+      return prevTweets.map((tweet) => {
+        if (tweet.id === tweetId) {
+          return {
+            ...tweet,
+            likes: isCurrentlyLiked
+              ? tweet.likes.filter(
+                  (l: any) =>
+                    (l.author?.id || l.userId) !== me?.id,
+                )
+              : [
+                  ...(tweet.likes || []),
+                  {
+                    userId: me?.id,
+                    tweetId: tweetId,
+                  },
+                ],
+          };
+        }
+        return tweet;
+      });
+    });
+
+    try {
+      if (isCurrentlyLiked) {
+        // DELETE exige a chave 'data' para enviar o body no Axios
+        await api.delete("/likes", {
+          data: { tweetId },
+        });
+      } else {
+        // POST envia o body direto como segundo parâmetro
+        await api.post("/likes", {
+          tweetId,
+        });
+      }
+
+      // Recarrega os dados em background para sincronizar com o servidor
+      // sem mostrar o spinner de tela cheia
+      const userResponse = await api.get(`/users/${id}`);
+      const data =
+        userResponse.data.data || userResponse.data;
+      setUserData(data);
+
+      const tweetsRes = await api.get(
+        `/users/${id}/tweets`,
+      );
+      setUserTweets(tweetsRes.data.data || []);
+    } catch (error) {
+      console.error("Erro ao processar like: ", error);
+      // Se der erro, você pode chamar o loadData() para reverter o estado otimista
+      loadData();
+      alert("Não foi possível processar o like.");
+    }
+  };
+
   const handleFollow = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (isSubmitting || !id) return;
-
     try {
       setIsSubmitting(true);
       if (isFollowing) {
@@ -80,7 +142,6 @@ export const UserProfile = () => {
         await api.post("/followers", { userId: id });
       }
       setIsFollowing(!isFollowing);
-
       const refresh = await api.get(`/users/${id}`);
       setUserData(refresh.data.data || refresh.data);
     } catch (error) {
@@ -232,8 +293,19 @@ export const UserProfile = () => {
                   avatarUrl={userData?.imageUrl}
                   likes={tweet.likes?.length || 0}
                   isLiked={tweet.likes?.some(
-                    (l: any) => l.userId === me?.id,
+                    (l: any) =>
+                      (l.author?.id || l.userId) === me?.id,
                   )}
+                  onLike={() =>
+                    handleToggleLike(
+                      tweet.id,
+                      !!tweet.likes?.some(
+                        (l: any) =>
+                          (l.author?.id || l.userId) ===
+                          me?.id,
+                      ),
+                    )
+                  }
                   isAuthor={tweet.authorId === me?.id}
                 />
               ))}
