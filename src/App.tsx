@@ -15,9 +15,18 @@ import { UserProfile } from "./pages/UserProfile";
 import { DefaultLayout } from "./layouts/DefaultLayout";
 
 export function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(()=>{
+    const savedTheme = localStorage.getItem("@Growtwitter:theme");
+    return savedTheme ? JSON.parse(savedTheme) : true;
+  });
 
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  const toggleTheme = () => {
+    setIsDarkMode((prev: boolean) => {
+      const newState = !prev;
+      localStorage.setItem("@Growtweet:theme", JSON.stringify(newState));
+      return newState;
+    });
+  };
   const theme = isDarkMode ? themes.dark : themes.light;
 
   return (

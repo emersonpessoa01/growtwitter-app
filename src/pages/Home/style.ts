@@ -2,7 +2,9 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: grid;
-  // Exemplo de grid: Sidebar | Main | WidgetsAside
+  /* Desktop: 3 colunas
+    SideBar (fixa) |  Feed (Flexível) | Widgets (fixa)
+  */
   grid-template-columns: 275px 1fr 350px; 
   
   width: 100%;
@@ -10,13 +12,13 @@ export const Container = styled.div`
   margin: 0 auto;
   min-height: 100vh;
   
-  // APLICAÇÃO CORRETA DO TEMA:
   background-color: ${(props) => props.theme.colors.backgroundColor}; 
   color: ${(props) => props.theme.colors.textColor};
   /* --- AS MEDIA QUERIES DEVEM FICAR AQUI DENTRO --- */
+  /* 1. TABLET: Esconde a barra da direita (Quem Seguir) */
 
   @media (max-width: 1024px) {
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 275px 1fr;
     
     /* Esconde a barra da direita (Quem Seguir) */
     aside:last-child {
@@ -24,24 +26,28 @@ export const Container = styled.div`
     }
   }
 
+  /* 2. MOBILE: Navegação otimizada por ícones */
   @media (max-width: 768px) {
     grid-template-columns: 80px 1fr;
     
     /* Ajusta a Sidebar para o modo compacto */
     aside:first-child {
       width: 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
+      padding: 10px;
       span { 
-        display: none; 
+        display: none; /* Esconde o nome do menu*/
+      }
+      /* Centraliza os ícones do menu */
+      nav a {
+        justify-content: center;
+        padding: 12px;
       }
     }
 
     /* Reduz o tamanho da logo no mobile */
     .logo img {
       width: 40px !important;
+      content: url("../../assets/images/favicon_circle.png"); /* Usa o ícone do site */
     }
   }
 `;
