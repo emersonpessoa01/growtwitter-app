@@ -1,12 +1,45 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 300px 1fr 350px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
   min-height: 100vh;
-  background-color: ${(props) =>
-    props.theme.colors.backgroundColor};
-  color: ${(props) => props.theme.colors.textColor};
-  justify-content: center;
+  background-color: ${(props) => props.theme.colors.backgroundColor};
+
+  /* --- AS MEDIA QUERIES DEVEM FICAR AQUI DENTRO --- */
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 300px 1fr;
+    
+    /* Esconde a barra da direita (Quem Seguir) */
+    aside:last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 80px 1fr;
+    
+    /* Ajusta a Sidebar para o modo compacto */
+    aside:first-child {
+      width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span { 
+        display: none; 
+      }
+    }
+
+    /* Reduz o tamanho da logo no mobile */
+    .logo img {
+      width: 40px !important;
+    }
+  }
 `;
 
 export const SideBar = styled.aside`
@@ -268,3 +301,4 @@ export const FormContent = styled.div`
       ${(props) => props.theme.colors.border};
   }
 `;
+

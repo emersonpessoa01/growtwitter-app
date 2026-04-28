@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../../components/Button";
-import { LoginForm } from "./style";
+import * as S from "./style"; // Importe tudo como 'S'
 import { BsSun, BsMoonStars } from "react-icons/bs";
+
+// Importe a sua logo (supondo que ela esteja nesta pasta)
+import logoGrowtweet from "../../assets/images/logo_growtweet.svg";
 
 interface LoginProps {
   toggleTheme: () => void;
@@ -35,35 +38,47 @@ export function Login({ toggleTheme, isDarkMode }: LoginProps) {
   }
 
   return (
-    <LoginForm onSubmit={handleLogin}>
-      <div style={{ alignSelf: 'flex-end', cursor: 'pointer' }} onClick={toggleTheme}>
-        {isDarkMode ? <BsSun size={20} color="#f2f2f2" /> : <BsMoonStars size={20} color="#4f4f4f" />}
-      </div>
-      
-      <h2>Login</h2>
-      <input
-        autoFocus
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Usuário"
-        disabled={isLoggingIn}
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Senha"
-        disabled={isLoggingIn}
-        autoComplete="current-password"
-      />
+    <S.LoginContainer>
+      {/* Área da Logo Grande (Esquerda) */}
+      <S.LogoArea>
+        <img src={logoGrowtweet} alt="Growtweet" className="big-logo" />
+      </S.LogoArea>
 
-      <Button type="submit" loading={isLoggingIn}>
-        Entrar
-      </Button>
+      {/* Área do Formulário (Direita) */}
+      <S.FormArea>
+        <S.LoginForm onSubmit={handleLogin}>
+          {/* Botão de Tema no topo do form */}
+          <div style={{ alignSelf: 'flex-end', cursor: 'pointer', marginBottom: '-1rem' }} onClick={toggleTheme}>
+            {isDarkMode ? <BsSun size={20} color="#f2f2f2" /> : <BsMoonStars size={20} color="#4f4f4f" />}
+          </div>
+          
+          <h2>Entrar no Growtwitter</h2>
+          
+          <input
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Usuário"
+            disabled={isLoggingIn}
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Senha"
+            disabled={isLoggingIn}
+            autoComplete="current-password"
+          />
 
-      <p style={{ textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem', color: '#71767b' }}>
-        Não tem uma conta? <Link to="/signup" style={{ color: '#1DA1F2', fontWeight: 'bold' }}>Cadastre-se</Link>
-      </p>
-    </LoginForm>
+          <Button type="submit" loading={isLoggingIn} $width="100%">
+            Entrar
+          </Button>
+
+          <p>
+            Não tem uma conta? <Link to="/signup">Cadastre-se</Link>
+          </p>
+        </S.LoginForm>
+      </S.FormArea>
+    </S.LoginContainer>
   );
 }

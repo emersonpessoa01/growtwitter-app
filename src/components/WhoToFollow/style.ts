@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.aside`
-  background-color: #F2F5F7;
+  background-color: ${(props) => props.theme.colors.backgroundColor};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 12px;
   padding: 1rem;
@@ -10,13 +10,15 @@ export const Container = styled.aside`
   flex-direction: column;
   gap: 16px;
 
+  
+
   h3 {
     font-size: 18px;
     font-weight: 700;
-    color: #333;
+    color: ${(props) => props.theme.colors.textColor};
     margin-bottom: 8px;
     // Se o Figma usa uma linha separadora:
-    border-bottom: 1px solid #E6E9EC;
+    border-bottom: 1px solid ${(props) => props.theme.colors.border};
     padding-bottom: 8px;
   }
 `;
@@ -42,7 +44,7 @@ export const UserInfo = styled.div`
 
     strong {
       font-size: 15px;
-      color: #0F1419;
+      color: ${(props) => props.theme.colors.textColor};
       
       // REGRAS PARA AS RETICÊNCIAS:
       white-space: nowrap;      // Impede que o nome quebre em duas linhas
