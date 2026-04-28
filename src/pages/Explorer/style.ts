@@ -4,8 +4,7 @@ export const ExplorerContainer = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
+  
   min-height: 100vh;
   border: 1px solid ${(props) => props.theme.colors.border};
 `;

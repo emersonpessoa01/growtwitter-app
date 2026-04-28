@@ -23,11 +23,7 @@ export const SideBarHeader = styled.div`
   }
 `;
 
-export const BoxImage = styled.div`
-  .logo-img {
-    width: 3rem !important;
-  }
-`;
+export const BoxImage = styled.div``;
 
 export const ToggleTheme = styled.div`
   display: flex;

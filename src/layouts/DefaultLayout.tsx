@@ -21,7 +21,7 @@ import { Avatar } from "../components/TweetCard/style";
 import { TweetModal } from "../components/TweetModal";
 
 import logo from "../assets/images/logo.png";
-import circle from "../assets/images/favicon_circle.png";
+import circle from "../assets/images/favicon_bold.png";
 import { BoxImage } from "./style";
 
 interface DefaultLayoutProps {

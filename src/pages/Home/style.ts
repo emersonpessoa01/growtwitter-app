@@ -2,11 +2,12 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: 275px minmax(0, 1fr) 350px;
+  grid-template-columns: 275px minmax(0, 600px) 350px;
+  justify-content: center;
 
   width: 100%;
-  max-width: 1280px;
   margin: 0 auto;
+  max-width: 1280px;
   min-height: 100vh;
 
   background-color: ${(props) =>
@@ -14,7 +15,7 @@ export const Container = styled.div`
   color: ${(props) => props.theme.colors.textColor};
 
   @media (max-width: 1280px) {
-    grid-template-columns: 240px minmax(0, 1fr) 300px;
+    grid-template-columns: 240px minmax(0, 600px) 300px;
   }
 
   @media (max-width: 1024px) {
@@ -26,7 +27,7 @@ export const Container = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-columns: 88px minmax(0, 1fr);
 
     aside:first-child {
       width: 80px;
@@ -42,10 +43,11 @@ export const Container = styled.div`
       }
     }
   }
+  
 `;
 
 export const SideBar = styled.aside`
-  width: 300px;
+  width: 100%;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -53,7 +55,7 @@ export const SideBar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  
   .logo {
     padding: 1rem;
   }
@@ -150,6 +152,7 @@ export const NameContainer = styled.div`
 export const MainContent = styled.main`
   flex: 1;
   max-width: 600px;
+  border-inline: 1px solid ${(props) => props.theme.colors.border};
 `;
 
 export const PageHeader = styled.header`
@@ -197,7 +200,7 @@ export const Tab = styled.div<{ $active: boolean }>`
   font-weight: ${(props) =>
     props.$active ? "bold" : "500"};
   color: ${(props) =>
-    props.$active ? props.theme.colors.primary : "#71767b"};
+    props.$active ? props.theme.colors.primary : props.theme.colors.textColorSecondary};
   position: relative;
   transition: background-color 0.2s;
 

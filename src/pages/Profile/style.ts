@@ -22,8 +22,6 @@ export const MainContent = styled.main`
   flex: 1;
   border-left: 1px solid
     ${(props) => props.theme.colors.border};
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
   max-width: 600px;
 `;
 
@@ -80,12 +78,11 @@ export const ProfileHeader = styled.div`
 
   .banner {
     height: 200px;
-    background-color: ${(props) =>
-      props.theme.colors.primary};
+    background-color: ${(props) => props.theme.colors.primary};
   }
   .info {
     padding: 0 1rem;
-    margin-top: -50px;
+    margin-top: -70px;
     display: flex;
     flex-direction: column;
     gap: 4px;
