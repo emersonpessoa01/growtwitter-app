@@ -82,13 +82,7 @@ export const DefaultLayout = ({
       <S.SideBar>
         <div>
           <SideBarHeader onClick={() => navigate("/home")}>
-            <BoxImage
-              className="logo"
-              style={{
-                cursor: "pointer",
-                padding: "10px 0",
-              }}
-            >
+            <BoxImage className="logo">
               {/* Aumentado para 130px para ficar proporcional aos ícones */}
               <img
                 src={isSmallScreen ? circle : logo}
@@ -100,13 +94,12 @@ export const DefaultLayout = ({
             {/* Toggle de tema estilizado */}
             <ToggleTheme onClick={toggleTheme}>
               {isDarkMode ? (
-                <BsSun
+                <BsSun size={24} className="daymoon" />
+              ) : (
+                <BsMoonStars
                   size={24}
                   className="daymoon"
-                 
                 />
-              ) : (
-                <BsMoonStars size={24} className="daymoon" />
               )}
             </ToggleTheme>
           </SideBarHeader>
@@ -117,19 +110,19 @@ export const DefaultLayout = ({
                 $active={location.pathname === "/"}
                 onClick={() => navigate("/")}
               >
-                <RiHome7Fill size={24} /> Página Inicial
+                <RiHome7Fill size={24} /> <span>Página Inicial</span>
               </S.MenuItem>
               <S.MenuItem
                 $active={location.pathname === "/explorer"}
                 onClick={() => navigate("/explorer")}
               >
-                <BsHash size={24} /> Explorar
+                <BsHash size={24} /><span>Explorar</span> 
               </S.MenuItem>
               <S.MenuItem
                 $active={location.pathname === "/profile"}
                 onClick={() => navigate("/profile")}
               >
-                <BsPerson size={24} /> Perfil
+                <BsPerson size={24} /> <span>Perfil</span>
               </S.MenuItem>
             </S.NavList>
           </S.NavMenu>

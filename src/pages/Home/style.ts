@@ -43,7 +43,6 @@ export const Container = styled.div`
       }
     }
   }
-  
 `;
 
 export const SideBar = styled.aside`
@@ -55,7 +54,7 @@ export const SideBar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+
   .logo {
     padding: 1rem;
   }
@@ -108,16 +107,34 @@ export const MenuItem = styled.li<{ $active: boolean }>`
       stroke-width: 0.8px;
     }
   }
+  span{
+   @media (max-width: 768px) {
+      display: none;
+    } 
+  }
+  @media (max-width: 768px) {
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
 `;
 export const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  /* padding-bottom: 1rem; */
-  padding: 1rem 2rem;
   cursor: pointer;
   gap: 0.5rem;
   border-radius: 396px;
   transition: background 0.4s;
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+    justify-content: center;
+  }
+  div:last-child{
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
 
   &:hover {
     background: ${(props) => props.theme.colors.border};
@@ -152,7 +169,8 @@ export const NameContainer = styled.div`
 export const MainContent = styled.main`
   flex: 1;
   max-width: 600px;
-  border-inline: 1px solid ${(props) => props.theme.colors.border};
+  border-inline: 1px solid
+    ${(props) => props.theme.colors.border};
 `;
 
 export const PageHeader = styled.header`
@@ -200,7 +218,9 @@ export const Tab = styled.div<{ $active: boolean }>`
   font-weight: ${(props) =>
     props.$active ? "bold" : "500"};
   color: ${(props) =>
-    props.$active ? props.theme.colors.primary : props.theme.colors.textColorSecondary};
+    props.$active
+      ? props.theme.colors.primary
+      : props.theme.colors.textColorSecondary};
   position: relative;
   transition: background-color 0.2s;
 

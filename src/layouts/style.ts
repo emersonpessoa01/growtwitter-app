@@ -14,7 +14,7 @@ export const SideBarHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
-  padding-right: 10px;
+  /* padding-right: 10px; */
   gap: 1rem;
 
   @media (max-width: 800px) {
@@ -23,7 +23,13 @@ export const SideBarHeader = styled.div`
   }
 `;
 
-export const BoxImage = styled.div``;
+export const BoxImage = styled.div`
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+    margin: 0 auto;
+    cursor: pointer;
+`;
 
 export const ToggleTheme = styled.div`
   display: flex;
@@ -32,6 +38,9 @@ export const ToggleTheme = styled.div`
 
   svg.daymoon {
     color: ${(props) => props.theme.colors.daymoon};
-    margin-right: 0.5rem;
+    padding: 0 1rem;
+    display: block;
+    width: 100%;
+    height: auto;
   }
 `;
