@@ -19,7 +19,7 @@ tipagem forte e experiência do usuário.
 
 ## 📸 Preview
 
-> 💡 Print da tela do app
+> 💡 Tela do app logado
 
 ![Descrição da imagem](./src/assets/images/readme.png)
 
@@ -37,7 +37,10 @@ tipagem forte e experiência do usuário.
 
 ------------------------------------------------------------------------
 
-## 🛠️ Stack Tecnológica
+## 📦 Tecnologias
+
+```markdown
+🛠️ Stack Tecnológica
 
   Camada        Tecnologia
   ------------- -------------------
@@ -47,6 +50,8 @@ tipagem forte e experiência do usuário.
   Roteamento    React Router DOM
   HTTP Client   Axios
   UI/UX         React Icons
+
+```
 
 ------------------------------------------------------------------------
 
@@ -68,7 +73,9 @@ tipagem forte e experiência do usuário.
 > Implementação de sistema de **followers reais**, substituindo o modelo
 > básico de comentários.
 
-Essa decisão elevou o nível técnico do projeto ao incluir:
+ Essa implementação é baseada em uma abordagem de **componentização
+ mais complexa**, que envolve a criação de **componentes de alto nível**
+ que podem ser reutilizados em diferentes partes do aplicativo.
 
 -   Relacionamentos mais complexos
 -   Manipulação de estado mais robusta
@@ -108,11 +115,17 @@ Acesse: http://localhost:5173
 
 ``` text
 src/
+├── assets/
 ├── components/
-├── pages/
-├── services/
 ├── contexts/
-├── styles/
+├── Global/
+├── layouts/
+├── pages/
+├── routes/
+├── services/
+├── themes/
+├── types/
+├── styled.d.ts
 └── App.tsx
 ```
 
@@ -147,6 +160,8 @@ Este projeto está sob licença MIT.
 ## 👨‍💻 Autor
 
 **Emerson Pessoa**\
+[Linkedin](https://www.linkedin.com/in/emersonpessoa01/)
+
 Full Stack Developer\
 "Bring me to life... in code!" 🤘
 
