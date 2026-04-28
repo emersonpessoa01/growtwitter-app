@@ -8,6 +8,18 @@ export const LoginContainer = styled.div`
   color: ${(props) => props.theme.colors.textColor};
 
   /* Responsividade: em celulares, fica uma coluna só */
+  @media (max-width: 1024px) {
+    grid-template-columns: 240px minmax(0, 1fr);
+
+    aside:last-child {
+      display: none;
+    }
+
+    .logo img {
+      width: 80px;
+    }
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
@@ -22,20 +34,23 @@ export const LogoArea = styled.div`
   justify-content: center;
   padding: 2rem;
 
-  /* Estilo para a logo grande da esquerda */
   img.big-logo {
-    width: 80%;
-    max-width: 400px;
+    width: 100%; /* Deixe ocupar o espaço do container */
+    max-width: 300px; /* Reduzi um pouco para não estourar */
     height: auto;
+    object-fit: contain;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 991px) {
     flex: none;
-    padding: 1rem;
-    margin-bottom: 2rem;
     
+    
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
     img.big-logo {
-      width: 100px; /* Logo menor no mobile, acima do form */
+      width: clamp(80px, 100%, 120px); /* Logo menor no mobile, acima do form */
     }
   }
 `;

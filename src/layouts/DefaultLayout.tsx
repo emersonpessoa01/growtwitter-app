@@ -3,12 +3,12 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as S from "../pages/Home/style";
+import { SideBarHeader, ToggleTheme } from "./style";
 import { WhoToFollow } from "../components/WhoToFollow";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-import logo from "../assets/images/logo_growtweet.svg";
 import { RiHome7Fill } from "react-icons/ri";
 import {
   BsHash,
@@ -19,6 +19,10 @@ import {
 import { Button } from "../components/Button";
 import { Avatar } from "../components/TweetCard/style";
 import { TweetModal } from "../components/TweetModal";
+
+import logo from "../assets/images/logo.png";
+import circle from "../assets/images/favicon_circle.png";
+import { BoxImage } from "./style";
 
 interface DefaultLayoutProps {
   toggleTheme: () => void;
@@ -43,13 +47,27 @@ export const DefaultLayout = ({
     setNewTweet("");
   };
 
+  const [isSmallScreen, setIsSmallScreen] = useState(
+    window.innerWidth <= 768,
+  );
+  /* Para redimensionamento do sidebar */
+  useEffect(() => {
+    const handleResize = () =>
+      setIsSmallScreen(window.innerWidth <= 800);
+    window.addEventListener("resize", handleResize);
+    return () =>
+      window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTweet.trim()) return;
 
     try {
       setIsPublishing(true);
-      await api.post("/tweets", { content: newTweet });
+      await api.post("/tweets", {
+        content: newTweet,
+      });
       handleCloseModal();
       window.location.reload();
     } catch (error) {
@@ -63,18 +81,9 @@ export const DefaultLayout = ({
     <S.Container>
       <S.SideBar>
         <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "2rem",
-              paddingRight: "10px",
-            }}
-          >
-            <div
+          <SideBarHeader onClick={() => navigate("/home")}>
+            <BoxImage
               className="logo"
-              onClick={() => navigate("/")}
               style={{
                 cursor: "pointer",
                 padding: "10px 0",
@@ -82,27 +91,25 @@ export const DefaultLayout = ({
             >
               {/* Aumentado para 130px para ficar proporcional aos ícones */}
               <img
-                src={logo}
+                src={isSmallScreen ? circle : logo}
                 alt="growtweet"
-                style={{ width: "130px", height: "auto" }}
+                className="logo-img"
               />
-            </div>
+            </BoxImage>
 
-            <div
-              onClick={toggleTheme}
-              style={{
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
+            {/* Toggle de tema estilizado */}
+            <ToggleTheme onClick={toggleTheme}>
               {isDarkMode ? (
-                <BsSun size={24} color="#f2f2f2" />
+                <BsSun
+                  size={24}
+                  color="#ebf706"
+                  style={{ marginRight: "0.5rem" }}
+                />
               ) : (
                 <BsMoonStars size={24} color="#4f4f4f" />
               )}
-            </div>
-          </div>
+            </ToggleTheme>
+          </SideBarHeader>
 
           <S.NavMenu>
             <S.NavList>

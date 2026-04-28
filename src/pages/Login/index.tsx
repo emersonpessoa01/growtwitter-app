@@ -2,25 +2,32 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../../components/Button";
-import * as S from "./style"; // Importe tudo como 'S'
+import * as S from "./style"; // Importando tudo como 'S'
 import { BsSun, BsMoonStars } from "react-icons/bs";
 
 // Importando a logo do Growtwitter
-import logoGrowtweet from "../../assets/images/logo_growtweet.svg";
+import logoGrowtweet from "../../assets/images/logo.png";
 
 interface LoginProps {
   toggleTheme: () => void;
   isDarkMode: boolean;
 }
 
-export function Login({ toggleTheme, isDarkMode }: LoginProps) {
+export function Login({
+  toggleTheme,
+  isDarkMode,
+}: LoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  
+ 
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(
+    e: React.FormEvent<HTMLFormElement>,
+  ) {
     e.preventDefault();
     if (!username || !password) {
       alert("Preencha todos os campos!");
@@ -41,19 +48,34 @@ export function Login({ toggleTheme, isDarkMode }: LoginProps) {
     <S.LoginContainer>
       {/* Área da Logo Grande (Esquerda) */}
       <S.LogoArea>
-        <img src={logoGrowtweet} alt="Growtweet" className="big-logo" />
+        <img
+          src={logoGrowtweet}
+          alt="Growtweet"
+          className="big-logo"
+        />
       </S.LogoArea>
 
       {/* Área do Formulário (Direita) */}
       <S.FormArea>
         <S.LoginForm onSubmit={handleLogin}>
           {/* Botão de Tema no topo do form */}
-          <div style={{ alignSelf: 'flex-end', cursor: 'pointer', marginBottom: '-1rem' }} onClick={toggleTheme}>
-            {isDarkMode ? <BsSun size={20} color="#f2f2f2" /> : <BsMoonStars size={20} color="#4f4f4f" />}
+          <div
+            style={{
+              alignSelf: "flex-end",
+              cursor: "pointer",
+              marginBottom: "-1rem",
+            }}
+            onClick={toggleTheme}
+          >
+            {isDarkMode ? (
+              <BsSun size={20} color="#f2f2f2" />
+            ) : (
+              <BsMoonStars size={20} color="#4f4f4f" />
+            )}
           </div>
-          
+
           <h2>Entrar no Growtwitter</h2>
-          
+
           <input
             autoFocus
             value={username}
@@ -70,12 +92,17 @@ export function Login({ toggleTheme, isDarkMode }: LoginProps) {
             autoComplete="current-password"
           />
 
-          <Button type="submit" loading={isLoggingIn} $width="100%">
+          <Button
+            type="submit"
+            loading={isLoggingIn}
+            $width="100%"
+          >
             Entrar
           </Button>
 
           <p>
-            Não tem uma conta? <Link to="/signup">Cadastre-se</Link>
+            Não tem uma conta?{" "}
+            <Link to="/signup">Cadastre-se</Link>
           </p>
         </S.LoginForm>
       </S.FormArea>

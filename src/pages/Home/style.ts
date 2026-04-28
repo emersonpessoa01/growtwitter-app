@@ -2,52 +2,44 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: grid;
-  /* Desktop: 3 colunas
-    SideBar (fixa) |  Feed (Flexível) | Widgets (fixa)
-  */
-  grid-template-columns: 275px 1fr 350px; 
-  
+  grid-template-columns: 275px minmax(0, 1fr) 350px;
+
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
-  
-  background-color: ${(props) => props.theme.colors.backgroundColor}; 
+
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
   color: ${(props) => props.theme.colors.textColor};
-  /* --- AS MEDIA QUERIES DEVEM FICAR AQUI DENTRO --- */
-  /* 1. TABLET: Esconde a barra da direita (Quem Seguir) */
+
+  @media (max-width: 1280px) {
+    grid-template-columns: 240px minmax(0, 1fr) 300px;
+  }
 
   @media (max-width: 1024px) {
-    grid-template-columns: 275px 1fr;
-    
-    /* Esconde a barra da direita (Quem Seguir) */
+    grid-template-columns: 240px minmax(0, 1fr);
+
     aside:last-child {
       display: none;
     }
   }
 
-  /* 2. MOBILE: Navegação otimizada por ícones */
   @media (max-width: 768px) {
-    grid-template-columns: 80px 1fr;
-    
-    /* Ajusta a Sidebar para o modo compacto */
+    grid-template-columns: 80px minmax(0, 1fr);
+
     aside:first-child {
       width: 80px;
       padding: 10px;
-      span { 
-        display: none; /* Esconde o nome do menu*/
+
+      span {
+        display: none;
       }
-      /* Centraliza os ícones do menu */
+
       nav a {
         justify-content: center;
         padding: 12px;
       }
-    }
-
-    /* Reduz o tamanho da logo no mobile */
-    .logo img {
-      width: 40px !important;
-      content: url("../../assets/images/favicon_circle.png"); /* Usa o ícone do site */
     }
   }
 `;
@@ -61,14 +53,13 @@ export const SideBar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
 
   .logo {
     padding: 1rem;
   }
 
   .logo img {
-    width: 8rem;
+    width: clamp(3rem, 100%, 8rem);
   }
 `;
 export const NavMenu = styled.nav`
@@ -159,7 +150,6 @@ export const NameContainer = styled.div`
 export const MainContent = styled.main`
   flex: 1;
   max-width: 600px;
-  
 `;
 
 export const PageHeader = styled.header`
@@ -241,7 +231,6 @@ export const FeedSection = styled.section`
 `;
 
 export const TweetWrapper = styled.div`
-
   border-bottom: 1px solid
     ${(props) => props.theme.colors.buttonText};
 
@@ -310,4 +299,3 @@ export const FormContent = styled.div`
       ${(props) => props.theme.colors.border};
   }
 `;
-
