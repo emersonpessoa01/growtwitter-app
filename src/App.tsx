@@ -1,27 +1,36 @@
+import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import GlobalStyles from "./Global/syles";
-import lightTheme from "./themes/index";
-import { ThemeProvider } from "styled-components";
+import themes from "./themes/index";
+
 import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
 import { Home } from "./pages/Home";
 import { Profile } from "./pages/Profile";
 import { Explorer } from "./pages/Explorer";
 import { UserProfile } from "./pages/UserProfile";
-import { DefaultLayout } from "./layouts/DefaultLayout"; // Certifique-se de que o caminho está correto
+import { DefaultLayout } from "./layouts/DefaultLayout";
 
 export function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  const theme = isDarkMode ? themes.dark : themes.light;
+
   return (
-    <ThemeProvider theme={lightTheme.light}>
+    <ThemeProvider theme={theme}>
       <GlobalStyles />
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          {/* Passamos o toggleTheme para o Login também */}
+          <Route path="/login" element={<Login toggleTheme={toggleTheme} isDarkMode={isDarkMode} />} />
+          <Route path="/signup" element={<Signup />} />
 
-          {/* Rotas Protegidas com Layout Padronizado */}
           <Route element={<PrivateRoute />}>
-            <Route element={<DefaultLayout />}>
+            <Route element={<DefaultLayout toggleTheme={toggleTheme} isDarkMode={isDarkMode} />}>
               <Route path="/" element={<Home />} />
               <Route path="/explorer" element={<Explorer />} />
               <Route path="/profile" element={<Profile />} />
