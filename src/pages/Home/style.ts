@@ -2,13 +2,17 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: 300px 1fr 350px;
+  // Exemplo de grid: Sidebar | Main | WidgetsAside
+  grid-template-columns: 275px 1fr 350px; 
+  
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: ${(props) => props.theme.colors.backgroundColor};
-
+  
+  // APLICAÇÃO CORRETA DO TEMA:
+  background-color: ${(props) => props.theme.colors.backgroundColor}; 
+  color: ${(props) => props.theme.colors.textColor};
   /* --- AS MEDIA QUERIES DEVEM FICAR AQUI DENTRO --- */
 
   @media (max-width: 1024px) {
@@ -43,7 +47,7 @@ export const Container = styled.div`
 `;
 
 export const SideBar = styled.aside`
-  width: 280px;
+  width: 300px;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -51,8 +55,7 @@ export const SideBar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
+  
 
   .logo {
     padding: 1rem;
@@ -150,8 +153,7 @@ export const NameContainer = styled.div`
 export const MainContent = styled.main`
   flex: 1;
   max-width: 600px;
-  border-right: 1px solid
-    ${(props) => props.theme.colors.border};
+  
 `;
 
 export const PageHeader = styled.header`
@@ -233,6 +235,7 @@ export const FeedSection = styled.section`
 `;
 
 export const TweetWrapper = styled.div`
+
   border-bottom: 1px solid
     ${(props) => props.theme.colors.buttonText};
 

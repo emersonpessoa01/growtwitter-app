@@ -1,73 +1,156 @@
-# React + TypeScript + Vite
+# 🚀 Growtwitter - Full Stack Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript)
+![Status](https://img.shields.io/badge/status-in%20progress-yellow)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-Currently, two official plugins are available:
+Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o
+bootcamp da Growdev, com foco em arquitetura moderna de front-end,
+tipagem forte e experiência do usuário.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+------------------------------------------------------------------------
 
-## React Compiler
+## 🌐 Demonstração
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+> [growtweet](https://growtwitter-app-alpha.vercel.app/)
 
-## Expanding the ESLint configuration
+------------------------------------------------------------------------
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📸 Preview
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+> 💡 Sugestão: adicione prints ou GIFs aqui
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+``` md
+![Preview](./assets/preview.png)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+------------------------------------------------------------------------
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🧠 Arquitetura & Conceitos
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+-   Componentização avançada com React
+-   Gerenciamento de estado via Context API
+-   Separação de responsabilidades (services, components, pages)
+-   Interceptação de requisições com Axios
+-   Tipagem forte com TypeScript
+-   Sistema de temas (Dark/Light)
+
+------------------------------------------------------------------------
+
+## 🛠️ Stack Tecnológica
+
+  Camada        Tecnologia
+  ------------- -------------------
+  Frontend      React + Vite
+  Tipagem       TypeScript
+  Estilização   Styled Components
+  Roteamento    React Router DOM
+  HTTP Client   Axios
+  UI/UX         React Icons
+
+------------------------------------------------------------------------
+
+## ⚙️ Funcionalidades
+
+-   🔐 Autenticação completa (login/cadastro)
+-   📰 Feed dinâmico com tweets
+-   💬 Sistema de replies
+-   ❤️ Curtidas (likes)
+-   👤 Perfil do usuário
+-   🌍 Página explorar
+-   🌙 Dark Mode / ☀️ Light Mode
+-   📱 Layout totalmente responsivo
+
+------------------------------------------------------------------------
+
+## 💡 Diferencial Técnico
+
+> Implementação de sistema de **followers reais**, substituindo o modelo
+> básico de comentários.
+
+Essa decisão elevou o nível técnico do projeto ao incluir:
+
+-   Relacionamentos mais complexos
+-   Manipulação de estado mais robusta
+-   Maior proximidade com aplicações reais
+
+------------------------------------------------------------------------
+
+## 🚀 Como executar
+
+``` bash
+# Clone o projeto
+git clone https://github.com/seu-usuario/growtwitter-react.git
+
+# Acesse a pasta
+cd growtwitter-react
+
+# Instale dependências
+npm install
+
+# Execute
+npm run dev
 ```
+
+Acesse: http://localhost:5173
+
+------------------------------------------------------------------------
+
+## 📱 Responsividade
+
+-   **Desktop:** layout em 3 colunas
+-   **Tablet:** foco no feed (widgets ocultos)
+-   **Mobile:** navegação otimizada por ícones
+
+------------------------------------------------------------------------
+
+## 📁 Estrutura do Projeto
+
+``` text
+src/
+├── components/
+├── pages/
+├── services/
+├── contexts/
+├── styles/
+└── App.tsx
+```
+
+------------------------------------------------------------------------
+
+## 🧪 Possíveis Melhorias
+
+-   Testes com Jest ou Vitest
+-   Integração com backend real
+-   Sistema de notificações
+-   Upload de imagens
+-   Infinite scroll
+
+------------------------------------------------------------------------
+
+## 🤝 Contribuição
+
+1.  Fork o projeto
+2.  Crie uma branch: `git checkout -b feature/minha-feature`
+3.  Commit: `git commit -m 'feat: minha feature'`
+4.  Push: `git push origin minha-feature`
+5.  Abra um Pull Request
+
+------------------------------------------------------------------------
+
+## 📄 Licença
+
+Este projeto está sob licença MIT.
+
+------------------------------------------------------------------------
+
+## 👨‍💻 Autor
+
+**Emerson Pessoa**\
+Full Stack Developer\
+"Bring me to life... in code!" 🤘
+
+------------------------------------------------------------------------
+
+📅 Gerado em: 28/04/2026
