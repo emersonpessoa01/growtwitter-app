@@ -19,10 +19,10 @@ tipagem forte e experiência do usuário.
 
 ## 📸 Preview
 
-> 💡 Sugestão: adicione prints ou GIFs aqui
+> 💡 Print da tela do app
 
 ``` md
-![Preview](./assets/preview.png)
+![Preview](./src/assets/images/readme.png)
 ```
 
 ------------------------------------------------------------------------
@@ -153,4 +153,4 @@ Full Stack Developer\
 
 ------------------------------------------------------------------------
 
-📅 Gerado em: 28/04/2026
+📅 Gerado em: 27/04/2026
