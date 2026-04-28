@@ -117,6 +117,7 @@ export const MenuItem = styled.li<{ $active: boolean }>`
     width: fit-content;
     margin: 0 auto;
   }
+ 
 `;
 export const UserInfo = styled.div`
   display: flex;

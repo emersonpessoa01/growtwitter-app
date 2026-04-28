@@ -9,7 +9,10 @@ import { SideBarHeader, ToggleTheme } from "./style";
 import { WhoToFollow } from "../components/WhoToFollow";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-import { RiHome7Fill } from "react-icons/ri";
+import {
+  RiAddLine,
+  RiHome7Fill,
+} from "react-icons/ri";
 import {
   BsHash,
   BsPerson,
@@ -110,13 +113,15 @@ export const DefaultLayout = ({
                 $active={location.pathname === "/"}
                 onClick={() => navigate("/")}
               >
-                <RiHome7Fill size={24} /> <span>Página Inicial</span>
+                <RiHome7Fill size={24} />{" "}
+                <span>Página Inicial</span>
               </S.MenuItem>
               <S.MenuItem
                 $active={location.pathname === "/explorer"}
                 onClick={() => navigate("/explorer")}
               >
-                <BsHash size={24} /><span>Explorar</span> 
+                <BsHash size={24} />
+                <span>Explorar</span>
               </S.MenuItem>
               <S.MenuItem
                 $active={location.pathname === "/profile"}
@@ -131,8 +136,10 @@ export const DefaultLayout = ({
             $width="100%"
             $marginTop="1rem"
             onClick={handleOpenModal}
+            className="tweet-button"
           >
-            Tweetar
+            <span className="button-text">Tweetar</span>
+            <RiAddLine size={28} className="button-icon" />
           </Button>
         </div>
 

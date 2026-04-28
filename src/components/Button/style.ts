@@ -43,6 +43,10 @@ export const StyledButton = styled.button<ButtonProps>`
   width: ${(props) => props.$width || "100%"};
   margin-top: ${(props) => props.$marginTop || "1rem"};
 
+  @media (max-width: 768px) {
+    padding:0;
+  }
+
   /* Efeito de Hover */
   &:hover:not(:disabled) {
     background-color: ${(props) =>

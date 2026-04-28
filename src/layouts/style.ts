@@ -17,18 +17,15 @@ export const SideBarHeader = styled.div`
   /* padding-right: 10px; */
   gap: 1rem;
 
-  @media (max-width: 800px) {
-    justify-content: center;
-    padding-right: 0;
-  }
+
 `;
 
 export const BoxImage = styled.div`
-    width: 100%;
-    height: auto;
-    max-width: 300px;
-    margin: 0 auto;
-    cursor: pointer;
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+  margin: 0 auto;
+  cursor: pointer;
 `;
 
 export const ToggleTheme = styled.div`
