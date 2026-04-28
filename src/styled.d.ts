@@ -12,6 +12,7 @@ declare module "styled-components" {
       title: string;
       border: string;
       buttonText: string;
+      daymoon: string;
     };
   }
 }

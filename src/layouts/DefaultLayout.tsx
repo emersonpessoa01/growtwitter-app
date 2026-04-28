@@ -102,11 +102,11 @@ export const DefaultLayout = ({
               {isDarkMode ? (
                 <BsSun
                   size={24}
-                  color="#ebf706"
-                  style={{ marginRight: "0.5rem" }}
+                  className="daymoon"
+                 
                 />
               ) : (
-                <BsMoonStars size={24} color="#4f4f4f" />
+                <BsMoonStars size={24} className="daymoon" />
               )}
             </ToggleTheme>
           </SideBarHeader>

@@ -68,9 +68,9 @@ export function Login({
             onClick={toggleTheme}
           >
             {isDarkMode ? (
-              <BsSun size={20} color="#f2f2f2" />
+              <BsSun size={20} className="daymoon" />
             ) : (
-              <BsMoonStars size={20} color="#4f4f4f" />
+              <BsMoonStars size={20} className="daymoon"/>
             )}
           </div>
 

@@ -9,5 +9,6 @@ export const dark = {
     title: "#fff",
     border: "#3C3B3B",
     buttonText: "#fff",
+    daymoon: "#ebf706",
   },
 };

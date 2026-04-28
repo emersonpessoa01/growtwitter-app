@@ -11,6 +11,7 @@ declare module "styled-components" {
       textColor: string;
       title: string;
       border: string;
+      
     };
   }
 }

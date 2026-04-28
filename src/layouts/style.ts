@@ -6,8 +6,7 @@ import {
 } from "../pages/Home/style";
 
 export const Container = styled(HomeContainer)``;
-export const SideBar = styled(HomeSideBar)`
-`;
+export const SideBar = styled(HomeSideBar)``;
 
 export const SideBarHeader = styled.div`
   display: flex;
@@ -31,10 +30,12 @@ export const BoxImage = styled.div`
 `;
 
 export const ToggleTheme = styled.div`
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 
-    @media (max-width: 800px) {
-    }
+  svg.daymoon {
+    color: ${(props) => props.theme.colors.daymoon};
+    margin-right: 0.5rem;
+  }
 `;

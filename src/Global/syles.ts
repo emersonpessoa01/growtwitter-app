@@ -11,6 +11,7 @@ export default createGlobalStyle`
     --secondary-color: #fff;
     --text-blue: #1512c1;
     --grey-clear: #e0e0e0;
+    --sun:#ebf706;
 }
 
 body {

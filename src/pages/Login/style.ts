@@ -125,6 +125,9 @@ export const LoginForm = styled.form`
       }
     }
   }
+  .daymoon{
+    color: ${(props) => props.theme.colors.daymoon};
+  }
 
   @media (max-width: 480px) {
     width: 90%;
