@@ -10,7 +10,6 @@ const rotate = keyframes`
 export const ButtonSpinner = styled.div<{ $isFollowing: boolean }>`
   width: 16px;
   height: 16px;
-  /* Usamos propriedades separadas para evitar o conflito do React */
   border-width: 2px;
   border-style: solid;
   border-color: ${props => props.$isFollowing ? "#1d9bf0" : "#ffffff"};
@@ -22,7 +21,7 @@ export const ButtonSpinner = styled.div<{ $isFollowing: boolean }>`
 export const EmptyMessage = styled.p`
   padding: 20px;
   text-align: center;
-  color: #657786;
+  color: ${(props) => props.theme.colors.textColorSecondary};
 `;
 
 export const ProfileAvatar = styled(Avatar)`

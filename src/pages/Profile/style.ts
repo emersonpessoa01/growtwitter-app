@@ -82,7 +82,6 @@ export const ProfileHeader = styled.div`
     height: 200px;
     background-color: ${(props) =>
       props.theme.colors.primary};
-    /* margin: -1rem -1rem 0 -1rem; */
   }
   .info {
     padding: 0 1rem;
@@ -96,14 +95,13 @@ export const ProfileHeader = styled.div`
     align-items: center;
     justify-content: space-between;
     align-items: flex-end;
-    /* margin-top: -50px; */
   }
   strong {
     font-size: 1.2rem;
     margin-top: 8px;
   }
   span.username {
-    color: #536471;
+    color: ${(props) => props.theme.colors.textColorSecondary};
     font-size: 0.9rem;
   }
 `;
@@ -142,7 +140,6 @@ export const StatsContainer = styled.div`
 export const TabsContainer = styled.div`
   display: flex;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  /* margin-top: 8px; */
 
   div {
     flex: 1;
@@ -203,7 +200,7 @@ export const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15); /* Sombra profissional */
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15); 
 
   header {
     display: flex;
@@ -215,7 +212,7 @@ export const ModalContent = styled.div`
     div.left-content {
       display: flex;
       align-items: center;
-      gap: 1.5rem; /* Reduzi o gap para alinhar melhor */
+      gap: 1.5rem; /* gap reduzido para alinhar melhor */
     }
 
     h3 {

@@ -20,7 +20,6 @@ export function Signup() {
 
     setIsRegistering(true);
     try {
-      // Rota corrigida conforme seu Postman
       await api.post("/auth/register", { name, username, password });
       alert("Conta criada com sucesso!");
       navigate("/login");

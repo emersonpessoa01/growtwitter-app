@@ -2,9 +2,8 @@ import React, {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from "react";
-import * as S from "./style"; // Vamos criar o style.ts em seguida
+import * as S from "./style"; 
 
-// Definimos as propriedades que o botão aceita
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   children: ReactNode;

@@ -8,7 +8,7 @@ import {
   UserDetails,
   UserRow,
 } from "./style";
-// Importando os componentes de loading que você já usa no Profile
+// Importando os componentes de loading que é usado no Profile
 import {
   SpinnerContainer,
   StyledSpinner,
@@ -65,7 +65,7 @@ export const Explorer = () => {
 
   return (
     <ExplorerContainer>
-      {/* O Título agora é fixo no topo */}
+      {/* O Título fixo no topo */}
       <PageTitle>Explorar usuários</PageTitle>
 
       {loading ? (

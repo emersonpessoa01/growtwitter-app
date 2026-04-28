@@ -25,7 +25,7 @@ export function App() {
       <GlobalStyles />
       <AuthProvider>
         <Routes>
-          {/* Passamos o toggleTheme para o Login também */}
+          {/* Passando o toggleTheme para o Login e o Signup */}
           <Route path="/login" element={<Login toggleTheme={toggleTheme} isDarkMode={isDarkMode} />} />
           <Route path="/signup" element={<Signup />} />
 

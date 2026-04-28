@@ -5,7 +5,7 @@ import { Button } from "../../components/Button";
 import * as S from "./style"; // Importe tudo como 'S'
 import { BsSun, BsMoonStars } from "react-icons/bs";
 
-// Importe a sua logo (supondo que ela esteja nesta pasta)
+// Importando a logo do Growtwitter
 import logoGrowtweet from "../../assets/images/logo_growtweet.svg";
 
 interface LoginProps {

@@ -432,7 +432,7 @@ export const Profile = () => {
                       }
                       onReply={() =>
                         handleOpenReplyModal(tweet.id)
-                      } // Agora abre o modal corretamente
+                      } // Para abrir o modal de resposta
                     />
                   );
                 })

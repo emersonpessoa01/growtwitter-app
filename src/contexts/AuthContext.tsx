@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { api } from "../services/api";
 
-// Defina a estrutura do usuário baseada na API do Growtwitter
+// Definindo a estrutura do usuário baseada na API do Growtwitter
 interface User {
   id: string;
   name: string;
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{
 
   useEffect(() => {
     async function loadingStorageData() {
-      // Ao carregar o app, verifica se já existe um usuário salvo no navegador
+      // Função que ao carregar o app, verifica se já existe um usuário salvo no navegador
       const storagedUser = localStorage.getItem(
         "@Growtwitter:user",
       );

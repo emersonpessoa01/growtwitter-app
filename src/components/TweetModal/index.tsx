@@ -1,7 +1,6 @@
-// src/components/TweetModal/index.tsx
 import React from "react";
 import * as S from "./style";
-import * as HomeS from "../../pages/Home/style"; // Reaproveitamos os estilos do form
+import * as HomeS from "../../pages/Home/style"; // Reaproveitado os estilos do form
 import { Avatar } from "../TweetCard/style";
 import { Button } from "../Button";
 import { useAuth } from "../../contexts/AuthContext";
@@ -43,7 +42,7 @@ export const TweetModal: React.FC<TweetModalProps> = ({
           <h2>{title}</h2>
         </S.ModalHeader>
 
-        {/* Aqui usamos os mesmos estilos que você já tinha na Home */}
+        {/* Aqui foi usado os mesmos estilos que já tinha na Home */}
         <HomeS.FormContainer onSubmit={onSubmit}>
           <Avatar
             src={

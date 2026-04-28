@@ -3,7 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { Avatar } from "../TweetCard/style";
 import { Button } from "../Button";
-import { StyledSpinner } from "../Spinner/style"; // Importe seu spinner existente
+import { StyledSpinner } from "../Spinner/style"; // Importando spinner existente
 import * as S from "./style.ts";
 
 interface WhoToFollowProps {
@@ -26,13 +26,13 @@ export const WhoToFollow = ({
         const response = await api.get("/users");
 
         if (response.data.success) {
-          // Filtra para NÃO mostrar você mesmo E NÃO mostrar quem você já segue
+          // Filtra para NÃO mostrar a mesma conta logada E NÃO mostrar quem você já segue
           const filtered = response.data.data.filter(
             (u: any) => u.id !== user?.id && !u.isFollowing,
           );
 
           // Pega apenas os 3 primeiros da lista filtrada
-          setSuggestions(filtered.slice(0, 3));
+          setSuggestions(filtered.slice(0, 5));
         }
       } catch (error) {
         console.error("Erro ao carregar sugestões:", error);
@@ -48,14 +48,14 @@ export const WhoToFollow = ({
       await api.post("/followers", { userId });
 
       // Em vez de apenas mudar o texto para "Seguindo",
-      // removemos ele da lista de sugestões:
+      // remove da lista de sugestões:
       setSuggestions((prev) =>
         prev.filter((u) => u.id !== userId),
       );
 
       if (onFollowSuccess) await onFollowSuccess();
     } catch (error: any) {
-      // Se já segue (409), também removemos da lista de sugestões
+      // Se já segue, também será removido da lista de sugestões
       if (error.response?.status === 409) {
         setSuggestions((prev) =>
           prev.filter((u) => u.id !== userId),

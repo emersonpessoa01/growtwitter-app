@@ -56,13 +56,13 @@ export const FormArea = styled.div`
 
 export const LoginForm = styled.form`
   width: 100%;
-  max-width: 400px; /* Largura igual à do Figma/Dani */
+  max-width: 400px; /* Largura igual à do Figma*/
   display: flex;
   flex-direction: column;
   gap: 1.5rem; /* Espaçamento maior entre campos */
   padding: 2rem;
   
-  /* Se quiser o efeito de "card" da Dani */
+  /* Efeito de "card" no form */
   background: ${(props) => props.theme.colors.secondary};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 16px;

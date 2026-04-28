@@ -11,7 +11,7 @@ import {
   ButtonSpinner,
   EmptyMessage,
   ProfileAvatar,
-} from "./style"; // Import direto conforme seu ajuste
+} from "./style";
 import { FiArrowLeft } from "react-icons/fi";
 import {
   SpinnerContainer,
@@ -65,7 +65,7 @@ export const UserProfile = () => {
       if (activeTab === "tweets") {
         setUserTweets(tweetsData);
       } else if (activeTab === "likes") {
-        // Para a aba de curtidas, filtramos todos os tweets que esse usuário curtiu
+        // Para a aba de curtidas, filtrando todos os tweets que esse usuário curtiu
         const allRes = await api.get("/tweets");
         const liked = (allRes.data.data || []).filter(
           (t: any) =>
@@ -93,7 +93,7 @@ export const UserProfile = () => {
     tweetId: string,
     isCurrentlyLiked: boolean,
   ) => {
-    // 1. ATUALIZAÇÃO OTIMISTA (Igual à sua Home)
+    // 1. ATUALIZAÇÃO OTIMISTA (Igual a Home)
     setUserTweets((prevTweets) => {
       return prevTweets.map((tweet) => {
         if (tweet.id === tweetId) {
@@ -143,7 +143,6 @@ export const UserProfile = () => {
       setUserTweets(tweetsRes.data.data || []);
     } catch (error) {
       console.error("Erro ao processar like: ", error);
-      // Se der erro, você pode chamar o loadData() para reverter o estado otimista
       loadData();
       alert("Não foi possível processar o like.");
     }
@@ -306,8 +305,6 @@ export const UserProfile = () => {
                       (l.author?.id || l.userId) === me?.id,
                   );
 
-                  // Se estivermos na aba de tweets do próprio usuário, usamos userData.
-                  // Se for a aba de curtidas, precisamos usar o autor original do tweet curtido.
                   const tweetAuthor =
                     activeTab === "likes"
                       ? tweet.author
@@ -326,7 +323,7 @@ export const UserProfile = () => {
                       avatarUrl={tweetAuthor?.imageUrl}
                       likes={tweet.likes?.length || 0}
                       isLiked={!!isLikedByMe}
-                      // Verifica se o tweet atual é uma resposta (ajuste conforme sua API)
+                      // Verifica se o tweet atual é uma resposta 
                       isReply={!!tweet.parentTweetId}
                       onLike={() =>
                         handleToggleLike(

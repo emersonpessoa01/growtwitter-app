@@ -126,7 +126,7 @@ export const Home = () => {
                           <TweetCard
                             key={reply.id}
                             id={reply.id}
-                            isReply // Propriedade para estilo de comentário se existir no seu componente
+                            isReply // Propriedade para estilo de comentário se existir no componente
                             name={reply.author?.name}
                             username={reply.author?.username}
                             content={reply.content}

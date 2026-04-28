@@ -101,7 +101,8 @@ export const UserDetails = styled.div`
 `;
 
 export const FollowButton = styled.button`
-  background-color: #0f1419;
+  background-color: ${(props) =>
+    props.theme.colors.primary};
   color: white;
   border: none;
   border-radius: 9999px;
