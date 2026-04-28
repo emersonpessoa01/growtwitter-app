@@ -21,9 +21,8 @@ tipagem forte e experiência do usuário.
 
 > 💡 Print da tela do app
 
-``` md
-![Preview](./src/assets/images/readme.png)
-```
+![Descrição da imagem](./src/assets/images/readme.png)
+
 
 ------------------------------------------------------------------------
 
