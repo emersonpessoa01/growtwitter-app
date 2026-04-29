@@ -28,27 +28,41 @@ export const Explorer = () => {
       const enrichedUsers = await Promise.all(
         usersList.map(async (u: any) => {
           try {
-            const tweetsRes = await api.get(`/users/${u.id}/tweets`);
-            const tweets = tweetsRes.data.data || [];
+            // 1. Busca o perfil completo para pegar os followers
+            const userDetailRes = await api.get(
+              `/users/${u.id}`,
+            );
+            const fullUser =
+              userDetailRes.data.data || userDetailRes.data;
 
-            const lastTweetContent =
-              tweets.length > 0
-                ? tweets[0].content
-                : "Este usuário ainda não tweetou.";
+            // 2. Busca os tweets para o último tweet
+            const tweetsRes = await api.get(
+              `/users/${u.id}/tweets`,
+            );
+            const tweets = tweetsRes.data.data || [];
 
             return {
               ...u,
-              lastTweet: lastTweetContent,
-              followersCount: u.followers?.length || 0,
+              lastTweet:
+                tweets.length > 0
+                  ? tweets[0].content
+                  : "Este usuário ainda não tweetou.",
+              // Usando os dados do perfil completo que contém a array followers
+              followersCount:
+                fullUser.followers?.length || 0,
             };
-          } catch {
+          } catch (error) {
+            console.error(
+              `Erro ao enriquecer usuário ${u.id}:`,
+              error,
+            );
             return {
               ...u,
               lastTweet: "Informação indisponível.",
               followersCount: 0,
             };
           }
-        })
+        }),
       );
 
       setUsers(enrichedUsers);
@@ -114,7 +128,8 @@ export const Explorer = () => {
 
               <div className="stats">
                 <span>
-                  <strong>{user.followersCount}</strong> seguidores
+                  <strong>{user.followersCount}</strong>{" "}
+                  seguidores
                 </span>
               </div>
             </UserDetails>

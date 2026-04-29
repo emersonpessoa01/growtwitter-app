@@ -49,6 +49,7 @@ export const UserProfile = () => {
       const data =
         userResponse.data.data || userResponse.data;
       setUserData(data);
+      // console.log(data.followers);
 
       const following = data.followers?.some(
         (f: any) =>

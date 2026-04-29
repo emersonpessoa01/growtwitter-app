@@ -191,6 +191,15 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
     props.$active
       ? props.theme.colors.primary
       : props.theme.colors.textColor};
+  background-color: ${(props) =>
+    props.$active
+      ? props.theme.colors.secondary
+      : "transparent"};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;
