@@ -1,0 +1,3727 @@
+========================================
+PROJETO GROWTWITTER - CÓDIGO COMPLETO
+========================================
+
+========================================
+ARQUIVO: src/App.tsx
+========================================
+import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
+import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./contexts/AuthContext";
+import GlobalStyles from "./Global/syles";
+import themes from "./themes/index";
+
+import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
+import { Home } from "./pages/Home";
+import { Profile } from "./pages/Profile";
+import { Explorer } from "./pages/Explorer";
+import { UserProfile } from "./pages/UserProfile";
+import { DefaultLayout } from "./layouts/DefaultLayout";
+
+export function App() {
+  const [isDarkMode, setIsDarkMode] = useState(()=>{
+    const savedTheme = localStorage.getItem("@Growtwitter:theme");
+    return savedTheme ? JSON.parse(savedTheme) : true;
+  });
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev: boolean) => {
+      const newState = !prev;
+      localStorage.setItem("@Growtweet:theme", JSON.stringify(newState));
+      return newState;
+    });
+  };
+  const theme = isDarkMode ? themes.dark : themes.light;
+
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <AuthProvider>
+        <Routes>
+          {/* Passando o toggleTheme para o Login e o Signup */}
+          <Route path="/login" element={<Login toggleTheme={toggleTheme} isDarkMode={isDarkMode} />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route element={<PrivateRoute />}>
+            <Route element={<DefaultLayout toggleTheme={toggleTheme} isDarkMode={isDarkMode} />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/explorer" element={<Explorer />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:id" element={<UserProfile />} />
+            </Route>
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+
+========================================
+ARQUIVO: src/components/Button/index.tsx
+========================================
+import React, {
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
+import * as S from "./style"; 
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  children: ReactNode;
+  $width?: string;
+  $marginTop?: string;
+  $active?: boolean;
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  loading,
+  children,
+  $width,
+  $marginTop,
+  $active,
+ 
+  ...rest
+}) => {
+  return (
+    <S.StyledButton
+      
+      $width={$width}
+      $marginTop={$marginTop}
+      $active={$active}
+      $loading={loading}
+      disabled={loading || rest.disabled}
+      {...rest}
+    >
+      {loading ? (
+        <S.SpinnerWrapper>
+          <S.ButtonSpinner />
+        </S.SpinnerWrapper>
+      ) : (
+        children
+      )}
+    </S.StyledButton>
+  );
+};
+
+
+========================================
+ARQUIVO: src/components/Button/style.ts
+========================================
+import styled, { keyframes } from "styled-components";
+
+interface ButtonProps {
+  $width?: string;
+  $marginTop?: string;
+  $active?: boolean;
+  $loading?: boolean;
+}
+
+// Animação de rotação para o spinner
+const rotate = keyframes`
+  from { 
+    transform: rotate(0deg); 
+}
+  to { 
+    transform: rotate(360deg); 
+    }
+`;
+
+export const StyledButton = styled.button<ButtonProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Necessário para o SpinnerWrapper */
+
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 9999px; /* Botão arredondado estilo Twitter */
+
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  /* Aplica as cores do Tema */
+  background-color: ${(props) =>
+    props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.buttonText};
+
+  /* Aplicando largura e margem para o botão */
+  width: ${(props) => props.$width || "100%"};
+  margin-top: ${(props) => props.$marginTop || "1rem"};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .button-icon {
+    display:none
+  }
+
+  @media (max-width: 768px) {
+    /* padding: 0; */
+
+    .button-icon {
+      display: block;
+      
+      /* font-size: 26px; */
+    }
+  }
+
+  /* Efeito de Hover */
+  &:hover:not(:disabled) {
+    background-color: ${(props) =>
+      props.theme.colors.primaryHover};
+  }
+
+  /* Estado Desabilitado (quando está carregando ou input vazio) */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+// Container para centralizar o spinner dentro do botão
+export const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
+// O Spinner específico para o botão (menor e branco)
+export const ButtonSpinner = styled.div`
+  width: 1.25rem; /* ~20px */
+  height: 1.25rem;
+  border: 3px solid rgba(255, 255, 255, 0.3); /* Fundo semi-transparente */
+  border-top: 3px solid #ffffff; /* A parte que gira (branca) */
+  border-radius: 50%;
+  animation: ${rotate} 0.8s linear infinite; /* Rotação rápida */
+`;
+
+
+========================================
+ARQUIVO: src/components/PrivateRoute.tsx
+========================================
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../components/Spinner/style";
+
+export default function PrivateRoute() {
+  const { signed, loading } = useAuth();
+  if (loading) {
+    return (
+      <SpinnerContainer>
+        <StyledSpinner />
+      </SpinnerContainer>
+    );
+  }
+  // Se estiver logado, renderiza o conteúdo da rota (Outlet)
+  return signed ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" replace />
+  );
+}
+
+
+========================================
+ARQUIVO: src/components/Spinner/style.ts
+========================================
+import styled, { keyframes } from "styled-components";
+
+const rotate = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+export const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500vh;
+  width: 100%;
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
+`;
+
+export const StyledSpinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid ${(props) => props.theme.colors.border};
+  border-top: 4px solid
+    ${(props) => props.theme.colors.primary};
+  border-radius: 50%;
+  animation: ${rotate} 0.8s linear infinite;
+`;
+
+
+========================================
+ARQUIVO: src/components/TweetCard/index.tsx
+========================================
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiOutlineDelete,
+} from "react-icons/ai";
+import { FaRegComment } from "react-icons/fa";
+import * as S from "./style";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+interface TweetCardProps {
+  id: string;
+  name: string;
+  username: string;
+  content: string;
+  date: string;
+  avatarUrl?: string;
+  likes: number;
+  comments?: number;
+  isLiked?: boolean;
+  onLike?: () => void;
+  onReply?: () => void;
+  onDelete?: () => void;
+  onProfileClick?: () => void;
+  isAuthor?: boolean;
+  isReply?: boolean;
+}
+
+export const TweetCard: React.FC<TweetCardProps> = ({
+  id,
+  name,
+  username,
+  content,
+  date,
+  avatarUrl,
+  likes,
+  comments = 0,
+  isLiked = false,
+  onLike,
+  onReply,
+  onDelete,
+  isAuthor = false,
+  isReply = false,
+  onProfileClick,
+}) => {
+  const publishedDate = date
+    ? format(new Date(date), "d 'de' MMM., HH:mm", {
+        locale: ptBR,
+      })
+    : "";
+  return (
+    <S.CardContainer
+      $isReply={isReply}
+      id={`tweet-${id}`}
+      onClick={onProfileClick}
+    >
+      <S.Avatar
+        $isReply={isReply}
+        src={
+          avatarUrl ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
+        }
+      />
+
+      <S.ContentWrapper>
+        <S.TweetHeader>
+          <S.NameContainer>
+            <strong>{name}</strong>
+            <span>@{username}</span>
+            <span className="dot">·</span>
+            <span className="date">{publishedDate}</span>
+          </S.NameContainer>
+        </S.TweetHeader>
+
+        <S.TweetText $isReply={isReply}>
+          {content}
+        </S.TweetText>
+
+        {/* As ações só aparecem no tweet principal */}
+        {!isReply && (
+          <S.Actions>
+            <S.ActionItem
+              $variant="comment"
+              onClick={(e) => {
+                e.stopPropagation();
+                onReply?.();
+              }}
+            >
+              <FaRegComment />
+              {comments}
+            </S.ActionItem>
+
+            <S.ActionItem
+              $variant="like"
+              $active={isLiked}
+              onClick={(e) => {
+                e.stopPropagation();
+                onLike?.();
+              }}
+            >
+              {isLiked ? (
+                <AiFillHeart />
+              ) : (
+                <AiOutlineHeart />
+              )}
+              {likes}
+            </S.ActionItem>
+
+            {/* A lixeira entra aqui: ao lado dos ícones, apenas se for autor e NÃO for reply */}
+            {isAuthor && (
+              <S.DeleteIcon
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.();
+                }}
+              >
+                <AiOutlineDelete />
+              </S.DeleteIcon>
+            )}
+          </S.Actions>
+        )}
+      </S.ContentWrapper>
+    </S.CardContainer>
+  );
+};
+
+
+========================================
+ARQUIVO: src/components/TweetCard/style.ts
+========================================
+import styled from "styled-components";
+interface CardContainerProps {
+  $isReply?: boolean;
+}
+
+export const CardContainer = styled.div<CardContainerProps>`
+  display: flex;
+  padding: 1rem;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  gap: ${(props) => (props.$isReply ? "16px" : "1.5rem")};
+  transition: background 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+`;
+
+export const Avatar = styled.img<CardContainerProps>`
+  width: ${(props) => (props.$isReply ? "36px" : "48px")};
+  height: ${(props) => (props.$isReply ? "36px" : "48px")};
+  border-radius: 50%;
+  border: 3px solid ${(props) => props.theme.colors.primary};
+  background-color: transparent;
+  object-fit: cover;
+`;
+
+export const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const TweetHeader = styled.div`
+  display: flex;
+  align-items: flex-start; /* Alinha os itens pelo topo */
+  gap: 0.5rem;
+  width: 100%;
+
+  strong {
+    white-space: nowrap; /* Impede o nome de quebrar e empurrar tudo */
+  }
+
+  span {
+    font-size:14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Ajuste conforme necessário para não cobrir a lixeira */
+  }
+`;
+export const NameContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+export const DeleteIcon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: ${(props) =>
+    props.theme.colors.textColorSecondary};
+  cursor: pointer;
+  flex-shrink: 0; /* Impede o ícone de ser esmagado */
+
+  svg {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    color: #f4212e;
+  }
+`;
+
+export const TweetText = styled.p<{ $isReply?: boolean }>`
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: ${(props) => props.theme.colors.title};
+  word-break: break-word;
+
+  /* Lógica condicional: Estiliza apenas se for um comentário */
+  ${(props) =>
+    props.$isReply &&
+    `
+    background: ${props.theme.colors.border};
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  `}
+`;
+
+export const Actions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  gap: 4rem; /* Espaçamento entre comentário e curtida */
+`;
+
+export const ActionItem = styled.div<{
+  $active?: boolean;
+  $variant?: "like" | "comment";
+}>`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: ${(props) =>
+    props.$active && props.$variant === "like"
+      ? "#f91880"
+      : "#71767b"};
+  cursor: pointer;
+  transition: color 0.2s;
+
+  svg {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    color: ${(props) =>
+      props.$variant === "like" ? "#f91880" : "#1d9bf0"};
+  }
+`;
+
+
+========================================
+ARQUIVO: src/components/TweetModal/index.tsx
+========================================
+import React from "react";
+import * as S from "./style";
+import * as HomeS from "../../pages/Home/style"; // Reaproveitado os estilos do form
+import { Avatar } from "../TweetCard/style";
+import { Button } from "../Button";
+import { useAuth } from "../../contexts/AuthContext";
+
+interface TweetModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  value: string;
+  onChange: (value: string) => void;
+  isPublishing: boolean;
+  avatarUrl?: string;
+  title?: string;
+  buttonText?: string;
+}
+
+export const TweetModal: React.FC<TweetModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  value,
+  onChange,
+  isPublishing,
+  avatarUrl,
+  title = "Tweet",
+  buttonText = "Tweetar",
+}) => {
+  if (!isOpen) return null;
+
+  const { user } = useAuth();
+
+  return (
+    <S.Overlay onClick={onClose}>
+      <S.ModalBox onClick={(e) => e.stopPropagation()}>
+        <S.ModalHeader>
+          <button type="button" onClick={onClose}>
+            &times;
+          </button>
+          <h2>{title}</h2>
+        </S.ModalHeader>
+
+        {/* Aqui foi usado os mesmos estilos que já tinha na Home */}
+        <HomeS.FormContainer onSubmit={onSubmit}>
+          <Avatar
+            src={
+              avatarUrl ||
+              (user?.name
+                ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`
+                : "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png")
+            }
+            alt={user?.name}
+            style={{ flexShrink: 0 }}
+          />
+          <HomeS.FormContent>
+            <textarea
+              placeholder="O que está pensando?"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              rows={5}
+              autoFocus
+            />
+            <div className="form-actions">
+              <Button
+                type="submit"
+                $width="100px"
+                $marginTop="0"
+                disabled={!value.trim() || isPublishing}
+                loading={isPublishing}
+              >
+                {buttonText}
+              </Button>
+            </div>
+          </HomeS.FormContent>
+        </HomeS.FormContainer>
+      </S.ModalBox>
+    </S.Overlay>
+  );
+};
+
+
+========================================
+ARQUIVO: src/components/TweetModal/style.ts
+========================================
+import styled from "styled-components";
+
+export const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(
+    91,
+    112,
+    131,
+    0.4
+  ); // Tom de cinza do Twitter/ Growtwitter
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  z-index: 30;
+`;
+
+export const ModalBox = styled.div`
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ModalHeader = styled.header`
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+
+  button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: ${(props) => props.theme.colors.primaryHover};
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  h2 {
+    margin: 16px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.5%;
+    color: ${(props) => props.theme.colors.primaryHover};
+  }
+`;
+
+
+========================================
+ARQUIVO: src/components/WhoToFollow/index.tsx
+========================================
+import { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { api } from "../../services/api";
+import { Avatar } from "../TweetCard/style";
+import { Button } from "../Button";
+import { StyledSpinner } from "../Spinner/style"; // Importando spinner existente
+import * as S from "./style.ts";
+
+interface WhoToFollowProps {
+  onFollowSuccess?: () => void;
+}
+
+export const WhoToFollow = ({
+  onFollowSuccess,
+}: WhoToFollowProps) => {
+  const { user } = useAuth();
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  // Novo estado para controlar o loading por botão
+  const [loadingId, setLoadingId] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const response = await api.get("/users");
+
+        if (response.data.success) {
+          // Filtra para NÃO mostrar a mesma conta logada E NÃO mostrar quem você já segue
+          const filtered = response.data.data.filter(
+            (u: any) => u.id !== user?.id && !u.isFollowing,
+          );
+
+          // Pega apenas os 3 primeiros da lista filtrada
+          setSuggestions(filtered.slice(0, 5));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar sugestões:", error);
+      }
+    }
+
+    if (user?.id) loadUsers();
+  }, [user?.id]);
+
+  const handleFollow = async (userId: string) => {
+    try {
+      setLoadingId(userId);
+      await api.post("/followers", { userId });
+
+      // Em vez de apenas mudar o texto para "Seguindo",
+      // remove da lista de sugestões:
+      setSuggestions((prev) =>
+        prev.filter((u) => u.id !== userId),
+      );
+
+      if (onFollowSuccess) await onFollowSuccess();
+    } catch (error: any) {
+      // Se já segue, também será removido da lista de sugestões
+      if (error.response?.status === 409) {
+        setSuggestions((prev) =>
+          prev.filter((u) => u.id !== userId),
+        );
+      }
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  if (suggestions.length === 0) return null;
+
+  return (
+    <S.Container>
+      <h3>Quem seguir</h3>
+      {suggestions.map((s) => (
+        <S.UserItem key={s.id}>
+          <S.UserInfo>
+            <Avatar
+              src={
+                s.imageUrl ||
+                `https://ui-avatars.com/api/?name=${s.name}`
+              }
+              style={{ width: "40px", height: "40px" }}
+            />
+            <div>
+              <strong>{s.name}</strong>
+              <span>@{s.username}</span>
+            </div>
+          </S.UserInfo>
+
+          <Button
+            onClick={() => handleFollow(s.id)}
+            $width="75px" // Largura fixa para o botão não mudar de tamanho com o spinner
+            disabled={loadingId === s.id} // Desabilita enquanto carrega
+            style={{
+              padding: "4px 12px",
+              fontSize: "12px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "30px",
+              borderRadius: "20px",
+            }}
+          >
+            {loadingId === s.id ? (
+              <StyledSpinner
+                style={{
+                  width: "15px",
+                  height: "15px",
+                  border: "2px solid #fff",
+                  borderTop: "2px solid transparent",
+                }}
+              />
+            ) : s.isFollowing ? (
+              "Seguindo"
+            ) : (
+              "Seguir"
+            )}
+          </Button>
+        </S.UserItem>
+      ))}
+    </S.Container>
+  );
+};
+
+
+========================================
+ARQUIVO: src/components/WhoToFollow/style.ts
+========================================
+import styled from "styled-components";
+
+export const Container = styled.aside`
+  background-color: ${(props) => props.theme.colors.backgroundColor};
+  border: 1px solid ${(props) => props.theme.colors.border};
+  border-radius: 12px;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: ${(props) => props.theme.colors.textColor};
+    margin-bottom: 8px;
+    // Se o Figma usa uma linha separadora:
+    border-bottom: 1px solid ${(props) => props.theme.colors.border};
+    padding-bottom: 8px;
+  }
+`;
+
+export const UserItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+`;
+
+export const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0; // CRÍTICO: permite que o flex-item diminua além do conteúdo
+
+  div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; // Garante que a div interna também respeite o limite
+
+    strong {
+      font-size: 15px;
+      color: ${(props) => props.theme.colors.textColor};
+      
+      // REGRAS PARA AS RETICÊNCIAS:
+      white-space: nowrap;      // Impede que o nome quebre em duas linhas
+      overflow: hidden;         // Esconde o que passar do limite
+      text-overflow: ellipsis;  // Adiciona os "..." automaticamente
+    }
+
+    span {
+      font-size: 14px;
+      color: ${(props) => props.theme.colors.textColorSecondary};
+      // REGRAS PARA AS RETICÊNCIAS:
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+`;
+
+========================================
+ARQUIVO: src/contexts/AuthContext.tsx
+========================================
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  type ReactNode,
+} from "react";
+import { api } from "../services/api";
+
+// Definindo a estrutura do usuário baseada na API do Growtwitter
+interface User {
+  id: string;
+  name: string;
+  username: string;
+  imageUrl?: string;
+}
+
+interface AuthContextData {
+  signed: boolean;
+  user: User | null;
+  signIn(credentials: object): Promise<void>;
+  signOut(): void;
+  updateUser(newUser: User): void;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextData>(
+  {} as AuthContextData,
+);
+
+export const AuthProvider: React.FC<{
+  children: ReactNode;
+}> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadingStorageData() {
+      // Função que ao carregar o app, verifica se já existe um usuário salvo no navegador
+      const storagedUser = localStorage.getItem(
+        "@Growtwitter:user",
+      );
+      const storagedToken = localStorage.getItem(
+        "@Growtwitter:token",
+      );
+
+      // Executa a leitura e o delay em paralelo
+
+      if (storagedUser && storagedToken) {
+        try {
+          if (
+            storagedUser !== "undefined" &&
+            storagedToken !== "undefined"
+          ) {
+            api.defaults.headers.Authorization = `Bearer ${storagedToken}`;
+            setUser(JSON.parse(storagedUser));
+          }
+        } catch (error) {
+          console.error(
+            `Erro no parse do storage: ${error}`,
+          );
+          localStorage.clear();
+        }
+      }
+      setLoading(false);
+    }
+    loadingStorageData();
+  }, []);
+
+  async function signIn(credentials: object) {
+    try {
+      const response = await api.post(
+        "/auth/login",
+        credentials,
+      );
+      console.log("RES LOGIN:", response.data);
+
+      // Para bater com o retorno da API, verifica se o status é 200
+      if (response.status !== 200) {
+        throw new Error("Falha na autenticação");
+      }
+      const { authUser, authToken } = response.data.data;
+      console.log(authUser, authToken);
+
+      setUser(authUser);
+      api.defaults.headers.Authorization = `Bearer ${authToken}`;
+
+      localStorage.setItem(
+        "@Growtwitter:user",
+        JSON.stringify(authUser),
+      );
+      localStorage.setItem("@Growtwitter:token", authToken);
+    } catch (error) {
+      console.error(`Erro no login: ${error}`);
+      throw error; // Re-throw para que a UI possa lidar com isso (exibir mensagem de erro, etc.)
+    }
+  }
+
+  function updateUser(newUser: User) {
+    // Atualiza o estado (faz o Sidebar e Profile mudarem na hora)
+    setUser(newUser);
+
+    // Atualiza o Storage (para quando der F5 continuar com os dados novos)
+    localStorage.setItem(
+      "@Growtwitter:user",
+      JSON.stringify(newUser),
+    );
+  }
+
+  function signOut() {
+    localStorage.clear();
+    setUser(null);
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{
+        signed: !!user,
+        user,
+        loading,
+        signIn,
+        signOut,
+        updateUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+
+========================================
+ARQUIVO: src/Global/syles.ts
+========================================
+import { createGlobalStyle } from "styled-components";
+
+export default createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root{
+    --primary-color: #3295b4;
+    --secondary-color: #fff;
+    --text-blue: #1512c1;
+    --grey-clear: #e0e0e0;
+    --sun:#ebf706;
+}
+
+body {
+    color: ${(props) => props.theme.colors.textColor};
+    font-family: "Roboto", "Lexend","Fira Code", monospace;
+    line-height:140%;
+    background-color: ${(props) => props.theme.colors.backgroundColor};
+  }
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+    font-family: "Kumbh Sans", sans-serif;
+    line-height: 140%;
+    color: ${(props) => props.theme.colors.title};
+}
+
+img{
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+`;
+
+
+========================================
+ARQUIVO: src/index.css
+========================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+
+========================================
+ARQUIVO: src/layouts/DefaultLayout.tsx
+========================================
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
+import * as S from "../pages/Home/style";
+import { SideBarHeader, ToggleTheme } from "./style";
+import { WhoToFollow } from "../components/WhoToFollow";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import { RiAddLine, RiHome7Fill } from "react-icons/ri";
+import {
+  BsHash,
+  BsPerson,
+  BsSun,
+  BsMoonStars,
+} from "react-icons/bs";
+import { Button } from "../components/Button";
+import { Avatar } from "../components/TweetCard/style";
+import { TweetModal } from "../components/TweetModal";
+
+import logo from "../assets/images/logo.png";
+import circle from "../assets/images/favicon_bold.png";
+import { BoxImage } from "./style";
+
+interface DefaultLayoutProps {
+  toggleTheme: () => void;
+  isDarkMode: boolean;
+}
+
+export const DefaultLayout = ({
+  toggleTheme,
+  isDarkMode,
+}: DefaultLayoutProps) => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTweet, setNewTweet] = useState("");
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setNewTweet("");
+  };
+
+  const [isSmallScreen, setIsSmallScreen] = useState(
+    window.innerWidth <= 768,
+  );
+  /* Para redimensionamento do sidebar */
+  useEffect(() => {
+    const handleResize = () =>
+      setIsSmallScreen(window.innerWidth <= 800);
+    window.addEventListener("resize", handleResize);
+    return () =>
+      window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTweet.trim()) return;
+
+    try {
+      setIsPublishing(true);
+      await api.post("/tweets", {
+        content: newTweet,
+      });
+      handleCloseModal();
+      window.location.reload();
+    } catch (error) {
+      alert("Erro ao publicar tweet");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  return (
+    <S.Container>
+      <S.SideBar>
+        <div>
+          <SideBarHeader onClick={() => navigate("/home")}>
+            <BoxImage className="logo">
+              {/* Aumentado para 130px para ficar proporcional aos ícones */}
+              <img
+                src={isSmallScreen ? circle : logo}
+                alt="growtweet"
+                className="logo-img"
+              />
+            </BoxImage>
+
+            {/* Toggle de tema estilizado */}
+            <ToggleTheme onClick={toggleTheme}>
+              {isDarkMode ? (
+                <BsSun size={24} className="daymoon" />
+              ) : (
+                <BsMoonStars
+                  size={24}
+                  className="daymoon"
+                />
+              )}
+            </ToggleTheme>
+          </SideBarHeader>
+
+          <S.NavMenu>
+            <S.NavList>
+              <S.MenuItem
+                $active={location.pathname === "/"}
+                onClick={() => navigate("/")}
+              >
+                <RiHome7Fill size={24} />{" "}
+                <span>Página Inicial</span>
+              </S.MenuItem>
+              <S.MenuItem
+                $active={location.pathname === "/explorer"}
+                onClick={() => navigate("/explorer")}
+              >
+                <BsHash size={24} />
+                <span>Explorar</span>
+              </S.MenuItem>
+              <S.MenuItem
+                $active={location.pathname === "/profile"}
+                onClick={() => navigate("/profile")}
+              >
+                <BsPerson size={24} /> <span>Perfil</span>
+              </S.MenuItem>
+            </S.NavList>
+          </S.NavMenu>
+
+          <Button
+            $width="100%"
+            $marginTop="1rem"
+            onClick={handleOpenModal}
+            className="tweet-button"
+          >
+            <span className="button-text">Tweetar</span>
+            <RiAddLine className="button-icon" />
+          </Button>
+        </div>
+
+        <S.UserInfo
+          onClick={signOut}
+          style={{ cursor: "pointer" }}
+        >
+          <Avatar
+            src={
+              user?.imageUrl ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "U")}&background=random`
+            }
+            alt={user?.name}
+          />
+          <S.NameContainer>
+            <strong>{user?.name}</strong>
+            <span>@{user?.username}</span>
+          </S.NameContainer>
+        </S.UserInfo>
+      </S.SideBar>
+
+      <S.MainContent>
+        <Outlet />
+      </S.MainContent>
+
+      <S.WidgetsAside>
+        <WhoToFollow />
+      </S.WidgetsAside>
+
+      <TweetModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        value={newTweet}
+        onChange={setNewTweet}
+        isPublishing={isPublishing}
+        avatarUrl={user?.imageUrl}
+        title="Criar Tweet"
+      />
+    </S.Container>
+  );
+};
+
+
+========================================
+ARQUIVO: src/layouts/style.ts
+========================================
+import styled from "styled-components";
+
+export const SideBarHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 1rem;
+`;
+
+export const BoxImage = styled.div`
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+  margin: 0 auto;
+  cursor: pointer;
+`;
+
+export const ToggleTheme = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  svg.daymoon {
+    color: ${(props) => props.theme.colors.daymoon};
+    padding: 0 1rem;
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+`;
+
+
+========================================
+ARQUIVO: src/main.tsx
+========================================
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { App } from "./App";
+import "./index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+
+========================================
+ARQUIVO: src/pages/Explorer/index.tsx
+========================================
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { api } from "../../services/api";
+import {
+  Avatar,
+  ExplorerContainer,
+  PageTitle,
+  UserDetails,
+  UserRow,
+} from "./style";
+// Importando os componentes de loading que é usado no Profile
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
+
+export const Explorer = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const loadExplorerData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/users");
+      const usersList = response.data.data;
+
+      const enrichedUsers = await Promise.all(
+        usersList.map(async (u: any) => {
+          try {
+            const tweetsRes = await api.get(`/users/${u.id}/tweets`);
+            const tweets = tweetsRes.data.data || [];
+
+            const lastTweetContent =
+              tweets.length > 0
+                ? tweets[0].content
+                : "Este usuário ainda não tweetou.";
+
+            return {
+              ...u,
+              lastTweet: lastTweetContent,
+              followersCount: u.followers?.length || 0,
+            };
+          } catch {
+            return {
+              ...u,
+              lastTweet: "Informação indisponível.",
+              followersCount: 0,
+            };
+          }
+        })
+      );
+
+      setUsers(enrichedUsers);
+    } catch (error) {
+      console.error("Erro ao carregar explorer:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadExplorerData();
+  }, [loadExplorerData]);
+
+  return (
+    <ExplorerContainer>
+      {/* O Título fixo no topo */}
+      <PageTitle>Explorar usuários</PageTitle>
+
+      {loading ? (
+        /* Spinner centralizado logo abaixo do título */
+        <SpinnerContainer
+          style={{
+            height: "300px",
+            background: "transparent",
+          }}
+        >
+          <StyledSpinner />
+        </SpinnerContainer>
+      ) : (
+        /* Lista de usuários só aparece após o loading */
+        users.map((user) => (
+          <UserRow
+            key={user.id}
+            onClick={() =>
+              navigate(`/profile/${user.id}`, {
+                state: {
+                  username: user.username,
+                },
+              })
+            }
+          >
+            <Avatar
+              src={
+                user.imageUrl ||
+                `https://ui-avatars.com/api/?name=${user.name}`
+              }
+              alt={user.name}
+            />
+
+            <UserDetails>
+              <div className="header">
+                <div>
+                  <strong>{user.name}</strong>
+                  <span>@{user.username}</span>
+                </div>
+              </div>
+
+              <div className="last-tweet-box">
+                <small>Último tweet:</small>
+                {user.lastTweet}
+              </div>
+
+              <div className="stats">
+                <span>
+                  <strong>{user.followersCount}</strong> seguidores
+                </span>
+              </div>
+            </UserDetails>
+          </UserRow>
+        ))
+      )}
+    </ExplorerContainer>
+  );
+};
+
+========================================
+ARQUIVO: src/pages/Explorer/style.ts
+========================================
+import styled from "styled-components";
+
+export const ExplorerContainer = styled.div`
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  min-height: 100vh;
+  border: 1px solid ${(props) => props.theme.colors.border};
+`;
+
+export const PageTitle = styled.h2`
+  padding: 15px;
+  font-size: 20px;
+  font-weight: 700;
+
+  padding: 1rem;
+  background-color: ${(props) =>
+    props.theme.colors
+      .backgroundColor}40; /* 40 = 25% opacidade em hex */
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border}60; /* 60 = 30% opacidade em hex */
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+`;
+
+export const UserRow = styled.div`
+  display: flex;
+  padding: 12px 16px;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  gap: 12px;
+  transition: background 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
+  }
+`;
+
+export const Avatar = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
+`;
+
+export const UserDetails = styled.div`
+  flex: 1;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    strong {
+      font-size: 15px;
+      color: ${(props) => props.theme.colors.textColor};
+    }
+
+    span {
+      color: ${(props) => props.theme.colors.textColor};
+      font-size: 15px;
+      margin-left: 4px;
+    }
+  }
+
+  .last-tweet-box {
+    background-color: ${(props) =>
+      props.theme.colors.backgroundColor};
+    border-radius: 12px;
+    padding: 10px;
+    margin: 8px 0;
+    font-size: 14px;
+    color: ${(props) => props.theme.colors.textColor};
+    line-height: 1.4;
+
+    small {
+      display: block;
+      color: ${(props) => props.theme.colors.textColor};
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+  }
+
+  .stats {
+    font-size: 13px;
+    color: ${(props) => props.theme.colors.textColor};
+    display: flex;
+    gap: 12px;
+  }
+`;
+
+export const FollowButton = styled.button`
+  background-color: ${(props) =>
+    props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  height: fit-content;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #272c30;
+  }
+`;
+
+
+========================================
+ARQUIVO: src/pages/Home/index.tsx
+========================================
+import { useEffect, useState, useCallback } from "react";
+import { api } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
+import { TweetCard } from "../../components/TweetCard";
+import * as S from "./style";
+import { TweetModal } from "../../components/TweetModal";
+import { SpinnerContainer, StyledSpinner } from "../../components/Spinner/style";
+import { useNavigate } from "react-router-dom";
+
+export const Home = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [tweets, setTweets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
+  
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+  const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [isPublishingReply, setIsPublishingReply] = useState(false);
+
+  const loadTweets = useCallback(async (silent = false) => {
+    if (!user?.id) return;
+    try {
+      if (!silent) setLoading(true);
+      const url = activeTab === "following" ? "/feed" : "/tweets";
+      const response = await api.get(url);
+      setTweets(response.data.data || []);
+    } catch (error) {
+      console.error("Erro ao carregar tweets:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, user?.id]);
+
+  useEffect(() => { loadTweets(); }, [loadTweets]);
+
+  const handleLikeTweet = async (tweetId: string, isCurrentlyLiked: boolean) => {
+    try {
+      if (isCurrentlyLiked) {
+        await api.delete("/likes", { data: { tweetId } });
+      } else {
+        await api.post("/likes", { tweetId });
+      }
+      loadTweets(true);
+    } catch (error) {
+      alert("Erro ao processar curtida");
+    }
+  };
+
+  const handleDeleteTweet = async (tweetId: string) => {
+    if (!window.confirm("Deseja excluir este tweet?")) return;
+    try {
+      await api.delete(`/tweets/${tweetId}`);
+      loadTweets(true);
+    } catch (error) {
+      alert("Erro ao deletar");
+    }
+  };
+
+  const handleOpenReply = (id: string) => {
+    setSelectedTweetId(id);
+    setIsReplyModalOpen(true);
+  };
+
+  const handleReplySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim()) return;
+
+    try {
+      setIsPublishingReply(true);
+      await api.post("/replies", { content: replyContent, replyTo: selectedTweetId });
+      setReplyContent("");
+      setIsReplyModalOpen(false);
+      loadTweets(true); // Recarrega para mostrar o comentário novo
+    } catch (error) {
+      alert("Erro ao responder");
+    } finally {
+      setIsPublishingReply(false);
+    }
+  };
+
+  return (
+    <>
+      <S.PageHeader><h3>Página Inicial</h3></S.PageHeader>
+      <S.TabsContainer>
+        <S.Tab $active={activeTab === "forYou"} onClick={() => setActiveTab("forYou")}>Para você</S.Tab>
+        <S.Tab $active={activeTab === "following"} onClick={() => setActiveTab("following")}>Seguindo</S.Tab>
+      </S.TabsContainer>
+
+      <S.FeedSection>
+        {loading ? (
+          <SpinnerContainer style={{ height: "300px", background: "transparent" }}><StyledSpinner /></SpinnerContainer>
+        ) : (
+          tweets
+            .filter(t => !t.replyTo) // Mostra apenas tweets principais no feed
+            .map((tweet) => {
+              const isLiked = tweet.likes?.some((l: any) => (l.userId === user?.id || l.author?.id === user?.id));
+              
+              return (
+                <S.TweetWrapper key={tweet.id}>
+                  {/* Tweet Principal */}
+                  <TweetCard
+                    id={tweet.id}
+                    name={tweet.author?.name}
+                    username={tweet.author?.username}
+                    content={tweet.content}
+                    avatarUrl={tweet.author?.imageUrl}
+                    date={tweet.createdAt}
+                    likes={tweet.likes?.length || 0}
+                    comments={tweet.replies?.length || 0}
+                    isLiked={!!isLiked}
+                    isAuthor={String(tweet.author?.id) === String(user?.id)}
+                    onLike={() => handleLikeTweet(tweet.id, !!isLiked)}
+                    onDelete={() => handleDeleteTweet(tweet.id)}
+                    onReply={() => handleOpenReply(tweet.id)}
+                    onProfileClick={() => navigate(`/profile/${tweet.author.id}`)}
+                  />
+
+                  {/* Renderização das Respostas (Comentários) logo abaixo */}
+                  {tweet.replies && tweet.replies.length > 0 && (
+                    <S.TweetContainer>
+                      {tweet.replies.map((reply: any) => {
+                        const isReplyLiked = reply.likes?.some((l: any) => (l.userId === user?.id || l.author?.id === user?.id));
+                        return (
+                          <TweetCard
+                            key={reply.id}
+                            id={reply.id}
+                            isReply // Propriedade para estilo de comentário se existir no componente
+                            name={reply.author?.name}
+                            username={reply.author?.username}
+                            content={reply.content}
+                            avatarUrl={reply.author?.imageUrl}
+                            date={reply.createdAt}
+                            likes={reply.likes?.length || 0}
+                            isLiked={!!isReplyLiked}
+                            isAuthor={String(reply.author?.id) === String(user?.id)}
+                            onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
+                            onDelete={() => handleDeleteTweet(reply.id)}
+                            onReply={() => handleOpenReply(tweet.id)} // Responde ao principal
+                          />
+                        );
+                      })}
+                    </S.TweetContainer>
+                  )}
+                </S.TweetWrapper>
+              );
+            })
+        )}
+      </S.FeedSection>
+
+      <TweetModal
+        isOpen={isReplyModalOpen}
+        onClose={() => setIsReplyModalOpen(false)}
+        onSubmit={handleReplySubmit}
+        value={replyContent}
+        onChange={setReplyContent}
+        isPublishing={isPublishingReply}
+        title="Responder Tweet"
+        avatarUrl={user?.imageUrl}
+      />
+    </>
+  );
+};
+
+========================================
+ARQUIVO: src/pages/Home/style.ts
+========================================
+import styled from "styled-components";
+
+export const Container = styled.div`
+  display: grid;
+  grid-template-columns: 275px minmax(0, 600px) 350px;
+  justify-content: center;
+
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1280px;
+  min-height: 100vh;
+
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
+  color: ${(props) => props.theme.colors.textColor};
+
+  @media (max-width: 1280px) {
+    grid-template-columns: 240px minmax(0, 600px) 300px;
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 240px minmax(0, 1fr);
+
+    aside:last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 88px minmax(0, 1fr);
+
+    aside:first-child {
+      width: 80px;
+      padding: 10px;
+
+      span {
+        display: none;
+      }
+
+      nav a {
+        justify-content: center;
+        padding: 12px;
+      }
+    }
+  }
+`;
+
+export const SideBar = styled.aside`
+  width: 100%;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .logo {
+    padding: .5rem;
+  }
+
+  .logo img {
+    width: clamp(3rem, 100%, 8rem);
+  }
+`;
+export const NavMenu = styled.nav`
+  margin-top: 1rem;
+`;
+
+export const NavList = styled.ul`
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const MenuItem = styled.li<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  color: ${(props) => props.theme.colors.textColor};
+
+  font-weight: ${(props) =>
+    props.$active ? "bold" : "normal"};
+
+  svg {
+    stroke: currentColor;
+    stroke-width: ${(props) =>
+      props.$active ? "0.6px" : "0.2px"};
+    transition: all 0.2s;
+  }
+
+  &:hover {
+    color: ${(props) => props.theme.colors.buttonText};
+    font-weight: bold;
+    background-color: ${(props) =>
+      props.theme.colors.primaryHover};
+    border-radius: 9999px;
+
+    svg {
+      stroke-width: 0.8px;
+    }
+  }
+  span{
+   @media (max-width: 768px) {
+      display: none;
+    } 
+  }
+  @media (max-width: 768px) {
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 1rem;
+    border-radius: 14px !important;
+  }
+ 
+`;
+export const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.5rem;
+  border-radius: 396px;
+  transition: background 0.4s;
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+    justify-content: center;
+  }
+  div:last-child{
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  &:hover {
+    background: ${(props) => props.theme.colors.border};
+  }
+`;
+
+export const NameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  strong {
+    display: block;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+  }
+
+  span {
+    color: ${(props) => props.theme.colors.textColor};
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const MainContent = styled.main`
+  flex: 1;
+  max-width: 600px;
+  border-inline: 1px solid
+    ${(props) => props.theme.colors.border};
+`;
+
+export const PageHeader = styled.header`
+  padding: 1rem;
+  background-color: ${(props) =>
+    props.theme.colors
+      .backgroundColor}40; /* 40 = 25% opacidade em hex */
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border}60;
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+
+  h3 {
+    font-size: 1.25rem;
+  }
+`;
+
+export const TabsContainer = styled.div`
+  display: flex;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  position: sticky;
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    ${(props) => props.theme.colors.secondary} 0%,
+    ${(props) => props.theme.colors.secondary} 70%,
+    ${(props) => props.theme.colors.secondary} 100%
+  );
+  backdrop-filter: blur(5px);
+  z-index: 10;
+`;
+
+export const Tab = styled.div<{ $active: boolean }>`
+  // Removido o '?' para evitar undefined
+  flex: 1;
+  text-align: center;
+  padding: 1rem 0;
+  cursor: pointer;
+  font-weight: ${(props) =>
+    props.$active ? "bold" : "500"};
+  color: ${(props) =>
+    props.$active
+      ? props.theme.colors.primary
+      : props.theme.colors.textColorSecondary};
+  position: relative;
+  transition: background-color 0.2s;
+
+  &::after {
+    content: "";
+    display: ${(props) =>
+      props.$active ? "block" : "none"};
+    position: absolute;
+    bottom: 0;
+    left: 25%; // Centraliza a linha azul
+    width: 50%;
+    height: 3px;
+    background-color: ${(props) =>
+      props.theme.colors.primary};
+    border-radius: 2px;
+  }
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.border};
+  }
+`;
+
+// Novo: Seção de conteúdo do feed
+export const FeedSection = styled.section`
+  padding: 0 0 1rem 0;
+
+  p {
+    padding: 10px;
+  }
+`;
+
+export const TweetWrapper = styled.div`
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.buttonText};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
+  }
+`;
+
+export const TweetContainer = styled.div`
+  margin-left: 50px;
+  /* border-left: 2px solid ${(props) =>
+    props.theme.colors.border}; */
+`;
+// Novo: Coluna de Widgets (Terceira Coluna)
+export const WidgetsAside = styled.aside`
+  width: 300px;
+  padding: 1rem;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
+
+export const FormContainer = styled.form`
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+`;
+
+export const AvatarImg = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 100;
+`;
+export const FormContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: ${(props) => props.theme.colors.textColor};
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+
+    &::placeholder {
+      color: ${(props) => props.theme.colors.textColor};
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    border-top: 1px solid
+      ${(props) => props.theme.colors.border};
+  }
+`;
+
+
+========================================
+ARQUIVO: src/pages/Login/index.tsx
+========================================
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { Button } from "../../components/Button";
+import * as S from "./style"; // Importando tudo como 'S'
+import { BsSun, BsMoonStars } from "react-icons/bs";
+
+// Importando a logo do Growtwitter
+import logoGrowtweet from "../../assets/images/logo.png";
+
+interface LoginProps {
+  toggleTheme: () => void;
+  isDarkMode: boolean;
+}
+
+export function Login({
+  toggleTheme,
+  isDarkMode,
+}: LoginProps) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+  
+ 
+
+  async function handleLogin(
+    e: React.FormEvent<HTMLFormElement>,
+  ) {
+    e.preventDefault();
+    if (!username || !password) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+    setIsLoggingIn(true);
+    try {
+      await signIn({ username, password });
+      navigate("/");
+    } catch {
+      alert("Login falhou. Verifique usuário e senha");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  }
+
+  return (
+    <S.LoginContainer>
+      {/* Área da Logo Grande (Esquerda) */}
+      <S.LogoArea>
+        <img
+          src={logoGrowtweet}
+          alt="Growtweet"
+          className="big-logo"
+        />
+      </S.LogoArea>
+
+      {/* Área do Formulário (Direita) */}
+      <S.FormArea>
+        <S.LoginForm onSubmit={handleLogin}>
+          {/* Botão de Tema no topo do form */}
+          <div
+            style={{
+              alignSelf: "flex-end",
+              cursor: "pointer",
+              marginBottom: "-1rem",
+            }}
+            onClick={toggleTheme}
+          >
+            {isDarkMode ? (
+              <BsSun size={20} className="daymoon" />
+            ) : (
+              <BsMoonStars size={20} className="daymoon"/>
+            )}
+          </div>
+
+          <h2>Entrar no Growtwitter</h2>
+
+          <input
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Usuário"
+            disabled={isLoggingIn}
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Senha"
+            disabled={isLoggingIn}
+            autoComplete="current-password"
+          />
+
+          <Button
+            type="submit"
+            loading={isLoggingIn}
+            $width="100%"
+          >
+            Entrar
+          </Button>
+
+          <p>
+            Não tem uma conta?{" "}
+            <Link to="/signup">Cadastre-se</Link>
+          </p>
+        </S.LoginForm>
+      </S.FormArea>
+    </S.LoginContainer>
+  );
+}
+
+
+========================================
+ARQUIVO: src/pages/Login/style.ts
+========================================
+import styled from "styled-components";
+
+export const LoginContainer = styled.div`
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: ${(props) => props.theme.colors.backgroundColor};
+  color: ${(props) => props.theme.colors.textColor};
+
+  /* Responsividade: em celulares, fica uma coluna só */
+  @media (max-width: 1024px) {
+    grid-template-columns: 240px minmax(0, 1fr);
+
+    aside:last-child {
+      display: none;
+    }
+
+    .logo img {
+      width: 80px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+export const LogoArea = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  img.big-logo {
+    width: 100%; /* Deixe ocupar o espaço do container */
+    max-width: 300px; /* Reduzi um pouco para não estourar */
+    height: auto;
+    object-fit: contain;
+  }
+
+  @media (max-width: 991px) {
+    flex: none;
+    
+    
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    img.big-logo {
+      width: clamp(80px, 100%, 120px); /* Logo menor no mobile, acima do form */
+    }
+  }
+`;
+
+export const FormArea = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex: none;
+    padding: 1rem;
+  }
+`;
+
+export const LoginForm = styled.form`
+  width: 100%;
+  max-width: 400px; /* Largura igual à do Figma*/
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espaçamento maior entre campos */
+  padding: 2rem;
+  
+  /* Efeito de "card" no form */
+  background: ${(props) => props.theme.colors.secondary};
+  border: 1px solid ${(props) => props.theme.colors.border};
+  border-radius: 16px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: ${(props) => props.theme.colors.title};
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid ${(props) => props.theme.colors.border};
+    background: transparent;
+    color: ${(props) => props.theme.colors.textColor};
+    font-size: 1rem;
+    
+    &::placeholder {
+      color: ${(props) => props.theme.colors.textColorSecondary};
+    }
+
+    &:focus {
+      border-color: ${(props) => props.theme.colors.primary};
+      outline: none;
+    }
+  }
+
+  p {
+    text-align: center;
+    font-size: 0.9rem;
+    color: ${(props) => props.theme.colors.textColorSecondary};
+    margin-top: 1rem;
+
+    a {
+      color: ${(props) => props.theme.colors.primary};
+      font-weight: bold;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .daymoon{
+    color: ${(props) => props.theme.colors.daymoon};
+  }
+
+  @media (max-width: 480px) {
+    width: 90%;
+    padding: 1.5rem;
+  }
+`;
+
+========================================
+ARQUIVO: src/pages/Profile/index.tsx
+========================================
+import { useEffect, useState, useCallback } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { api } from "../../services/api";
+import { TweetCard } from "../../components/TweetCard";
+import * as S from "./style";
+import { Avatar } from "../../components/TweetCard/style";
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
+import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+// Importações adicionadas para o Modal
+import { TweetModal } from "../../components/TweetModal";
+import { EmptyMessage } from "../UserProfile/style";
+
+const tabLabels: Record<string, string> = {
+  tweets: "tweet",
+  replies: "resposta",
+  likes: "curtida",
+};
+
+export const Profile = () => {
+  const { user, updateUser } = useAuth();
+  const navigate = useNavigate();
+  const [myTweets, setMyTweets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("tweets");
+  const [isEditModalOpen, setIsEditModalOpen] =
+    useState(false); // Renomeado para evitar conflito
+  const [tempName, setTempName] = useState(
+    user?.name || "",
+  );
+  const [tempImageUrl, setTempImageUrl] = useState(
+    user?.imageUrl || "",
+  );
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Estados para o TweetModal (Lógica da Home)
+  const [isTweetModalOpen, setIsTweetModalOpen] =
+    useState(false);
+  const [selectedTweetId, setSelectedTweetId] = useState<
+    string | null
+  >(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const loadProfileData = useCallback(
+    async (silent = false) => {
+      if (!user?.id) return;
+      try {
+        if (!silent) setLoading(true);
+
+        let response;
+        if (activeTab === "tweets") {
+          response = await api.get(
+            `/users/${user.id}/tweets`,
+          );
+          setMyTweets(response.data.data || []);
+        } else if (activeTab === "likes") {
+          response = await api.get("/tweets");
+          const all = response.data.data || [];
+          const liked = all.filter((t: any) =>
+            t.likes?.some((l: any) => l.userId === user.id),
+          );
+          setMyTweets(liked);
+        } else {
+          response = await api.get(
+            `/users/${user.id}/tweets`,
+          );
+          const replies = response.data.data?.filter(
+            (t: any) => t.type === "REPLY",
+          );
+          setMyTweets(replies || []);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user?.id, activeTab],
+  );
+
+  useEffect(() => {
+    loadProfileData();
+  }, [loadProfileData]);
+
+  // Lógica de Resposta (Igual à Home)
+  const handleOpenReplyModal = (tweetId: string) => {
+    setSelectedTweetId(tweetId);
+    setIsTweetModalOpen(true);
+  };
+
+  const handleCloseTweetModal = () => {
+    setIsTweetModalOpen(false);
+    setSelectedTweetId(null);
+    setReplyContent("");
+  };
+
+  const handleReplySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim() || !selectedTweetId) return;
+
+    try {
+      setIsPublishing(true);
+      await api.post("/replies", {
+        content: replyContent,
+        replyTo: selectedTweetId,
+      });
+
+      handleCloseTweetModal();
+      loadProfileData(true); // Recarrega os dados silenciosamente
+    } catch (error) {
+      console.error("Erro ao responder:", error);
+      alert("Não foi possível enviar a resposta.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleLikeTweet = async (
+    tweetId: string,
+    isCurrentlyLiked: boolean,
+  ) => {
+    setMyTweets((prev) =>
+      prev.map((t) => {
+        if (t.id === tweetId) {
+          return {
+            ...t,
+            likes: isCurrentlyLiked
+              ? t.likes.filter(
+                  (l: any) => l.userId !== user?.id,
+                )
+              : [
+                  ...(t.likes || []),
+                  {
+                    userId: user?.id,
+                  },
+                ],
+          };
+        }
+        return t;
+      }),
+    );
+
+    try {
+      if (isCurrentlyLiked) {
+        await api.delete("/likes", {
+          data: {
+            tweetId,
+          },
+        });
+      } else {
+        await api.post("/likes", {
+          tweetId,
+        });
+      }
+      loadProfileData(true);
+    } catch (error) {
+      console.error(error);
+      loadProfileData(true);
+    }
+  };
+
+  const handleDeleteTweet = async (tweetId: string) => {
+    if (
+      !window.confirm(
+        "Deseja realmente excluir este tweet?",
+      )
+    )
+      return;
+    try {
+      await api.delete(`/tweets/${tweetId}`);
+      setMyTweets((prev) =>
+        prev.filter((t) => t.id !== tweetId),
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao deletar");
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user?.id) return;
+    setIsSaving(true);
+
+    try {
+      // Ajuste da rota para incluir o ID do usuário
+      const response = await api.put(`/users/${user.id}`, {
+        name: tempName,
+        imageUrl: tempImageUrl,
+      });
+
+      const updatedUser = response.data.data;
+
+      // Atualiza o usuário no contexto
+      updateUser(updatedUser);
+
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      alert(
+        "Não foi possível atualizar o perfil. Verifique a conexão com a API.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  return (
+    <S.Container>
+      <S.MainContent>
+        <S.TopNav>
+          <div
+            className="back-button"
+            onClick={() => navigate("/home")}
+          >
+            <FiArrowLeft size={20} />
+          </div>
+          <div className="user-info">
+            <h2>{user?.name}</h2>
+            <span>{myTweets.length} Tweets</span>
+          </div>
+        </S.TopNav>
+
+        {loading ? (
+          <SpinnerContainer
+            style={{
+              height: "calc(100vh - 60px)",
+              width: "100%",
+              backgroundColor: "transparent",
+            }}
+          >
+            <StyledSpinner />
+          </SpinnerContainer>
+        ) : (
+          <>
+            <S.ProfileHeader>
+              <div className="banner" />
+              <div className="info">
+                <div className="avatar-row">
+                  <Avatar
+                    src={
+                      user?.imageUrl ||
+                      `https://ui-avatars.com/api/?name=${user?.name}`
+                    }
+                    style={{
+                      width: 133,
+                      height: 133,
+                      border: "4px solid white",
+                    }}
+                  />
+                  <S.EditButton
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    Editar Perfil
+                  </S.EditButton>
+
+                  {isEditModalOpen && (
+                    <S.ModalOverlay>
+                      <S.ModalContent>
+                        <header>
+                          <div className="left-content">
+                            <button
+                              type="button"
+                              className="close-button"
+                              onClick={() =>
+                                setIsEditModalOpen(false)
+                              }
+                              aria-label="Fechar"
+                              title="Fechar"
+                            >
+                              <FiX size={22} />
+                            </button>
+                            <h3>Editar Perfil</h3>
+                          </div>
+                          <button
+                            className="save-button"
+                            onClick={handleSaveProfile}
+                            disabled={isSaving}
+                          >
+                            {isSaving ? (
+                              <StyledSpinner
+                                style={{
+                                  width: 16,
+                                  height: 16,
+                                  border: "2px solid #fff",
+                                  borderTopColor:
+                                    "transparent",
+                                }}
+                              />
+                            ) : (
+                              <FiSave />
+                            )}
+                            Salvar
+                          </button>
+                        </header>
+                        <form
+                          onSubmit={(e) =>
+                            e.preventDefault()
+                          }
+                        >
+                          <S.AvatarRow>
+                            <Avatar
+                              src={
+                                tempImageUrl ||
+                                `https://ui-avatars.com/api/?name=${tempName}`
+                              }
+                              style={{
+                                width: 133,
+                                height: 133,
+                                border: "4px solid white",
+                                marginBottom: "1rem",
+                              }}
+                            />
+                          </S.AvatarRow>
+                          <S.FloatingInputGroup>
+                            <input
+                              autoFocus
+                              type="text"
+                              id="name"
+                              value={tempName}
+                              placeholder=" "
+                              onChange={(e) =>
+                                setTempName(e.target.value)
+                              }
+                            />
+                            <label htmlFor="name">
+                              Nome
+                            </label>
+                          </S.FloatingInputGroup>
+                          <S.FloatingInputGroup>
+                            <input
+                              type="text"
+                              id="imageUrl"
+                              value={tempImageUrl}
+                              placeholder=" "
+                              onChange={(e) =>
+                                setTempImageUrl(
+                                  e.target.value,
+                                )
+                              }
+                            />
+                            <label htmlFor="imageUrl">
+                              URL da Imagem
+                            </label>
+                          </S.FloatingInputGroup>
+                        </form>
+                      </S.ModalContent>
+                    </S.ModalOverlay>
+                  )}
+                </div>
+                <strong>{user?.name}</strong>
+                <span className="username">
+                  @{user?.username}
+                </span>
+              </div>
+            </S.ProfileHeader>
+
+            <S.TabsContainer>
+              <div
+                className={
+                  activeTab === "tweets" ? "active" : ""
+                }
+                onClick={() => setActiveTab("tweets")}
+              >
+                Tweets
+              </div>
+              <div
+                className={
+                  activeTab === "replies" ? "active" : ""
+                }
+                onClick={() => setActiveTab("replies")}
+              >
+                Respostas
+              </div>
+              <div
+                className={
+                  activeTab === "likes" ? "active" : ""
+                }
+                onClick={() => setActiveTab("likes")}
+              >
+                Curtidas
+              </div>
+            </S.TabsContainer>
+
+            <div>
+              {myTweets.length > 0 ? (
+                myTweets.map((tweet: any) => {
+                  const isLikedByMe = tweet.likes?.some(
+                    (l: any) =>
+                      l.userId === user?.id ||
+                      l.author?.id === user?.id,
+                  );
+                  const isMyTweet =
+                    String(
+                      tweet.author?.id || tweet.authorId,
+                    ) === String(user?.id);
+
+                  return (
+                    <TweetCard
+                      key={tweet.id}
+                      id={tweet.id}
+                      name={
+                        tweet.author?.name ||
+                        user?.name ||
+                        ""
+                      }
+                      username={
+                        tweet.author?.username ||
+                        user?.username ||
+                        ""
+                      }
+                      content={tweet.content}
+                      date={tweet.createdAt}
+                      avatarUrl={
+                        tweet.author?.imageUrl ||
+                        user?.imageUrl
+                      }
+                      likes={tweet.likes?.length || 0}
+                      comments={tweet.replies?.length || 0} // Adicionado contador de respostas
+                      isLiked={!!isLikedByMe}
+                      isAuthor={isMyTweet}
+                      onLike={() =>
+                        handleLikeTweet(
+                          tweet.id,
+                          !!isLikedByMe,
+                        )
+                      }
+                      onDelete={() =>
+                        handleDeleteTweet(tweet.id)
+                      }
+                      onReply={() =>
+                        handleOpenReplyModal(tweet.id)
+                      } // Para abrir o modal de resposta
+                    />
+                  );
+                })
+              ) : (
+                <EmptyMessage>
+                  Nenhum {tabLabels[activeTab]} para exibir.
+                </EmptyMessage>
+              )}
+            </div>
+          </>
+        )}
+      </S.MainContent>
+
+      {/* Modal de Resposta importado da Home */}
+      <TweetModal
+        isOpen={isTweetModalOpen}
+        onClose={handleCloseTweetModal}
+        onSubmit={handleReplySubmit}
+        value={replyContent}
+        onChange={setReplyContent}
+        isPublishing={isPublishing}
+        avatarUrl={
+          user?.imageUrl ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}`
+        }
+        title="Responder Tweet"
+      />
+    </S.Container>
+  );
+};
+
+
+========================================
+ARQUIVO: src/pages/Profile/style.ts
+========================================
+import styled from "styled-components";
+
+const colors = {
+  background: "#FFFFFF",
+  overlay: "rgba(0, 0, 0, 0.4)",
+  border: "rgba(0, 0, 0, 0.12)",
+  textPrimary: "#0F1419",
+  textSecondary: "#536471",
+  accent: "#1D9BF0",
+  saveBtnText: "#FFFFFF",
+};
+
+export const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
+`;
+
+export const MainContent = styled.main`
+  flex: 1;
+  border-left: 1px solid
+    ${(props) => props.theme.colors.border};
+  max-width: 600px;
+`;
+
+export const TopNav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.5rem 1rem;
+  background-color: ${(props) =>
+      props.theme.colors.backgroundColor}
+    40%;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .back-button {
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 0.5rem;
+    display: flex;
+    transition: background-color 0.2s;
+    &:hover {
+      background-color: #eff3f4;
+      color: ${(props) => props.theme.colors.primaryHover};
+    }
+  }
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    h2 {
+      font-size: 1.2rem;
+      margin: 0;
+      color: ${(props) => props.theme.colors.textColor};
+    }
+    span {
+      font-size: 0.9rem;
+      color: ${(props) =>
+        props.theme.colors.textColorSecondary};
+    }
+  }
+`;
+
+export const ProfileHeader = styled.div`
+  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  /* gap: 1rem; */
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+
+  .banner {
+    height: 200px;
+    background-color: ${(props) => props.theme.colors.primary};
+  }
+  .info {
+    padding: 0 1rem;
+    margin-top: -70px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .avatar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  strong {
+    font-size: 1.2rem;
+    margin-top: 8px;
+  }
+  span.username {
+    color: ${(props) => props.theme.colors.textColorSecondary};
+    font-size: 0.9rem;
+  }
+`;
+
+export const EditButton = styled.button`
+  background: transparent;
+  border: 1px solid ${(props) => props.theme.colors.border};
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: ${(props) => props.theme.colors.textColor};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.secondary};
+  }
+`;
+
+export const StatsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin: 12px 0;
+
+  span {
+    font-size: 0.9rem;
+    color: ${(props) =>
+      props.theme.colors.textColorSecondary};
+    strong {
+      color: ${(props) => props.theme.colors.textColor};
+    }
+  }
+`;
+
+export const TabsContainer = styled.div`
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  div {
+    flex: 1;
+    padding: 18px;
+    text-align: center;
+    font-weight: bold;
+    color: ${(props) =>
+      props.theme.colors.textColorSecondary};
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+
+    &:hover {
+      background-color: ${(props) =>
+        props.theme.colors.secondary};
+    }
+    /* Agora a borda azul depende da classe 'active' */
+    &.active {
+      color: ${(props) => props.theme.colors.primary};
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 56px;
+        height: 4px;
+        background-color: #1d9bf0;
+        border-radius: 9999px;
+      }
+    }
+  }
+`;
+
+// Modal
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: ${colors.overlay};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(
+    2px
+  ); /* Efeito opcional de desfoque sutil no fundo */
+`;
+
+export const ModalContent = styled.div`
+  background-color: ${colors.background};
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15); 
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid ${colors.border};
+
+    div.left-content {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem; /* gap reduzido para alinhar melhor */
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: ${colors.textPrimary};
+      margin: 0;
+    }
+
+    button.close-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      padding: 8px;
+      border-radius: 50%;
+      color: ${colors.textPrimary};
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: rgba(15, 20, 25, 0.1);
+      }
+    }
+
+    button.save-button {
+      background-color: ${colors.accent}; /* Botão Azul */
+      color: ${colors.saveBtnText};
+      border: none;
+      padding: 8px 20px;
+      border-radius: 9999px; /* Formato Pílula */
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 40px;
+
+      &:hover {
+        opacity: 0.9;
+      }
+      &:disabled {
+        cursor: not-allowed;
+      }
+
+      svg {
+        font-size: 1.1rem;
+      } /* Tamanho do ícone de salvar */
+    }
+  }
+
+  form {
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    span {
+      font-size: 0.8rem;
+      color: ${(props) =>
+        props.theme.colors.textColorSecondary};
+    }
+  }
+`;
+
+export const AvatarRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+`;
+export const FloatingInputGroup = styled.div`
+  position: relative;
+  border: 1px solid ${colors.border};
+  border-radius: 4px;
+  padding: 1.25rem 0.75rem 0.5rem 0.75rem; /* Espaço para o label subir */
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: ${colors.accent};
+    box-shadow: 0 0 0 1px ${colors.accent};
+  }
+
+  label {
+    position: absolute;
+    top: 1.25rem;
+    left: 0.75rem;
+    font-size: 1.1rem;
+    color: ${colors.textSecondary};
+    transition: all 0.2s ease-out;
+    pointer-events: none; /* Garante que o clique passe para o input */
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    width: 100%;
+    outline: none;
+    color: ${colors.textPrimary};
+    padding: 0;
+
+    /* Lógica para o label subir quando focado ou tiver texto */
+    &:focus + label,
+    &:not(:placeholder-shown) + label {
+      top: 0.25rem;
+      font-size: 0.8rem;
+      color: ${colors.accent};
+      font-weight: 600;
+    }
+  }
+`;
+
+
+========================================
+ARQUIVO: src/pages/Signup/index.tsx
+========================================
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { api } from "../../services/api";
+import { Button } from "../../components/Button";
+import { LoginForm as SignupForm } from "../Login/style";
+import * as S from "../Login/style";
+import logoGrowtweet from "../../assets/images/logo.png";
+
+export function Signup() {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const navigate = useNavigate();
+
+  async function handleSignup(
+    e: React.FormEvent<HTMLFormElement>,
+  ) {
+    e.preventDefault();
+    if (!name || !username || !password) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    setIsRegistering(true);
+    try {
+      await api.post("/auth/register", {
+        name,
+        username,
+        password,
+      });
+      alert("Conta criada com sucesso!");
+      navigate("/login");
+    } catch (error: any) {
+      alert(
+        error.response?.data?.message ||
+          "Falha ao cadastrar.",
+      );
+    } finally {
+      setIsRegistering(false);
+    }
+  }
+
+  return (
+    <>
+      <S.LoginContainer>
+        <S.LogoArea>
+          <img
+            src={logoGrowtweet}
+            alt="Growtweet"
+            className="big-logo"
+          />
+        </S.LogoArea>
+        <S.FormArea>
+          <SignupForm onSubmit={handleSignup}>
+            <h2>Criar conta</h2>
+            <input
+              autoFocus
+              placeholder="Nome completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isRegistering}
+            />
+            <input
+              placeholder="Usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isRegistering}
+            />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isRegistering}
+            />
+
+            <Button type="submit" loading={isRegistering}>
+              Cadastrar
+            </Button>
+
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "0.8rem",
+                marginTop: "1rem",
+              }}
+            >
+              Já tem uma conta?{" "}
+              <Link to="/login">Faça login</Link>
+            </p>
+          </SignupForm>
+        </S.FormArea>
+      </S.LoginContainer>
+    </>
+  );
+}
+
+
+========================================
+ARQUIVO: src/pages/UserProfile/index.tsx
+========================================
+import { useEffect, useState, useCallback } from "react";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { api } from "../../services/api";
+import { TweetCard } from "../../components/TweetCard";
+import * as S from "../Profile/style";
+import {
+  ButtonSpinner,
+  EmptyMessage,
+  ProfileAvatar,
+} from "./style";
+import { FiArrowLeft } from "react-icons/fi";
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
+import { useAuth } from "../../contexts/AuthContext";
+
+const tabLabels: Record<string, string> = {
+  tweets: "tweet",
+  replies: "resposta",
+  likes: "curtida",
+};
+
+export const UserProfile = () => {
+  const { id } = useParams();
+  const { user: me } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const initialUsername = location.state?.username;
+
+  const [userData, setUserData] = useState<any>(null);
+  const [userTweets, setUserTweets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("tweets");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [followingCount, setFollowingCount] = useState(0);
+
+  const loadData = useCallback(async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const userResponse = await api.get(`/users/${id}`);
+      const data =
+        userResponse.data.data || userResponse.data;
+      setUserData(data);
+
+      const following = data.followers?.some(
+        (f: any) =>
+          f.followerId === me?.id || f.id === me?.id,
+      );
+      setIsFollowing(!!following);
+      setFollowingCount(data.following?.length || 0);
+
+      const tweetsRes = await api.get(
+        `/users/${id}/tweets`,
+      );
+      const tweetsData = tweetsRes.data.data || [];
+
+      if (activeTab === "tweets") {
+        setUserTweets(tweetsData);
+      } else if (activeTab === "likes") {
+        // Para a aba de curtidas, filtrando todos os tweets que esse usuário curtiu
+        const allRes = await api.get("/tweets");
+        const liked = (allRes.data.data || []).filter(
+          (t: any) =>
+            t.likes?.some((l: any) => l.userId === id),
+        );
+        setUserTweets(liked);
+      } else {
+        const response = await api.get(
+          `/users/${id}/tweets`,
+        );
+        const replies = response.data.data?.filter(
+          (t: any) => t.type === "REPLY",
+        );
+        setUserTweets(replies || []);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id, activeTab, me?.id]);
+
+  // Lógica de Curtida (Igual à da Home)
+  const handleToggleLike = async (
+    tweetId: string,
+    isCurrentlyLiked: boolean,
+  ) => {
+    // 1. ATUALIZAÇÃO OTIMISTA (Igual a Home)
+    setUserTweets((prevTweets) => {
+      return prevTweets.map((tweet) => {
+        if (tweet.id === tweetId) {
+          return {
+            ...tweet,
+            likes: isCurrentlyLiked
+              ? tweet.likes.filter(
+                  (l: any) =>
+                    (l.author?.id || l.userId) !== me?.id,
+                )
+              : [
+                  ...(tweet.likes || []),
+                  {
+                    userId: me?.id,
+                    tweetId: tweetId,
+                  },
+                ],
+          };
+        }
+        return tweet;
+      });
+    });
+
+    try {
+      if (isCurrentlyLiked) {
+        // DELETE exige a chave 'data' para enviar o body no Axios
+        await api.delete("/likes", {
+          data: { tweetId },
+        });
+      } else {
+        // POST envia o body direto como segundo parâmetro
+        await api.post("/likes", {
+          tweetId,
+        });
+      }
+
+      // Recarrega os dados em background para sincronizar com o servidor
+      // sem mostrar o spinner de tela cheia
+      const userResponse = await api.get(`/users/${id}`);
+      const data =
+        userResponse.data.data || userResponse.data;
+      setUserData(data);
+
+      const tweetsRes = await api.get(
+        `/users/${id}/tweets`,
+      );
+      setUserTweets(tweetsRes.data.data || []);
+    } catch (error) {
+      console.error("Erro ao processar like: ", error);
+      loadData();
+      alert("Não foi possível processar o like.");
+    }
+  };
+
+  const handleFollow = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isSubmitting || !id) return;
+    try {
+      setIsSubmitting(true);
+      if (isFollowing) {
+        await api.delete("/followers", {
+          data: { userId: id },
+        });
+      } else {
+        await api.post("/followers", { userId: id });
+      }
+      setIsFollowing(!isFollowing);
+      const refresh = await api.get(`/users/${id}`);
+      setUserData(refresh.data.data || refresh.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  return (
+    <S.Container>
+      <S.MainContent>
+        <S.TopNav>
+          <div
+            className="back-button"
+            onClick={() => navigate(-1)}
+          >
+            <FiArrowLeft size={20} />
+          </div>
+          <div className="user-info">
+            <h2>
+              {userData?.name ||
+                initialUsername ||
+                "Perfil"}
+            </h2>
+            <span>{userTweets.length} Tweets</span>
+          </div>
+        </S.TopNav>
+
+        {loading ? (
+          <SpinnerContainer
+            style={{
+              background: "transparent",
+              height: "300px",
+            }}
+          >
+            <StyledSpinner />
+          </SpinnerContainer>
+        ) : (
+          <>
+            <S.ProfileHeader>
+              <div className="banner" />
+              <div className="info">
+                <div className="avatar-row">
+                  <ProfileAvatar
+                    src={
+                      userData?.imageUrl ||
+                      `https://ui-avatars.com/api/?name=${userData?.name}`
+                    }
+                  />
+
+                  {id !== me?.id && (
+                    <S.EditButton
+                      onClick={handleFollow}
+                      disabled={isSubmitting}
+                      className={
+                        isFollowing ? "following" : ""
+                      }
+                      style={{
+                        backgroundColor: isFollowing
+                          ? "#fff"
+                          : "#1d9bf0",
+                        color: isFollowing
+                          ? "#0f1419"
+                          : "#fff",
+                        minWidth: "105px",
+                        height: "36px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {isSubmitting ? (
+                        <ButtonSpinner
+                          $isFollowing={isFollowing}
+                        />
+                      ) : isFollowing ? (
+                        "Seguindo"
+                      ) : (
+                        "Seguir"
+                      )}
+                    </S.EditButton>
+                  )}
+                </div>
+
+                <strong>{userData?.name}</strong>
+                <span className="username">
+                  @{userData?.username}
+                </span>
+
+                <S.StatsContainer>
+                  <span>
+                    <strong>{followingCount}</strong>{" "}
+                    Seguindo
+                  </span>
+                  <span>
+                    <strong>
+                      {userData?.followers?.length || 0}
+                    </strong>{" "}
+                    Seguidores
+                  </span>
+                </S.StatsContainer>
+              </div>
+            </S.ProfileHeader>
+
+            <S.TabsContainer>
+              <div
+                className={
+                  activeTab === "tweets" ? "active" : ""
+                }
+                onClick={() => setActiveTab("tweets")}
+              >
+                Tweets
+              </div>
+              <div
+                className={
+                  activeTab === "replies" ? "active" : ""
+                }
+                onClick={() => setActiveTab("replies")}
+              >
+                Respostas
+              </div>
+              <div
+                className={
+                  activeTab === "likes" ? "active" : ""
+                }
+                onClick={() => setActiveTab("likes")}
+              >
+                Curtidas
+              </div>
+            </S.TabsContainer>
+
+            <div>
+              {userTweets.length > 0 ? (
+                userTweets.map((tweet: any) => {
+                  const isLikedByMe = tweet.likes?.some(
+                    (l: any) =>
+                      (l.author?.id || l.userId) === me?.id,
+                  );
+
+                  const tweetAuthor =
+                    activeTab === "likes"
+                      ? tweet.author
+                      : userData;
+
+                  return (
+                    <TweetCard
+                      key={tweet.id}
+                      id={tweet.id}
+                      name={tweetAuthor?.name || "Usuário"}
+                      username={
+                        tweetAuthor?.username || "usuario"
+                      }
+                      content={tweet.content}
+                      date={tweet.createdAt}
+                      avatarUrl={tweetAuthor?.imageUrl}
+                      likes={tweet.likes?.length || 0}
+                      isLiked={!!isLikedByMe}
+                      // Verifica se o tweet atual é uma resposta 
+                      isReply={!!tweet.parentTweetId}
+                      onLike={() =>
+                        handleToggleLike(
+                          tweet.id,
+                          !!isLikedByMe,
+                        )
+                      }
+                      isAuthor={tweet.authorId === me?.id}
+                    />
+                  );
+                })
+              ) : (
+                <EmptyMessage>
+                  Nenhum {tabLabels[activeTab]} para exibir.
+                </EmptyMessage>
+              )}
+            </div>
+          </>
+        )}
+      </S.MainContent>
+    </S.Container>
+  );
+};
+
+
+========================================
+ARQUIVO: src/pages/UserProfile/style.ts
+========================================
+
+import styled, { keyframes } from "styled-components";
+import { Avatar } from "../../components/TweetCard/style";
+
+const rotate = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+export const ButtonSpinner = styled.div<{ $isFollowing: boolean }>`
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: ${props => props.$isFollowing ? "#1d9bf0" : "#ffffff"};
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ${rotate} 0.6s linear infinite;
+`;
+
+export const EmptyMessage = styled.p`
+  padding: 20px;
+  text-align: center;
+  color: ${(props) => props.theme.colors.textColorSecondary};
+`;
+
+export const ProfileAvatar = styled(Avatar)`
+  width: 133px;
+  height: 133px;
+  border: 4px solid white;
+`;
+
+========================================
+ARQUIVO: src/services/api.ts
+========================================
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("@Growtwitter:token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+
+
+
+========================================
+ARQUIVO: src/styled.d.ts
+========================================
+import "styled-components";
+
+declare module "styled-components" {
+  export interface DefaultTheme {
+    colors: {
+      primary: string;
+      primaryHover: string;
+      secondary: string;
+      backgroundColor: string;
+      textColor: string;
+      textColorSecondary: string;
+      title: string;
+      border: string;
+      buttonText: string;
+      daymoon: string;
+    };
+  }
+}
+
+
+========================================
+ARQUIVO: src/themes/dark.ts
+========================================
+export const dark = {
+  colors: {
+    primary: "#1DA1F2",
+    primaryHover: "#1A91DA",
+    secondary: "#16181c",
+    backgroundColor: "#0B0707",
+    textColor: "#fbfcfc",
+    textColorSecondary: "#71767b",
+    title: "#fff",
+    border: "#3C3B3B",
+    buttonText: "#fff",
+    daymoon: "#ebf706",
+  },
+};
+
+
+========================================
+ARQUIVO: src/themes/index.ts
+========================================
+import { light } from "./light";
+import { dark } from "./dark";
+
+// Exportar para nomear como queira
+export default {
+  light,
+  dark,
+};
+
+========================================
+ARQUIVO: src/themes/light.ts
+========================================
+export const light = {
+  colors: {
+    primary: "#1DA1F2",
+    primaryHover: "#1A91DA",
+    secondary: "#e9e9e9",
+    backgroundColor: "#f2f2f2",
+    textColor: "#4f4f4f",
+    textColorSecondary: "#71767b",
+    title: "#333",
+    border: "#e0e0e0",
+    buttonText: "#fff",
+    daymoon: "#0a97ef",
+  },
+};
+
+
+========================================
+ARQUIVO: src/types/styled.d.ts
+========================================
+
+import { light } from "../themes/light"
+type Theme = typeof light
+
+declare module "styled-components" {
+  export interface DefaultTheme extends Theme {
+    colors: {
+      primary: string;
+      secondary: string;
+      backgroundColor: string;
+      textColor: string;
+      title: string;
+      border: string;
+      
+    };
+  }
+}

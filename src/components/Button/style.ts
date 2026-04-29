@@ -5,7 +5,6 @@ interface ButtonProps {
   $marginTop?: string;
   $active?: boolean;
   $loading?: boolean;
- 
 }
 
 // Animação de rotação para o spinner
@@ -43,8 +42,22 @@ export const StyledButton = styled.button<ButtonProps>`
   width: ${(props) => props.$width || "100%"};
   margin-top: ${(props) => props.$marginTop || "1rem"};
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .button-icon {
+    display:none
+  }
+
   @media (max-width: 768px) {
-    padding:0;
+    /* padding: 0; */
+
+    .button-icon {
+      display: block;
+      
+      /* font-size: 26px; */
+    }
   }
 
   /* Efeito de Hover */

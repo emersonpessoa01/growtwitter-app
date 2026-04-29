@@ -56,7 +56,7 @@ export const SideBar = styled.aside`
   justify-content: space-between;
 
   .logo {
-    padding: 1rem;
+    padding: .5rem;
   }
 
   .logo img {
@@ -116,6 +116,8 @@ export const MenuItem = styled.li<{ $active: boolean }>`
     justify-content: center;
     width: fit-content;
     margin: 0 auto;
+    padding: 1rem;
+    border-radius: 14px !important;
   }
  
 `;

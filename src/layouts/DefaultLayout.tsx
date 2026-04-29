@@ -9,10 +9,7 @@ import { SideBarHeader, ToggleTheme } from "./style";
 import { WhoToFollow } from "../components/WhoToFollow";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-import {
-  RiAddLine,
-  RiHome7Fill,
-} from "react-icons/ri";
+import { RiAddLine, RiHome7Fill } from "react-icons/ri";
 import {
   BsHash,
   BsPerson,
@@ -139,7 +136,7 @@ export const DefaultLayout = ({
             className="tweet-button"
           >
             <span className="button-text">Tweetar</span>
-            <RiAddLine size={28} className="button-icon" />
+            <RiAddLine className="button-icon" />
           </Button>
         </div>
 
