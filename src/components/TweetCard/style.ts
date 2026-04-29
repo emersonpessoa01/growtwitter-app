@@ -5,6 +5,7 @@ interface CardContainerProps {
 
 export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
+  flex-direction: column;
   padding: 1rem;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};

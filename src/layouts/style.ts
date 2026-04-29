@@ -2,11 +2,18 @@ import styled from "styled-components";
 
 export const SideBarHeader = styled.div`
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 2rem;
+  justify-content: center;
   gap: 1rem;
+
+  @media (max-width: 1024px) {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 
 export const BoxImage = styled.div`

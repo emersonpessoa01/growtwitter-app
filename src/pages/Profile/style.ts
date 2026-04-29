@@ -23,6 +23,11 @@ export const MainContent = styled.main`
   border-left: 1px solid
     ${(props) => props.theme.colors.border};
   max-width: 600px;
+
+  @media (max-width: 1024px) {
+    max-width: 100%;
+  }
+  
 `;
 
 export const TopNav = styled.nav`
@@ -72,7 +77,6 @@ export const ProfileHeader = styled.div`
   padding-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  /* gap: 1rem; */
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
 
@@ -183,10 +187,11 @@ export const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 10;
   backdrop-filter: blur(
     2px
-  ); /* Efeito opcional de desfoque sutil no fundo */
+  ); 
+  padding:2rem 2%;
 `;
 
 export const ModalContent = styled.div`
@@ -238,7 +243,7 @@ export const ModalContent = styled.div`
       color: ${colors.saveBtnText};
       border: none;
       padding: 8px 20px;
-      border-radius: 9999px; /* Formato Pílula */
+      border-radius: 999px; /* Formato Pílula */
       font-weight: 700;
       font-size: 0.95rem;
       cursor: pointer;

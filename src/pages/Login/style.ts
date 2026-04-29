@@ -4,7 +4,8 @@ export const LoginContainer = styled.div`
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background-color: ${(props) => props.theme.colors.backgroundColor};
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor};
   color: ${(props) => props.theme.colors.textColor};
 
   /* Responsividade: em celulares, fica uma coluna só */
@@ -35,22 +36,24 @@ export const LogoArea = styled.div`
   padding: 2rem;
 
   img.big-logo {
-    width: 100%; /* Deixe ocupar o espaço do container */
-    max-width: 300px; /* Reduzi um pouco para não estourar */
+    width: 100%; /* Ocupando o espaço do container */
+    max-width: 300px; /* Reduzido para não estourar */
     height: auto;
     object-fit: contain;
   }
 
   @media (max-width: 991px) {
     flex: none;
-    
-    
   }
-  
+
   @media (max-width: 768px) {
     padding: 1rem;
     img.big-logo {
-      width: clamp(80px, 100%, 120px); /* Logo menor no mobile, acima do form */
+      width: clamp(
+        80px,
+        100%,
+        120px
+      ); /* Logo menor no mobile, acima do form */
     }
   }
 `;
@@ -76,7 +79,7 @@ export const LoginForm = styled.form`
   flex-direction: column;
   gap: 1.5rem; /* Espaçamento maior entre campos */
   padding: 2rem;
-  
+
   /* Efeito de "card" no form */
   background: ${(props) => props.theme.colors.secondary};
   border: 1px solid ${(props) => props.theme.colors.border};
@@ -94,17 +97,20 @@ export const LoginForm = styled.form`
     width: 100%;
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid ${(props) => props.theme.colors.border};
+    border: 1px solid
+      ${(props) => props.theme.colors.border};
     background: transparent;
     color: ${(props) => props.theme.colors.textColor};
     font-size: 1rem;
-    
+
     &::placeholder {
-      color: ${(props) => props.theme.colors.textColorSecondary};
+      color: ${(props) =>
+        props.theme.colors.textColorSecondary};
     }
 
     &:focus {
-      border-color: ${(props) => props.theme.colors.primary};
+      border-color: ${(props) =>
+        props.theme.colors.primary};
       outline: none;
     }
   }
@@ -112,20 +118,21 @@ export const LoginForm = styled.form`
   p {
     text-align: center;
     font-size: 0.9rem;
-    color: ${(props) => props.theme.colors.textColorSecondary};
+    color: ${(props) =>
+      props.theme.colors.textColorSecondary};
     margin-top: 1rem;
 
     a {
       color: ${(props) => props.theme.colors.primary};
       font-weight: bold;
       text-decoration: none;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
   }
-  .daymoon{
+  .daymoon {
     color: ${(props) => props.theme.colors.daymoon};
   }
 

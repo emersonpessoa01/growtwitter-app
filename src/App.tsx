@@ -17,7 +17,7 @@ import { DefaultLayout } from "./layouts/DefaultLayout";
 export function App() {
   const [isDarkMode, setIsDarkMode] = useState(()=>{
     const savedTheme = localStorage.getItem("@Growtwitter:theme");
-    return savedTheme ? JSON.parse(savedTheme) : true;
+    return savedTheme ? JSON.parse(savedTheme) : false;
   });
 
   const toggleTheme = () => {

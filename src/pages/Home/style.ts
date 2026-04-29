@@ -4,44 +4,24 @@ export const Container = styled.div`
   display: grid;
   grid-template-columns: 275px minmax(0, 600px) 350px;
   justify-content: center;
-
   width: 100%;
   margin: 0 auto;
   max-width: 1280px;
   min-height: 100vh;
-
   background-color: ${(props) =>
     props.theme.colors.backgroundColor};
   color: ${(props) => props.theme.colors.textColor};
 
-  @media (max-width: 1280px) {
-    grid-template-columns: 240px minmax(0, 600px) 300px;
-  }
-
   @media (max-width: 1024px) {
-    grid-template-columns: 240px minmax(0, 1fr);
-
+    grid-template-columns: 88px minmax(0, 1fr);
     aside:last-child {
       display: none;
     }
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 88px minmax(0, 1fr);
-
-    aside:first-child {
-      width: 80px;
-      padding: 10px;
-
-      span {
-        display: none;
-      }
-
-      nav a {
-        justify-content: center;
-        padding: 12px;
-      }
-    }
+  @media (max-width: 500px) {
+    display: block;
+    width: 100%;
   }
 `;
 
@@ -55,117 +35,53 @@ export const SideBar = styled.aside`
   flex-direction: column;
   justify-content: space-between;
 
-  .logo {
-    padding: .5rem;
-  }
-
-  .logo img {
-    width: clamp(3rem, 100%, 8rem);
-  }
-`;
-export const NavMenu = styled.nav`
-  margin-top: 1rem;
-`;
-
-export const NavList = styled.ul`
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-export const MenuItem = styled.li<{ $active: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1.1rem;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  color: ${(props) => props.theme.colors.textColor};
-
-  font-weight: ${(props) =>
-    props.$active ? "bold" : "normal"};
-
-  svg {
-    stroke: currentColor;
-    stroke-width: ${(props) =>
-      props.$active ? "0.6px" : "0.2px"};
-    transition: all 0.2s;
-  }
-
-  &:hover {
-    color: ${(props) => props.theme.colors.buttonText};
-    font-weight: bold;
-    background-color: ${(props) =>
-      props.theme.colors.primaryHover};
-    border-radius: 9999px;
-
-    svg {
-      stroke-width: 0.8px;
-    }
-  }
-  span{
-   @media (max-width: 768px) {
-      display: none;
-    } 
-  }
-  @media (max-width: 768px) {
-    justify-content: center;
-    width: fit-content;
-    margin: 0 auto;
+  @media (max-width: 1024px) {
     padding: 1rem;
-    border-radius: 14px !important;
   }
- 
-`;
-export const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 0.5rem;
-  border-radius: 396px;
-  transition: background 0.4s;
 
-  @media (max-width: 768px) {
-    border-radius: 0;
-    justify-content: center;
-  }
-  div:last-child{
-    @media (max-width: 768px) {
-      display: none;
+  @media (max-width: 500px) {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0;
+    width: 100% !important;
+    height: 80px !important;
+    background-color: ${(props) =>
+      props.theme.colors.backgroundColor};
+    border-top: 1px solid
+      ${(props) => props.theme.colors.border};
+    z-index: 9999;
+    flex-direction: row;
+
+    .logo,
+    .UserInfo,
+    .theme-toggle {
+      display: none !important;
     }
-  }
 
-  &:hover {
-    background: ${(props) => props.theme.colors.border};
-  }
-`;
+    .tweet-button {
+      position: fixed !important;
+      bottom: 80px !important;
+      right: 20px !important;
+      width: 56px !important;
+      height: 56px !important;
+      border-radius: 50% !important;
+      z-index: 10000 !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      padding: 0 !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      pointer-events: auto !important;
 
-export const NameContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  strong {
-    display: block;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.9rem;
-  }
-
-  span {
-    color: ${(props) => props.theme.colors.textColor};
-    font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+      .button-text {
+        display: none !important;
+      }
+      .button-icon {
+        display: block !important;
+        font-size: 28px !important;
+      }
+    }
   }
 `;
 
@@ -174,111 +90,45 @@ export const MainContent = styled.main`
   max-width: 600px;
   border-inline: 1px solid
     ${(props) => props.theme.colors.border};
+  @media (max-width: 1024px) {
+    max-width: 100%;
+  }
+
+  @media (max-width: 500px) {
+    max-width: 100%;
+    border: none;
+    padding-bottom: 80px;
+  }
 `;
 
 export const PageHeader = styled.header`
   padding: 1rem;
   background-color: ${(props) =>
-    props.theme.colors
-      .backgroundColor}40; /* 40 = 25% opacidade em hex */
-  border-bottom: 1px solid
-    ${(props) => props.theme.colors.border}60;
-  position: sticky;
-  left: 0;
-  right: 0;
-  top: 0;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 20;
-
-  h3 {
-    font-size: 1.25rem;
-  }
-`;
-
-export const TabsContainer = styled.div`
-  display: flex;
+    props.theme.colors.backgroundColor}E6;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
-  position: sticky;
+  position: fixed;
   top: 0;
-  background: linear-gradient(
-    to bottom,
-    ${(props) => props.theme.colors.secondary} 0%,
-    ${(props) => props.theme.colors.secondary} 70%,
-    ${(props) => props.theme.colors.secondary} 100%
-  );
-  backdrop-filter: blur(5px);
   z-index: 10;
-`;
+  backdrop-filter: blur(12px);
+  width: 100%;
 
-export const Tab = styled.div<{ $active: boolean }>`
-  // Removido o '?' para evitar undefined
-  flex: 1;
-  text-align: center;
-  padding: 1rem 0;
-  cursor: pointer;
-  font-weight: ${(props) =>
-    props.$active ? "bold" : "500"};
-  color: ${(props) =>
-    props.$active
-      ? props.theme.colors.primary
-      : props.theme.colors.textColorSecondary};
-  position: relative;
-  transition: background-color 0.2s;
-
-  &::after {
-    content: "";
-    display: ${(props) =>
-      props.$active ? "block" : "none"};
-    position: absolute;
-    bottom: 0;
-    left: 25%; // Centraliza a linha azul
-    width: 50%;
-    height: 3px;
-    background-color: ${(props) =>
-      props.theme.colors.primary};
-    border-radius: 2px;
-  }
-
-  &:hover {
-    background-color: ${(props) =>
-      props.theme.colors.border};
+  @media (min-width: 501px) {
+    position: sticky;
   }
 `;
 
-// Novo: Seção de conteúdo do feed
+// OS COMPONENTES QUE ESTAVAM FALTANDO E CAUSANDO A TELA BRANCA:
 export const FeedSection = styled.section`
-  padding: 0 0 1rem 0;
+  width: 100%;
 
-  p {
-    padding: 10px;
-  }
-`;
-
-export const TweetWrapper = styled.div`
-  border-bottom: 1px solid
-    ${(props) => props.theme.colors.buttonText};
-
-  &:hover {
-    background-color: ${(props) =>
-      props.theme.colors.secondary};
+  @media (max-width: 500px) {
+    padding-top: 60px;
   }
 `;
 
 export const TweetContainer = styled.div`
-  margin-left: 50px;
-  /* border-left: 2px solid ${(props) =>
-    props.theme.colors.border}; */
-`;
-// Novo: Coluna de Widgets (Terceira Coluna)
-export const WidgetsAside = styled.aside`
-  width: 300px;
-  padding: 1rem;
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
+  width: 100%;
 `;
 
 export const FormContainer = styled.form`
@@ -289,13 +139,6 @@ export const FormContainer = styled.form`
     ${(props) => props.theme.colors.border};
 `;
 
-export const AvatarImg = styled.img`
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  z-index: 100;
-`;
 export const FormContent = styled.div`
   flex: 1;
   display: flex;
@@ -307,21 +150,168 @@ export const FormContent = styled.div`
     border: none;
     background: transparent;
     color: ${(props) => props.theme.colors.textColor};
-    font-size: 1rem;
+    font-size: 1.2rem;
     resize: none;
     outline: none;
-    font-family: inherit;
-
-    &::placeholder {
-      color: ${(props) => props.theme.colors.textColor};
-    }
   }
 
   .form-actions {
     display: flex;
     justify-content: flex-end;
-    padding-top: 0.5rem;
     border-top: 1px solid
       ${(props) => props.theme.colors.border};
+    padding-top: 0.5rem;
+  }
+`;
+
+export const NavList = styled.ul`
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (max-width: 500px) {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+  }
+`;
+
+export const MenuItem = styled.li<{ $active?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  color: ${(props) =>
+    props.$active
+      ? props.theme.colors.primary
+      : props.theme.colors.textColor};
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+
+  span {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  @media (max-width: 500px) {
+    /* Garante que o ícone tenha uma área de toque boa (44px é o padrão mobile) */
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Quando o botão de logout tem uma classe específica, pode-se dar um margin-left auto */
+    &.logout-button {
+      margin-left: auto;
+    }
+  }
+
+  &.mobile-only {
+    display: none;
+    @media (max-width: 500px) {
+      display: flex;
+    }
+  }
+`;
+
+export const NavMenu = styled.nav`
+  width: 100%;
+`;
+export const TweetWrapper = styled.div`
+  width: 100%;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  word-break: break-word;
+`;
+export const TabsContainer = styled.div`
+  display: flex;
+  border-bottom: 1px solid
+    ${(props) => props.theme.colors.border};
+  background-color: ${(props) =>
+    props.theme.colors.backgroundColor}F2;
+  position: sticky;
+  top: 53px;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+
+  @media (max-width: 500px) {
+    top: 53px;
+  }
+`;
+
+export const Tab = styled.div<{ $active: boolean }>`
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  font-weight: ${(props) =>
+    props.$active ? "bold" : "500"};
+  color: ${(props) =>
+    props.$active
+      ? props.theme.colors.primary
+      : props.theme.colors.textColorSecondary};
+  position: relative;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.theme.colors.border}40;
+  }
+
+  /* A barrinha azul da aba ativa */
+  &::after {
+    content: "";
+    display: ${(props) =>
+      props.$active ? "block" : "none"};
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px; /* Largura da barrinha */
+    height: 4px;
+    background-color: ${(props) =>
+      props.theme.colors.primary};
+    border-radius: 9999px;
+  }
+`;
+export const WidgetsAside = styled.aside`
+  width: 300px;
+  padding: 1rem;
+`;
+export const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    .button-logout {
+      display: block;
+      color: ${(props) => props.theme.colors.primary};
+    }
+  }
+  @media (max-width: 500px) {
+    justify-content: center;
+    img {
+      display: none;
+    }
+  }
+`;
+export const NameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1024px) {
+    display: none;
   }
 `;

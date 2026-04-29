@@ -47,16 +47,26 @@ export const StyledButton = styled.button<ButtonProps>`
   justify-content: center;
 
   .button-icon {
-    display:none
+    display: none;
+  }
+  @media (max-width: 1024px) {
+    padding:.5rem 1rem;
+    border-radius: 8px;
+    span {
+      display: none;
+    }
+    .button-icon {
+      display: block;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 
   @media (max-width: 768px) {
-    /* padding: 0; */
 
     .button-icon {
       display: block;
-      
-      /* font-size: 26px; */
+
     }
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import * as S from "./style";
-import * as HomeS from "../../pages/Home/style"; // Reaproveitado os estilos do form
+import * as HomeS from "../../pages/Home/style";
 import { Avatar } from "../TweetCard/style";
 import { Button } from "../Button";
 import { useAuth } from "../../contexts/AuthContext";
@@ -28,9 +28,9 @@ export const TweetModal: React.FC<TweetModalProps> = ({
   title = "Tweet",
   buttonText = "Tweetar",
 }) => {
-  if (!isOpen) return null;
-
   const { user } = useAuth();
+
+  if (!isOpen) return null;
 
   return (
     <S.Overlay onClick={onClose}>
@@ -42,7 +42,6 @@ export const TweetModal: React.FC<TweetModalProps> = ({
           <h2>{title}</h2>
         </S.ModalHeader>
 
-        {/* Aqui foi usado os mesmos estilos que já tinha na Home */}
         <HomeS.FormContainer onSubmit={onSubmit}>
           <Avatar
             src={
@@ -52,7 +51,6 @@ export const TweetModal: React.FC<TweetModalProps> = ({
                 : "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png")
             }
             alt={user?.name}
-            style={{ flexShrink: 0 }}
           />
           <HomeS.FormContent>
             <textarea
@@ -68,9 +66,8 @@ export const TweetModal: React.FC<TweetModalProps> = ({
                 $width="100px"
                 $marginTop="0"
                 disabled={!value.trim() || isPublishing}
-                loading={isPublishing}
               >
-                {buttonText}
+                {isPublishing ? "Enviando..." : buttonText}
               </Button>
             </div>
           </HomeS.FormContent>

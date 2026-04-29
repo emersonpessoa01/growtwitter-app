@@ -17,6 +17,10 @@ export const Overlay = styled.div`
   align-items: flex-start;
   padding-top: 50px;
   z-index: 30;
+
+  @media (max-width: 500px) {
+    padding: 2rem 2%;
+  }
 `;
 
 export const ModalBox = styled.div`

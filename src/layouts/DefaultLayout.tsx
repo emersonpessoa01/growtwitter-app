@@ -5,11 +5,17 @@ import {
 } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as S from "../pages/Home/style";
-import { SideBarHeader, ToggleTheme } from "./style";
+import {
+  SideBarHeader,
+  ToggleTheme,
+  BoxImage,
+} from "./style";
 import { WhoToFollow } from "../components/WhoToFollow";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-import { RiAddLine, RiHome7Fill } from "react-icons/ri";
+import {
+  RiHome7Fill,
+} from "react-icons/ri";
 import {
   BsHash,
   BsPerson,
@@ -22,7 +28,7 @@ import { TweetModal } from "../components/TweetModal";
 
 import logo from "../assets/images/logo.png";
 import circle from "../assets/images/favicon_bold.png";
-import { BoxImage } from "./style";
+import { LogOut, Plus } from "lucide-react";
 
 interface DefaultLayoutProps {
   toggleTheme: () => void;
@@ -40,6 +46,9 @@ export const DefaultLayout = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTweet, setNewTweet] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(
+    window.innerWidth <= 800,
+  );
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
@@ -47,10 +56,6 @@ export const DefaultLayout = ({
     setNewTweet("");
   };
 
-  const [isSmallScreen, setIsSmallScreen] = useState(
-    window.innerWidth <= 768,
-  );
-  /* Para redimensionamento do sidebar */
   useEffect(() => {
     const handleResize = () =>
       setIsSmallScreen(window.innerWidth <= 800);
@@ -62,12 +67,9 @@ export const DefaultLayout = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTweet.trim()) return;
-
     try {
       setIsPublishing(true);
-      await api.post("/tweets", {
-        content: newTweet,
-      });
+      await api.post("/tweets", { content: newTweet });
       handleCloseModal();
       window.location.reload();
     } catch (error) {
@@ -81,25 +83,21 @@ export const DefaultLayout = ({
     <S.Container>
       <S.SideBar>
         <div>
-          <SideBarHeader onClick={() => navigate("/home")}>
+          <SideBarHeader onClick={() => navigate("/")}>
             <BoxImage className="logo">
-              {/* Aumentado para 130px para ficar proporcional aos ícones */}
               <img
                 src={isSmallScreen ? circle : logo}
                 alt="growtweet"
-                className="logo-img"
               />
             </BoxImage>
-
-            {/* Toggle de tema estilizado */}
-            <ToggleTheme onClick={toggleTheme}>
+            <ToggleTheme
+              onClick={toggleTheme}
+              className="theme-toggle"
+            >
               {isDarkMode ? (
-                <BsSun size={24} className="daymoon" />
+                <BsSun size={24} />
               ) : (
-                <BsMoonStars
-                  size={24}
-                  className="daymoon"
-                />
+                <BsMoonStars size={24} />
               )}
             </ToggleTheme>
           </SideBarHeader>
@@ -110,21 +108,22 @@ export const DefaultLayout = ({
                 $active={location.pathname === "/"}
                 onClick={() => navigate("/")}
               >
-                <RiHome7Fill size={24} />{" "}
+                <RiHome7Fill size={26} />{" "}
                 <span>Página Inicial</span>
               </S.MenuItem>
+
               <S.MenuItem
                 $active={location.pathname === "/explorer"}
                 onClick={() => navigate("/explorer")}
               >
-                <BsHash size={24} />
-                <span>Explorar</span>
+                <BsHash size={26} /> <span>Explorar</span>
               </S.MenuItem>
+
               <S.MenuItem
                 $active={location.pathname === "/profile"}
                 onClick={() => navigate("/profile")}
               >
-                <BsPerson size={24} /> <span>Perfil</span>
+                <BsPerson size={26} /> <span>Perfil</span>
               </S.MenuItem>
             </S.NavList>
           </S.NavMenu>
@@ -136,18 +135,15 @@ export const DefaultLayout = ({
             className="tweet-button"
           >
             <span className="button-text">Tweetar</span>
-            <RiAddLine className="button-icon" />
+            <Plus className="button-icon" />
           </Button>
         </div>
 
-        <S.UserInfo
-          onClick={signOut}
-          style={{ cursor: "pointer" }}
-        >
+        <S.UserInfo onClick={signOut}>
           <Avatar
             src={
               user?.imageUrl ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "U")}&background=random`
+              `https://ui-avatars.com/api/?name=${user?.name}`
             }
             alt={user?.name}
           />
@@ -155,6 +151,7 @@ export const DefaultLayout = ({
             <strong>{user?.name}</strong>
             <span>@{user?.username}</span>
           </S.NameContainer>
+          <LogOut size={28} className="button-logout" />
         </S.UserInfo>
       </S.SideBar>
 

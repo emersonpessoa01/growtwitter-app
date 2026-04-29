@@ -7,6 +7,10 @@ export const ExplorerContainer = styled.div`
   
   min-height: 100vh;
   border: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 1024px) {
+    max-width: 100%;
+  }
 `;
 
 export const PageTitle = styled.h2`
@@ -31,6 +35,7 @@ export const PageTitle = styled.h2`
 
 export const UserRow = styled.div`
   display: flex;
+  flex-direction: column;
   padding: 12px 16px;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
