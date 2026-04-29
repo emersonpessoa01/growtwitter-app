@@ -9,6 +9,8 @@ export const Container = styled.aside`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: fixed;
+  max-width: 268px;
 
   
 
