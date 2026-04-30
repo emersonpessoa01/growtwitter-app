@@ -5,13 +5,14 @@ interface CardContainerProps {
 
 export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   padding: 1rem;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
   gap: ${(props) => (props.$isReply ? "16px" : "1.5rem")};
   transition: background 0.2s;
   cursor: pointer;
+  
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.03);
@@ -32,6 +33,8 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  
+  
 `;
 
 export const TweetHeader = styled.div`
@@ -39,6 +42,7 @@ export const TweetHeader = styled.div`
   align-items: flex-start; /* Alinha os itens pelo topo */
   gap: 0.5rem;
   width: 100%;
+  
 
   strong {
     white-space: nowrap; /* Impede o nome de quebrar e empurrar tudo */
@@ -56,6 +60,7 @@ export const NameContainer = styled.div`
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  
 `;
 
 export const DeleteIcon = styled.div`
@@ -82,6 +87,7 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   line-height: 1.3;
   color: ${(props) => props.theme.colors.title};
   word-break: break-word;
+  
 
   /* Lógica condicional: Estiliza apenas se for um comentário */
   ${(props) =>
@@ -99,6 +105,7 @@ export const Actions = styled.div`
   justify-content: space-between;
   margin-top: 0.75rem;
   gap: 4rem; /* Espaçamento entre comentário e curtida */
+  
 `;
 
 export const ActionItem = styled.div<{
@@ -115,6 +122,7 @@ export const ActionItem = styled.div<{
       : "#71767b"};
   cursor: pointer;
   transition: color 0.2s;
+  
 
   svg {
     font-size: 1.2rem;

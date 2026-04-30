@@ -79,6 +79,7 @@ export const ProfileHeader = styled.div`
   flex-direction: column;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
+    
 
   .banner {
     height: 200px;
