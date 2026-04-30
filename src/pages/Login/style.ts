@@ -81,7 +81,7 @@ export const LoginForm = styled.form`
   padding: 2rem;
 
   /* Efeito de "card" no form */
-  background: ${(props) => props.theme.colors.secondary};
+  background: ${(props) => props.theme.colors.backgroundColor};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 16px;
 
@@ -99,7 +99,7 @@ export const LoginForm = styled.form`
     border-radius: 8px;
     border: 1px solid
       ${(props) => props.theme.colors.border};
-    background: transparent;
+    background: #e9e9e929;
     color: ${(props) => props.theme.colors.textColor};
     font-size: 1rem;
 
