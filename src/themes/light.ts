@@ -3,7 +3,7 @@ export const light = {
     primary: "#1DA1F2",
     primaryHover: "#1A91DA",
     secondary: "#e9e9e9",
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#fff",
     textColor: "#4f4f4f",
     textColorSecondary: "#71767b",
     title: "#333",

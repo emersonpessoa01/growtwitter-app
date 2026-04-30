@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { CardContainer } from "../../components/TweetCard/style";
 
 export const Container = styled.div`
   display: grid;
@@ -129,6 +130,8 @@ export const FeedSection = styled.section`
 
 export const TweetContainer = styled.div`
   width: 100%;
+  margin-left: 48px;
+  /* padding-bottom: 8px; */
 `;
 
 export const FormContainer = styled.form`
@@ -176,7 +179,7 @@ export const NavList = styled.ul`
     justify-content: space-between !important;
     align-items: center;
     width: 100%;
-    padding: 0 20px;
+    /* padding: 0 20px; */
   }
 `;
 
@@ -235,12 +238,20 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
 export const NavMenu = styled.nav`
   width: 100%;
 `;
+
 export const TweetWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
   word-break: break-word;
+
+  ${CardContainer} {
+    border-bottom: none;
+  }
 `;
+
 export const TabsContainer = styled.div`
   display: flex;
   border-bottom: 1px solid
@@ -306,13 +317,16 @@ export const UserInfo = styled.div`
     flex-direction: column;
     .button-logout {
       display: block;
-      color: ${(props) => props.theme.colors.primary};
+      color: ${(props) => props.theme.colors.textColor};
     }
   }
   @media (max-width: 500px) {
     justify-content: center;
     img {
       display: none;
+    }
+    .button-logout {
+      color: #f91880;
     }
   }
 `;

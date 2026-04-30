@@ -5,10 +5,10 @@ interface CardContainerProps {
 
 export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  max-width:100%;
   padding: 1rem;
-  border-bottom: 1px solid
-    ${(props) => props.theme.colors.border};
+  border-bottom: ${(props) => (props.$isReply ? "none" : `1px solid ${props.theme.colors.border}`)};
   gap: ${(props) => (props.$isReply ? "16px" : "1.5rem")};
   transition: background 0.2s;
   cursor: pointer;
@@ -39,8 +39,10 @@ export const ContentWrapper = styled.div`
 
 export const TweetHeader = styled.div`
   display: flex;
+  flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */ 
   align-items: flex-start; /* Alinha os itens pelo topo */
   gap: 0.5rem;
+  max-width: 100%;
   width: 100%;
   
 
@@ -58,6 +60,7 @@ export const TweetHeader = styled.div`
 `;
 export const NameContainer = styled.div`
   display: flex;
+  flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */
   gap: 0.5rem;
   align-items: center;
   
@@ -93,10 +96,10 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   ${(props) =>
     props.$isReply &&
     `
-    background: ${props.theme.colors.border};
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    background: ${props.theme.colors.border}40; /* 40 adiciona transparência */
+    padding: 8px 12px;
+    border-radius: 16px; /* Bordas mais arredondadas como no print */
+    margin-top: 4px;
   `}
 `;
 

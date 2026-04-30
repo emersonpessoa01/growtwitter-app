@@ -141,6 +141,7 @@ export const StatsContainer = styled.div`
 
 export const TabsContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
   div {
