@@ -60,11 +60,7 @@ export function Login({
         <S.LoginForm onSubmit={handleLogin}>
           {/* Botão de Tema no topo do form */}
           <div
-            style={{
-              alignSelf: "flex-end",
-              cursor: "pointer",
-              marginBottom: "-1rem",
-            }}
+            className="theme-toggle"
             onClick={toggleTheme}
           >
             {isDarkMode ? (
@@ -77,6 +73,8 @@ export function Login({
           <h2>Entrar no Growtwitter</h2>
 
           <input
+            type="text"
+            name="user"
             autoFocus
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -85,6 +83,7 @@ export function Login({
           />
           <input
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Senha"
