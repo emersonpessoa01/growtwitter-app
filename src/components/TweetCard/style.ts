@@ -6,13 +6,15 @@ interface CardContainerProps {
 export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
   flex-direction: row;
-  max-width:100%;
+  max-width: 100%;
   padding: 1rem;
-  border-bottom: ${(props) => (props.$isReply ? "none" : `1px solid ${props.theme.colors.border}`)};
+  border-bottom: ${(props) =>
+    props.$isReply
+      ? "none"
+      : `1px solid ${props.theme.colors.border}`};
   gap: ${(props) => (props.$isReply ? "16px" : "1.5rem")};
   transition: background 0.2s;
   cursor: pointer;
-  
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.03);
@@ -26,6 +28,14 @@ export const Avatar = styled.img<CardContainerProps>`
   border: 3px solid ${(props) => props.theme.colors.primary};
   background-color: transparent;
   object-fit: cover;
+
+  padding: 1px;
+
+  /* Força a suavização da borda */
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.5);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 `;
 
 export const ContentWrapper = styled.div`
@@ -33,25 +43,22 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  
-  
 `;
 
 export const TweetHeader = styled.div`
   display: flex;
-  flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */ 
+  flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */
   align-items: flex-start; /* Alinha os itens pelo topo */
   gap: 0.5rem;
   max-width: 100%;
   width: 100%;
-  
 
   strong {
     white-space: nowrap; /* Impede o nome de quebrar e empurrar tudo */
   }
 
   span {
-    font-size:14px;
+    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -63,7 +70,6 @@ export const NameContainer = styled.div`
   flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */
   gap: 0.5rem;
   align-items: center;
-  
 `;
 
 export const DeleteIcon = styled.div`
@@ -92,7 +98,6 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
-  
 
   /* Lógica condicional: Estiliza apenas se for um comentário */
   ${(props) =>
@@ -110,7 +115,6 @@ export const Actions = styled.div`
   justify-content: space-between;
   margin-top: 0.75rem;
   gap: 4rem; /* Espaçamento entre comentário e curtida */
-  
 `;
 
 export const ActionItem = styled.div<{
@@ -127,7 +131,6 @@ export const ActionItem = styled.div<{
       : "#71767b"};
   cursor: pointer;
   transition: color 0.2s;
-  
 
   svg {
     font-size: 1.2rem;
