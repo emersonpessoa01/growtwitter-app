@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { Button } from "../../components/Button";
-import { LoginForm as SignupForm } from "../Login/login-styles";
-import * as S from "../Login/login-styles";
+import { LoginForm as SignupForm } from "../Login/style";
+import * as S from "../Login/style";
 import logoGrowtweet from "../../assets/images/logo.png";
 
 export function Signup() {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../../components/Button";
-import * as S from "./login-styles"; // Importando tudo como 'S'
+import * as S from "./style"; // Importando tudo como 'S'
 import { BsSun, BsMoonStars } from "react-icons/bs";
 
 // Importando a logo do Growtwitter
