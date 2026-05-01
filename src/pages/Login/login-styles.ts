@@ -2,6 +2,9 @@ import styled from "styled-components";
 
 export const LoginContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   width: 100%;
   background-color: ${(props) =>
@@ -12,9 +15,6 @@ export const LoginContainer = styled.div`
   @media (max-width: 1024px) {
     grid-template-columns: 240px minmax(0, 1fr);
 
-    aside:last-child {
-      display: none;
-    }
 
     .logo img {
       width: 80px;

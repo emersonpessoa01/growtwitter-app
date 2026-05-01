@@ -96,9 +96,9 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   ${(props) =>
     props.$isReply &&
     `
-    background: ${props.theme.colors.border}40; /* 40 adiciona transparência */
+    background: ${props.theme.colors.border}40;
     padding: 8px 12px;
-    border-radius: 16px; /* Bordas mais arredondadas como no print */
+    border-radius: 16px;
     margin-top: 4px;
   `}
 `;
