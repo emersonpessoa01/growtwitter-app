@@ -7,7 +7,7 @@ export const light = {
     textColor: "#4f4f4f",
     textColorSecondary: "#71767b",
     title: "#333",
-    border: "#e0e0e0",
+    border: "#fafafa",
     buttonText: "#fff",
     daymoon: "#0a97ef",
   },

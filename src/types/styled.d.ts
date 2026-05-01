@@ -11,7 +11,8 @@ declare module "styled-components" {
       textColor: string;
       title: string;
       border: string;
-      
+      buttonText: string;
+      daymoon: string;
     };
   }
 }

@@ -98,8 +98,8 @@ export const LoginForm = styled.form`
     padding: 1rem;
     border-radius: 8px;
     border: 1px solid
-      ${(props) => props.theme.colors.border};
-    background: #e9e9e929;
+      ${(props) => props.theme.colors.secondary};
+    background: ${(props)=> props.theme.colors.border};
     color: ${(props) => props.theme.colors.textColor};
     font-size: 1rem;
 
