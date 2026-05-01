@@ -81,9 +81,16 @@ export const LoginForm = styled.form`
   padding: 2rem;
 
   /* Efeito de "card" no form */
-  background: ${(props) => props.theme.colors.backgroundColor};
+  background: ${(props) =>
+    props.theme.colors.backgroundColor};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 16px;
+
+  div.theme-toggle {
+    align-self: flex-end;
+    cursor: pointer;
+    margin-bottom: -1rem;
+  }
 
   h2 {
     font-size: 1.5rem;
@@ -99,8 +106,8 @@ export const LoginForm = styled.form`
     border-radius: 8px;
     border: 1px solid
       ${(props) => props.theme.colors.secondary};
-    background: ${(props)=> props.theme.colors.border};
-    color: ${(props) => props.theme.colors.textColor};
+    background: ${(props) => props.theme.colors.border};
+    color: ${(props) => props.theme.colors.title};
     font-size: 1rem;
 
     &::placeholder {
