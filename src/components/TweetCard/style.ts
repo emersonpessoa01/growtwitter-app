@@ -89,7 +89,9 @@ export const TweetText = styled.p<{ $isReply?: boolean }>`
   font-size: 0.95rem;
   line-height: 1.3;
   color: ${(props) => props.theme.colors.title};
+  white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: break-word;
   
 
   /* Lógica condicional: Estiliza apenas se for um comentário */
