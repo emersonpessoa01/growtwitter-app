@@ -50,7 +50,7 @@ export const StyledButton = styled.button<ButtonProps>`
     display: none;
   }
   @media (max-width: 1024px) {
-    padding:.5rem 1rem;
+    padding:1rem;
     border-radius: 8px;
     span {
       display: none;

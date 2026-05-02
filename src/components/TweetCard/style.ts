@@ -71,6 +71,12 @@ export const NameContainer = styled.div`
   flex-wrap: wrap; /* Permite que os itens sejam exibidos em uma linha */
   gap: 0.5rem;
   align-items: center;
+
+  .dot {
+      color: ${(props) => props.theme.colors.primary};
+      font-size: 30px;
+      margin-top: 0;
+    }
 `;
 
 export const DeleteIcon = styled.div`

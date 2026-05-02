@@ -206,6 +206,7 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
 
   @media (max-width: 1024px) {
     flex-direction: column;
+    border-radius: 8px;
   }
 
   span {

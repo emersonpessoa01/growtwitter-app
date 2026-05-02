@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import styled from "styled-components";
 
 export const ExplorerContainer = styled.div`
@@ -63,6 +64,7 @@ export const UserDetails = styled.div`
 
   .header div {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
 
@@ -103,12 +105,7 @@ export const UserDetails = styled.div`
       margin-bottom: 4px;
       font-weight: bold;
     }
-    span{
-      color: ${(props) => props.theme.colors.primary};
-      font-family: monospace;
-      font-weight: bold;
-      padding: 0 4px;
-    }
+    
   }
 
   .stats {

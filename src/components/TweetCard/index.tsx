@@ -8,6 +8,7 @@ import { FaRegComment } from "react-icons/fa";
 import * as S from "./style";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { formatCodeText } from "../../utils/formatters";
 
 interface TweetCardProps {
   id: string;
@@ -78,7 +79,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
         </S.TweetHeader>
 
         <S.TweetText $isReply={isReply}>
-          {content}
+          {formatCodeText(content)}
         </S.TweetText>
 
         {/* As ações só aparecem no tweet principal */}
