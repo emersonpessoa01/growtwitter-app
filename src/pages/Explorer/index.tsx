@@ -198,7 +198,7 @@ export const Explorer = () => {
               <div className="stats">
                 <span>
                   <strong>{user.followersCount}</strong>{" "}
-                  seguidores
+                  {user.followersCount <= 1 ? "seguidor" : "seguidores"}
                 </span>
               </div>
             </UserDetails>
