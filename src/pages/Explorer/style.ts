@@ -4,7 +4,7 @@ export const ExplorerContainer = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  
+
   min-height: 100vh;
   border: 1px solid ${(props) => props.theme.colors.border};
 
@@ -61,10 +61,10 @@ export const Avatar = styled.img`
 export const UserDetails = styled.div`
   flex: 1;
 
-  .header {
+  .header div {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
 
     strong {
       font-size: 15px;
@@ -74,7 +74,12 @@ export const UserDetails = styled.div`
     span {
       color: ${(props) => props.theme.colors.textColor};
       font-size: 15px;
-      margin-left: 4px;
+      /* margin-left: 4px; */
+    }
+    .dot {
+      color: ${(props) => props.theme.colors.primary};
+      font-size: 30px;
+      margin-top: -20px;
     }
   }
 
@@ -87,6 +92,10 @@ export const UserDetails = styled.div`
     font-size: 14px;
     color: ${(props) => props.theme.colors.textColor};
     line-height: 1.4;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
 
     small {
       display: block;

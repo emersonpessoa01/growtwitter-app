@@ -133,6 +133,8 @@ export const Home = () => {
     }
   };
 
+  
+
   return (
     <>
       <S.PageHeader>
@@ -227,7 +229,7 @@ export const Home = () => {
                             <TweetCard
                               key={reply.id}
                               id={reply.id}
-                              isReply // Propriedade para estilo de comentário se existir no componente
+                              isReply 
                               name={reply.author?.name}
                               username={
                                 reply.author?.username
@@ -251,6 +253,7 @@ export const Home = () => {
                                   !!isReplyLiked,
                                 )
                               }
+                              onEdit={()=> handleOpenEdit(reply.id, reply.content)}
                               onDelete={() =>
                                 handleDeleteTweet(reply.id)
                               }

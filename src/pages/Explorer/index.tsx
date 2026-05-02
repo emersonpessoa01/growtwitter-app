@@ -14,6 +14,9 @@ import {
   StyledSpinner,
 } from "../../components/Spinner/style";
 
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 export const Explorer = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,6 +121,18 @@ export const Explorer = () => {
                 <div>
                   <strong>{user.name}</strong>
                   <span>@{user.username}</span>
+                  <span className="dot">.</span>
+                  <span className="date">
+                    {user.createdAt
+                      ? format(
+                          new Date(user.createdAt),
+                          "d 'de' MMM., HH:mm",
+                          {
+                            locale: ptBR,
+                          },
+                        )
+                      : ""}
+                  </span>
                 </div>
               </div>
 

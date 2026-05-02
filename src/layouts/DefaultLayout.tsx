@@ -84,7 +84,7 @@ export const DefaultLayout = ({
       <S.SideBar>
         <div>
           <SideBarHeader onClick={() => navigate("/")}>
-            <BoxImage className="logo">
+            <BoxImage className="logo" onClick={() => navigate("/")}>
               <img
                 src={isSmallScreen ? circle : logo}
                 alt="growtweet"
