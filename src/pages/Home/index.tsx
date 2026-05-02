@@ -4,7 +4,10 @@ import { useAuth } from "../../contexts/AuthContext";
 import { TweetCard } from "../../components/TweetCard";
 import * as S from "./style";
 import { TweetModal } from "../../components/TweetModal";
-import { SpinnerContainer, StyledSpinner } from "../../components/Spinner/style";
+import {
+  SpinnerContainer,
+  StyledSpinner,
+} from "../../components/Spinner/style";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
@@ -12,30 +15,50 @@ export const Home = () => {
   const navigate = useNavigate();
   const [tweets, setTweets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"forYou" | "following">("forYou");
-  
-  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
-  const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "forYou" | "following"
+  >("forYou");
+
+  const [isReplyModalOpen, setIsReplyModalOpen] =
+    useState(false);
+  const [selectedTweetId, setSelectedTweetId] = useState<
+    string | null
+  >(null);
   const [replyContent, setReplyContent] = useState("");
-  const [isPublishingReply, setIsPublishingReply] = useState(false);
+  const [isPublishingReply, setIsPublishingReply] =
+    useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] =
+    useState(false);
+  const [editContent, setEditContent] = useState("");
+  const [isPublishingEdit, setIsPublishingEdit] =
+    useState(false);
 
-  const loadTweets = useCallback(async (silent = false) => {
-    if (!user?.id) return;
-    try {
-      if (!silent) setLoading(true);
-      const url = activeTab === "following" ? "/feed" : "/tweets";
-      const response = await api.get(url);
-      setTweets(response.data.data || []);
-    } catch (error) {
-      console.error("Erro ao carregar tweets:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab, user?.id]);
+  const loadTweets = useCallback(
+    async (silent = false) => {
+      if (!user?.id) return;
+      try {
+        if (!silent) setLoading(true);
+        const url =
+          activeTab === "following" ? "/feed" : "/tweets";
+        const response = await api.get(url);
+        setTweets(response.data.data || []);
+      } catch (error) {
+        console.error("Erro ao carregar tweets:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeTab, user?.id],
+  );
 
-  useEffect(() => { loadTweets(); }, [loadTweets]);
+  useEffect(() => {
+    loadTweets();
+  }, [loadTweets]);
 
-  const handleLikeTweet = async (tweetId: string, isCurrentlyLiked: boolean) => {
+  const handleLikeTweet = async (
+    tweetId: string,
+    isCurrentlyLiked: boolean,
+  ) => {
     try {
       if (isCurrentlyLiked) {
         await api.delete("/likes", { data: { tweetId } });
@@ -49,7 +72,8 @@ export const Home = () => {
   };
 
   const handleDeleteTweet = async (tweetId: string) => {
-    if (!window.confirm("Deseja excluir este tweet?")) return;
+    if (!window.confirm("Deseja excluir este tweet?"))
+      return;
     try {
       await api.delete(`/tweets/${tweetId}`);
       loadTweets(true);
@@ -69,7 +93,10 @@ export const Home = () => {
 
     try {
       setIsPublishingReply(true);
-      await api.post("/replies", { content: replyContent, replyTo: selectedTweetId });
+      await api.post("/replies", {
+        content: replyContent,
+        replyTo: selectedTweetId,
+      });
       setReplyContent("");
       setIsReplyModalOpen(false);
       loadTweets(true); // Recarrega para mostrar o comentário novo
@@ -80,23 +107,72 @@ export const Home = () => {
     }
   };
 
+  const handleOpenEdit = (id: string, content: string) => {
+    setSelectedTweetId(id);
+    setEditContent(content); // Preenche o modal c/ o texto atual
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editContent.trim() || !selectedTweetId) return;
+
+    try {
+      setIsPublishingEdit(true);
+      // A requisição PUT que funcionou no Postman
+      await api.put(`/tweets/${selectedTweetId}`, {
+        content: editContent,
+      });
+
+      setIsEditModalOpen(false);
+      loadTweets(true); // Atualiza o feed
+    } catch (error) {
+      alert("Erro ao editar tweet");
+    } finally {
+      setIsPublishingEdit(false);
+    }
+  };
+
   return (
     <>
-      <S.PageHeader><h3>Página Inicial</h3></S.PageHeader>
+      <S.PageHeader>
+        <h3>Página Inicial</h3>
+      </S.PageHeader>
       <S.TabsContainer>
-        <S.Tab $active={activeTab === "forYou"} onClick={() => setActiveTab("forYou")}>Para você</S.Tab>
-        <S.Tab $active={activeTab === "following"} onClick={() => setActiveTab("following")}>Seguindo</S.Tab>
+        <S.Tab
+          $active={activeTab === "forYou"}
+          onClick={() => setActiveTab("forYou")}
+        >
+          Para você
+        </S.Tab>
+        <S.Tab
+          $active={activeTab === "following"}
+          onClick={() => setActiveTab("following")}
+        >
+          Seguindo
+        </S.Tab>
       </S.TabsContainer>
 
       <S.FeedSection>
         {loading ? (
-          <SpinnerContainer style={{ height: "300px", background: "transparent" }}><StyledSpinner /></SpinnerContainer>
+          <SpinnerContainer
+            style={{
+              height: "300px",
+              background: "transparent",
+            }}
+          >
+            <StyledSpinner />
+          </SpinnerContainer>
         ) : (
           tweets
-            .filter(t => !t.replyTo) // Mostra apenas tweets principais no feed
+            .filter((t) => !t.replyTo) // Mostra apenas tweets principais no feed
             .map((tweet) => {
-              const isLiked = tweet.likes?.some((l: any) => (l.userId === user?.id || l.author?.id === user?.id));
-              
+              const isLiked = tweet.likes?.some(
+                (l: any) =>
+                  l.userId === user?.id ||
+                  l.author?.id === user?.id,
+              );
+
               return (
                 <S.TweetWrapper key={tweet.id}>
                   {/* Tweet Principal */}
@@ -110,39 +186,82 @@ export const Home = () => {
                     likes={tweet.likes?.length || 0}
                     comments={tweet.replies?.length || 0}
                     isLiked={!!isLiked}
-                    isAuthor={String(tweet.author?.id) === String(user?.id)}
-                    onLike={() => handleLikeTweet(tweet.id, !!isLiked)}
-                    onDelete={() => handleDeleteTweet(tweet.id)}
-                    onReply={() => handleOpenReply(tweet.id)}
-                    onProfileClick={() => navigate(`/profile/${tweet.author.id}`)}
+                    isAuthor={
+                      String(tweet.author?.id) ===
+                      String(user?.id)
+                    }
+                    onLike={() =>
+                      handleLikeTweet(tweet.id, !!isLiked)
+                    }
+                    onDelete={() =>
+                      handleDeleteTweet(tweet.id)
+                    }
+                    onReply={() =>
+                      handleOpenReply(tweet.id)
+                    }
+                    onEdit={() =>
+                      handleOpenEdit(
+                        tweet.id,
+                        tweet.content,
+                      )
+                    }
+                    onProfileClick={() =>
+                      navigate(
+                        `/profile/${tweet.author.id}`,
+                      )
+                    }
                   />
 
                   {/* Renderização das Respostas (Comentários) logo abaixo */}
-                  {tweet.replies && tweet.replies.length > 0 && (
-                    <S.TweetContainer>
-                      {tweet.replies.map((reply: any) => {
-                        const isReplyLiked = reply.likes?.some((l: any) => (l.userId === user?.id || l.author?.id === user?.id));
-                        return (
-                          <TweetCard
-                            key={reply.id}
-                            id={reply.id}
-                            isReply // Propriedade para estilo de comentário se existir no componente
-                            name={reply.author?.name}
-                            username={reply.author?.username}
-                            content={reply.content}
-                            avatarUrl={reply.author?.imageUrl}
-                            date={reply.createdAt}
-                            likes={reply.likes?.length || 0}
-                            isLiked={!!isReplyLiked}
-                            isAuthor={String(reply.author?.id) === String(user?.id)}
-                            onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
-                            onDelete={() => handleDeleteTweet(reply.id)}
-                            onReply={() => handleOpenReply(tweet.id)} // Responde ao principal
-                          />
-                        );
-                      })}
-                    </S.TweetContainer>
-                  )}
+                  {tweet.replies &&
+                    tweet.replies.length > 0 && (
+                      <S.TweetContainer>
+                        {tweet.replies.map((reply: any) => {
+                          const isReplyLiked =
+                            reply.likes?.some(
+                              (l: any) =>
+                                l.userId === user?.id ||
+                                l.author?.id === user?.id,
+                            );
+                          return (
+                            <TweetCard
+                              key={reply.id}
+                              id={reply.id}
+                              isReply // Propriedade para estilo de comentário se existir no componente
+                              name={reply.author?.name}
+                              username={
+                                reply.author?.username
+                              }
+                              content={reply.content}
+                              avatarUrl={
+                                reply.author?.imageUrl
+                              }
+                              date={reply.createdAt}
+                              likes={
+                                reply.likes?.length || 0
+                              }
+                              isLiked={!!isReplyLiked}
+                              isAuthor={
+                                String(reply.author?.id) ===
+                                String(user?.id)
+                              }
+                              onLike={() =>
+                                handleLikeTweet(
+                                  reply.id,
+                                  !!isReplyLiked,
+                                )
+                              }
+                              onDelete={() =>
+                                handleDeleteTweet(reply.id)
+                              }
+                              onReply={() =>
+                                handleOpenReply(tweet.id)
+                              } // Responde ao principal
+                            />
+                          );
+                        })}
+                      </S.TweetContainer>
+                    )}
                 </S.TweetWrapper>
               );
             })
@@ -157,6 +276,16 @@ export const Home = () => {
         onChange={setReplyContent}
         isPublishing={isPublishingReply}
         title="Responder Tweet"
+        avatarUrl={user?.imageUrl}
+      />
+      <TweetModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEditSubmit}
+        value={editContent}
+        onChange={setEditContent}
+        isPublishing={isPublishingEdit}
+        title="Editar Tweet"
         avatarUrl={user?.imageUrl}
       />
     </>

@@ -6,6 +6,7 @@ interface CardContainerProps {
 export const CardContainer = styled.div<CardContainerProps>`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   max-width: 100%;
   padding: 1rem;
   border-bottom: ${(props) =>
@@ -139,5 +140,15 @@ export const ActionItem = styled.div<{
   &:hover {
     color: ${(props) =>
       props.$variant === "like" ? "#f91880" : "#1d9bf0"};
+  }
+`;
+
+export const AuthorAcions = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  svg{
+    transition:color .4s ease-in-out;
   }
 `;

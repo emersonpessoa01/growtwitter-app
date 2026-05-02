@@ -2,6 +2,7 @@ import {
   AiOutlineHeart,
   AiFillHeart,
   AiOutlineDelete,
+  AiOutlineEdit,
 } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import * as S from "./style";
@@ -24,6 +25,7 @@ interface TweetCardProps {
   onProfileClick?: () => void;
   isAuthor?: boolean;
   isReply?: boolean;
+  onEdit?: () => void;
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
@@ -42,7 +44,10 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   isAuthor = false,
   isReply = false,
   onProfileClick,
+  onEdit,
 }) => {
+
+  
   const publishedDate = date
     ? format(new Date(date), "d 'de' MMM., HH:mm", {
         locale: ptBR,
@@ -89,7 +94,6 @@ export const TweetCard: React.FC<TweetCardProps> = ({
               <FaRegComment />
               {comments}
             </S.ActionItem>
-
             <S.ActionItem
               $variant="like"
               $active={isLiked}
@@ -105,17 +109,27 @@ export const TweetCard: React.FC<TweetCardProps> = ({
               )}
               {likes}
             </S.ActionItem>
-
             {/* A lixeira entra aqui: ao lado dos ícones, apenas se for autor e NÃO for reply */}
             {isAuthor && (
-              <S.DeleteIcon
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete?.();
-                }}
-              >
-                <AiOutlineDelete />
-              </S.DeleteIcon>
+              <S.AuthorAcions>
+                <S.DeleteIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(); // Abre o modal ou ativa o input de edição
+                  }}
+                >
+                  <AiOutlineEdit />
+                </S.DeleteIcon>
+
+                <S.DeleteIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete?.();
+                  }}
+                >
+                  <AiOutlineDelete />
+                </S.DeleteIcon>
+              </S.AuthorAcions>
             )}
           </S.Actions>
         )}
