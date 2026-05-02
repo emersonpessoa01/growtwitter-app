@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import styled from "styled-components";
 
 export const ExplorerContainer = styled.div`
