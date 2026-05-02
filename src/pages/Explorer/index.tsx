@@ -80,6 +80,58 @@ export const Explorer = () => {
     loadExplorerData();
   }, [loadExplorerData]);
 
+  const formatCodeText = (text: string) => {
+    // Lista de palavras reservada para destacar
+    const reservedWords = [
+      "const",
+      "let",
+      "var",
+      "function",
+      "return",
+      "if",
+      "else",
+      "import",
+      "export",
+      "APP_PORT",
+      "PORT",
+      "3000",
+      "/",
+      "process",
+      "env",
+      "http",
+      "app",
+      "message",
+      "body",
+      "json",
+      "status",
+      "ok",
+      "get",
+      "post",
+      "put",
+      "delete",
+      "patch",
+      "req",
+      "res",
+    ];
+
+    // Procura por essas palavras exatas em ordem crescente
+    const regex = new RegExp(
+      `\\b(${reservedWords.join("|")})\\b`,
+      "g",
+    );
+
+    // Divide o texto em partes e aplica a formatação
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      reservedWords.includes(part) ? (
+        <span key={index}>{part}</span>
+      ) : (
+        part
+      ),
+    );
+  };
+
   return (
     <ExplorerContainer>
       {/* O Título fixo no topo */}
@@ -138,7 +190,9 @@ export const Explorer = () => {
 
               <div className="last-tweet-box">
                 <small>Último tweet:</small>
-                {user.lastTweet}
+                {user.lastTweet
+                  ? formatCodeText(user.lastTweet)
+                  : "Informação indisponível."}
               </div>
 
               <div className="stats">

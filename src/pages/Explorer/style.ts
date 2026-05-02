@@ -103,6 +103,12 @@ export const UserDetails = styled.div`
       margin-bottom: 4px;
       font-weight: bold;
     }
+    span{
+      color: ${(props) => props.theme.colors.primary};
+      font-family: monospace;
+      font-weight: bold;
+      padding: 0 4px;
+    }
   }
 
   .stats {
