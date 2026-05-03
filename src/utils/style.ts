@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const FormattedText = styled.span`
-  color: ${(props) => props.theme.colors.primaryHover};
-  font-family: monospace;
-  font-weight: bold;
-  padding: 0 4px;
+export const FormattedText = styled.code`
+  font-family: "Fira Code", monospace; 
+  padding: 2px 4px;
+  font-size: 0.9em;
+  color: ${(props) => props.theme.colors.primary};
 `;

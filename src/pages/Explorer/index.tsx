@@ -124,6 +124,7 @@ export const Explorer = () => {
                   <span>@{user.username}</span>
                   <span className="dot">.</span>
                   <span className="date">
+                    Ingressou:{" "}
                     {user.createdAt
                       ? format(
                           new Date(user.createdAt),
