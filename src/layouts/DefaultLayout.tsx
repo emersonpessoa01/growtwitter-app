@@ -13,9 +13,7 @@ import {
 import { WhoToFollow } from "../components/WhoToFollow";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
-import {
-  RiHome7Fill,
-} from "react-icons/ri";
+import { RiHome7Fill } from "react-icons/ri";
 import {
   BsHash,
   BsPerson,
@@ -84,7 +82,10 @@ export const DefaultLayout = ({
       <S.SideBar>
         <div>
           <SideBarHeader onClick={() => navigate("/")}>
-            <BoxImage className="logo" onClick={() => navigate("/")}>
+            <BoxImage
+              className="logo"
+              onClick={() => navigate("/")}
+            >
               <img
                 src={isSmallScreen ? circle : logo}
                 alt="growtweet"
@@ -125,6 +126,14 @@ export const DefaultLayout = ({
               >
                 <BsPerson size={26} /> <span>Perfil</span>
               </S.MenuItem>
+
+              {/* Logout integrado à lista para alinhamento perfeito */}
+              <S.MenuItem
+                className="logout-item"
+                onClick={signOut}
+              >
+                <LogOut size={26} /> <span>Sair</span>
+              </S.MenuItem>
             </S.NavList>
           </S.NavMenu>
 
@@ -151,7 +160,6 @@ export const DefaultLayout = ({
             <strong>{user?.name}</strong>
             <span>@{user?.username}</span>
           </S.NameContainer>
-          <LogOut size={28} className="button-logout" />
         </S.UserInfo>
       </S.SideBar>
 

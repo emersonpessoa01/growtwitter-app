@@ -31,11 +31,12 @@ export const SideBar = styled.aside`
   height: 100vh;
   position: sticky;
   top: 0;
-  padding: 1rem 2rem;
+  /* padding: 1rem 2rem; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  padding: 1rem;
+  
   @media (max-width: 1024px) {
     padding: 1rem;
   }
@@ -46,18 +47,20 @@ export const SideBar = styled.aside`
     top: auto !important;
     left: 0;
     width: 100% !important;
-    height: 80px !important;
+    height: 73px !important;
     background-color: ${(props) =>
       props.theme.colors.backgroundColor};
     border-top: 1px solid
       ${(props) => props.theme.colors.border};
     z-index: 9999;
-    flex-direction: row;
+    display: block;
 
     .logo,
     .UserInfo,
     .theme-toggle {
       display: none !important;
+
+      
     }
 
     .tweet-button {
@@ -172,17 +175,27 @@ export const NavList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  height: 100%; // Importante para o logout ir para o fim
 
   @media (max-width: 500px) {
-    display: flex !important;
     flex-direction: row !important;
-    justify-content: space-between !important;
+    justify-content: space-around !important; // Distribui os ícones com distâncias iguais
     align-items: center;
     width: 100%;
-    /* padding: 0 20px; */
+    padding: 0;
+    gap: 0; // Remove o gap para o space-around trabalhar
+  }
+
+  /* No desktop, empurra o último item (logout) para o final da sidebar */
+  .logout-item {
+    margin-top: auto; 
+    color: #f91880; // Cor diferenciada opcional para o "Sair"
+
+    @media (max-width: 500px) {
+      margin-top: 0; // Remove o empurrão no mobile
+    }
   }
 `;
-
 export const MenuItem = styled.li<{ $active?: boolean }>`
   display: flex;
   align-items: center;
@@ -215,12 +228,6 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
     }
   }
   @media (max-width: 500px) {
-    /* Garante que o ícone tenha uma área de toque boa (44px é o padrão mobile) */
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     /* Quando o botão de logout tem uma classe específica, pode-se dar um margin-left auto */
     &.logout-button {
@@ -228,10 +235,11 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
     }
   }
 
-  &.mobile-only {
-    display: none;
-    @media (max-width: 500px) {
-      display: flex;
+  @media (max-width: 500px) {
+    padding: 0.5rem;
+
+    &.logout-button{
+      color: #f91880;
     }
   }
 `;
