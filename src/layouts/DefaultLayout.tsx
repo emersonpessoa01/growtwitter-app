@@ -148,7 +148,7 @@ export const DefaultLayout = ({
           </Button>
         </div>
 
-        <S.UserInfo onClick={signOut}>
+        <S.UserInfo onClick={() => navigate("/profile")}>
           <Avatar
             src={
               user?.imageUrl ||
