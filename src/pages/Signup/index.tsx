@@ -5,6 +5,7 @@ import { Button } from "../../components/Button";
 import { LoginForm as SignupForm } from "../Login/style";
 import * as S from "../Login/style";
 import logoGrowtweet from "../../assets/images/logo.png";
+import { RedirectText } from "./style";
 
 export function Signup() {
   const [name, setName] = useState("");
@@ -79,16 +80,10 @@ export function Signup() {
               Cadastrar
             </Button>
 
-            <p
-              style={{
-                textAlign: "center",
-                fontSize: "0.8rem",
-                marginTop: "1rem",
-              }}
-            >
+            <RedirectText>
               Já tem uma conta?{" "}
               <Link to="/login">Faça login</Link>
-            </p>
+            </RedirectText>
           </SignupForm>
         </S.FormArea>
       </S.LoginContainer>
