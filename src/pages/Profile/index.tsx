@@ -10,9 +10,10 @@ import {
 } from "../../components/Spinner/style";
 import { FiArrowLeft, FiX, FiSave } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-// Importações adicionadas para o Modal
 import { TweetModal } from "../../components/TweetModal";
 import { EmptyMessage } from "../UserProfile/style";
+// Importando os containers de estilo que fazem a linha vertical e o recuo das respostas
+import { FeedSection, TweetContainer, TweetWrapper } from "../Home/style";
 
 const tabLabels: Record<string, string> = {
   tweets: "tweet",
@@ -26,23 +27,19 @@ export const Profile = () => {
   const [myTweets, setMyTweets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("tweets");
-  const [isEditModalOpen, setIsEditModalOpen] =
-    useState(false); // Renomeado para evitar conflito
-  const [tempName, setTempName] = useState(
-    user?.name || "",
-  );
-  const [tempImageUrl, setTempImageUrl] = useState(
-    user?.imageUrl || "",
-  );
-  const [isSaving, setIsSaving] = useState(false);
 
-  // Estados para o TweetModal (Lógica da Home)
-  const [isTweetModalOpen, setIsTweetModalOpen] =
-    useState(false);
-  const [selectedTweetId, setSelectedTweetId] = useState<
-    string | null
-  >(null);
+  // --- ESTADOS DE EDIÇÃO DE PERFIL ---
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [tempName, setTempName] = useState(user?.name || "");
+  const [tempImageUrl, setTempImageUrl] = useState(user?.imageUrl || "");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  // --- ESTADOS DE TWEETS (Lógica da Home) ---
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+  const [isEditTweetModalOpen, setIsEditTweetModalOpen] = useState(false);
+  const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
+  const [editContent, setEditContent] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
 
   const loadProfileData = useCallback(
@@ -53,23 +50,19 @@ export const Profile = () => {
 
         let response;
         if (activeTab === "tweets") {
-          response = await api.get(
-            `/users/${user.id}/tweets`,
-          );
+          response = await api.get(`/users/${user.id}/tweets`);
           setMyTweets(response.data.data || []);
         } else if (activeTab === "likes") {
           response = await api.get("/tweets");
           const all = response.data.data || [];
           const liked = all.filter((t: any) =>
-            t.likes?.some((l: any) => l.userId === user.id),
+            t.likes?.some((l: any) => l.userId === user.id)
           );
           setMyTweets(liked);
         } else {
-          response = await api.get(
-            `/users/${user.id}/tweets`,
-          );
+          response = await api.get(`/users/${user.id}/tweets`);
           const replies = response.data.data?.filter(
-            (t: any) => t.type === "REPLY",
+            (t: any) => t.type === "REPLY" || !!t.replyTo
           );
           setMyTweets(replies || []);
         }
@@ -79,142 +72,99 @@ export const Profile = () => {
         setLoading(false);
       }
     },
-    [user?.id, activeTab],
+    [user?.id, activeTab]
   );
 
   useEffect(() => {
     loadProfileData();
   }, [loadProfileData]);
 
-  // Lógica de Resposta (Igual à Home)
-  const handleOpenReplyModal = (tweetId: string) => {
-    setSelectedTweetId(tweetId);
-    setIsTweetModalOpen(true);
+  // --- HANDLERS DE AÇÃO (Igual à Home) ---
+  const handleLikeTweet = async (tweetId: string, isCurrentlyLiked: boolean) => {
+    try {
+      if (isCurrentlyLiked) {
+        await api.delete("/likes", { data: { tweetId } });
+      } else {
+        await api.post("/likes", { tweetId });
+      }
+      loadProfileData(true);
+    } catch (error) {
+      alert("Erro ao processar curtida");
+    }
   };
 
-  const handleCloseTweetModal = () => {
-    setIsTweetModalOpen(false);
-    setSelectedTweetId(null);
+  const handleDeleteTweet = async (tweetId: string) => {
+    if (!window.confirm("Deseja excluir este tweet?")) return;
+    try {
+      await api.delete(`/tweets/${tweetId}`);
+      loadProfileData(true);
+    } catch (error) {
+      alert("Erro ao deletar");
+    }
+  };
+
+  const handleOpenReply = (id: string) => {
+    setSelectedTweetId(id);
     setReplyContent("");
+    setIsReplyModalOpen(true);
+  };
+
+  const handleOpenEdit = (id: string, content: string) => {
+    setSelectedTweetId(id);
+    setEditContent(content);
+    setIsEditTweetModalOpen(true);
   };
 
   const handleReplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!replyContent.trim() || !selectedTweetId) return;
-
+    if (!replyContent.trim()) return;
     try {
       setIsPublishing(true);
-      await api.post("/replies", {
-        content: replyContent,
-        replyTo: selectedTweetId,
-      });
-
-      handleCloseTweetModal();
-      loadProfileData(true); // Recarrega os dados silenciosamente
+      await api.post("/replies", { content: replyContent, replyTo: selectedTweetId });
+      setIsReplyModalOpen(false);
+      setReplyContent("");
+      loadProfileData(true);
     } catch (error) {
-      console.error("Erro ao responder:", error);
-      alert("Não foi possível enviar a resposta.");
+      alert("Erro ao responder");
     } finally {
       setIsPublishing(false);
     }
   };
 
-  const handleLikeTweet = async (
-    tweetId: string,
-    isCurrentlyLiked: boolean,
-  ) => {
-    setMyTweets((prev) =>
-      prev.map((t) => {
-        if (t.id === tweetId) {
-          return {
-            ...t,
-            likes: isCurrentlyLiked
-              ? t.likes.filter(
-                  (l: any) => l.userId !== user?.id,
-                )
-              : [
-                  ...(t.likes || []),
-                  {
-                    userId: user?.id,
-                  },
-                ],
-          };
-        }
-        return t;
-      }),
-    );
-
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editContent.trim() || !selectedTweetId) return;
     try {
-      if (isCurrentlyLiked) {
-        await api.delete("/likes", {
-          data: {
-            tweetId,
-          },
-        });
-      } else {
-        await api.post("/likes", {
-          tweetId,
-        });
-      }
+      setIsPublishing(true);
+      await api.put(`/tweets/${selectedTweetId}`, { content: editContent });
+      setIsEditTweetModalOpen(false);
       loadProfileData(true);
     } catch (error) {
-      console.error(error);
-      loadProfileData(true);
-    }
-  };
-
-  const handleDeleteTweet = async (tweetId: string) => {
-    if (
-      !window.confirm(
-        "Deseja realmente excluir este tweet?",
-      )
-    )
-      return;
-    try {
-      await api.delete(`/tweets/${tweetId}`);
-      setMyTweets((prev) =>
-        prev.filter((t) => t.id !== tweetId),
-      );
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao deletar");
+      alert("Erro ao editar tweet");
+    } finally {
+      setIsPublishing(false);
     }
   };
 
   const handleSaveProfile = async () => {
     if (!user?.id) return;
-    setIsSaving(true);
-
+    setIsSavingProfile(true);
     try {
-      // Ajuste da rota para incluir o ID do usuário
-      const response = await api.put(`/users/${user.id}`, {
-        name: tempName,
-        imageUrl: tempImageUrl,
-      });
-
-      const updatedUser = response.data.data;
-
-      // Atualiza o usuário no contexto
-      updateUser(updatedUser);
-
-      setIsEditModalOpen(false);
+      const response = await api.put(`/users/${user.id}`, { name: tempName, imageUrl: tempImageUrl });
+      updateUser(response.data.data);
+      setIsEditProfileModalOpen(false);
     } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
-      alert(
-        "Não foi possível atualizar o perfil. Verifique a conexão com a API.",
-      );
+      alert("Erro ao atualizar perfil");
     } finally {
-      setIsSaving(false);
+      setIsSavingProfile(false);
     }
   };
+
   return (
     <S.Container>
       <S.MainContent>
         <S.TopNav>
-          <div
-            className="back-button"
-            onClick={() => navigate("/home")}
-          >
+          <div className="back-button" onClick={() => navigate("/home")}>
             <FiArrowLeft size={20} />
           </div>
           <div className="user-info">
@@ -224,13 +174,7 @@ export const Profile = () => {
         </S.TopNav>
 
         {loading ? (
-          <SpinnerContainer
-            style={{
-              height: "calc(100vh - 60px)",
-              width: "100%",
-              backgroundColor: "transparent",
-            }}
-          >
+          <SpinnerContainer style={{ height: "300px", background: "transparent" }}>
             <StyledSpinner />
           </SpinnerContainer>
         ) : (
@@ -240,226 +184,147 @@ export const Profile = () => {
               <div className="info">
                 <div className="avatar-row">
                   <Avatar
-                    src={
-                      user?.imageUrl ||
-                      `https://ui-avatars.com/api/?name=${user?.name}`
-                    }
-                    style={{
-                      width: 133,
-                      height: 133,
-                      border: "4px solid white",
-                    }}
+                    src={user?.imageUrl || `https://ui-avatars.com/api/?name=${user?.name}`}
+                    style={{ width: 133, height: 133, border: "4px solid white" }}
                   />
-                  <S.EditButton
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
+                  <S.EditButton onClick={() => setIsEditProfileModalOpen(true)}>
                     Editar Perfil
                   </S.EditButton>
-
-                  {isEditModalOpen && (
-                    <S.ModalOverlay>
-                      <S.ModalContent>
-                        <header>
-                          <div className="left-content">
-                            <button
-                              type="button"
-                              className="close-button"
-                              onClick={() =>
-                                setIsEditModalOpen(false)
-                              }
-                              aria-label="Fechar"
-                              title="Fechar"
-                            >
-                              <FiX size={22} />
-                            </button>
-                            <h3>Editar Perfil</h3>
-                          </div>
-                          <button
-                            className="save-button"
-                            onClick={handleSaveProfile}
-                            disabled={isSaving}
-                          >
-                            {isSaving ? (
-                              <StyledSpinner
-                                style={{
-                                  width: 16,
-                                  height: 16,
-                                  border: "2px solid #fff",
-                                  borderTopColor:
-                                    "transparent",
-                                }}
-                              />
-                            ) : (
-                              <FiSave />
-                            )}
-                            Salvar
-                          </button>
-                        </header>
-                        <form
-                          onSubmit={(e) =>
-                            e.preventDefault()
-                          }
-                        >
-                          <S.AvatarRow>
-                            <Avatar
-                              src={
-                                tempImageUrl ||
-                                `https://ui-avatars.com/api/?name=${tempName}`
-                              }
-                              style={{
-                                width: 133,
-                                height: 133,
-                                border: "4px solid white",
-                                marginBottom: "1rem",
-                              }}
-                            />
-                          </S.AvatarRow>
-                          <S.FloatingInputGroup>
-                            <input
-                              autoFocus
-                              type="text"
-                              id="name"
-                              value={tempName}
-                              placeholder=" "
-                              onChange={(e) =>
-                                setTempName(e.target.value)
-                              }
-                            />
-                            <label htmlFor="name">
-                              Nome
-                            </label>
-                          </S.FloatingInputGroup>
-                          <S.FloatingInputGroup>
-                            <input
-                              type="text"
-                              id="imageUrl"
-                              value={tempImageUrl}
-                              placeholder=" "
-                              onChange={(e) =>
-                                setTempImageUrl(
-                                  e.target.value,
-                                )
-                              }
-                            />
-                            <label htmlFor="imageUrl">
-                              URL da Imagem
-                            </label>
-                          </S.FloatingInputGroup>
-                        </form>
-                      </S.ModalContent>
-                    </S.ModalOverlay>
-                  )}
                 </div>
                 <strong>{user?.name}</strong>
-                <span className="username">
-                  @{user?.username}
-                </span>
+                <span className="username">@{user?.username}</span>
               </div>
             </S.ProfileHeader>
 
             <S.TabsContainer>
-              <div
-                className={
-                  activeTab === "tweets" ? "active" : ""
-                }
-                onClick={() => setActiveTab("tweets")}
-              >
-                Tweets
-              </div>
-              <div
-                className={
-                  activeTab === "replies" ? "active" : ""
-                }
-                onClick={() => setActiveTab("replies")}
-              >
-                Respostas
-              </div>
-              <div
-                className={
-                  activeTab === "likes" ? "active" : ""
-                }
-                onClick={() => setActiveTab("likes")}
-              >
-                Curtidas
-              </div>
+              {["tweets", "replies", "likes"].map((tab) => (
+                <div key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)}>
+                  {tab === "tweets" ? "Tweets" : tab === "replies" ? "Respostas" : "Curtidas"}
+                </div>
+              ))}
             </S.TabsContainer>
 
-            <div>
+            <FeedSection>
               {myTweets.length > 0 ? (
-                myTweets.map((tweet: any) => {
-                  const isLikedByMe = tweet.likes?.some(
-                    (l: any) =>
-                      l.userId === user?.id ||
-                      l.author?.id === user?.id,
-                  );
-                  const isMyTweet =
-                    String(
-                      tweet.author?.id || tweet.authorId,
-                    ) === String(user?.id);
+                myTweets
+                  .filter((t) => activeTab !== "tweets" || !t.replyTo) // Lógica de filtro da Home
+                  .map((tweet: any) => {
+                    const isLiked = tweet.likes?.some(
+                      (l: any) => l.userId === user?.id || l.author?.id === user?.id
+                    );
 
-                  return (
-                    <TweetCard
-                      key={tweet.id}
-                      id={tweet.id}
-                      name={
-                        tweet.author?.name ||
-                        user?.name ||
-                        ""
-                      }
-                      username={
-                        tweet.author?.username ||
-                        user?.username ||
-                        ""
-                      }
-                      content={tweet.content}
-                      date={tweet.createdAt}
-                      avatarUrl={
-                        tweet.author?.imageUrl ||
-                        user?.imageUrl
-                      }
-                      likes={tweet.likes?.length || 0}
-                      comments={tweet.replies?.length || 0} // Adicionado contador de respostas
-                      isLiked={!!isLikedByMe}
-                      isAuthor={isMyTweet}
-                      onLike={() =>
-                        handleLikeTweet(
-                          tweet.id,
-                          !!isLikedByMe,
-                        )
-                      }
-                      onDelete={() =>
-                        handleDeleteTweet(tweet.id)
-                      }
-                      onReply={() =>
-                        handleOpenReplyModal(tweet.id)
-                      } // Para abrir o modal de resposta
-                    />
-                  );
-                })
+                    return (
+                      <TweetWrapper key={tweet.id}>
+                        <TweetCard
+                          id={tweet.id}
+                          name={tweet.author?.name || user?.name}
+                          username={tweet.author?.username || user?.username}
+                          content={tweet.content}
+                          avatarUrl={tweet.author?.imageUrl || user?.imageUrl}
+                          date={tweet.createdAt}
+                          likes={tweet.likes?.length || 0}
+                          comments={tweet.replies?.length || 0}
+                          isLiked={!!isLiked}
+                          isAuthor={String(tweet.author?.id || tweet.authorId) === String(user?.id)}
+                          onLike={() => handleLikeTweet(tweet.id, !!isLiked)}
+                          onDelete={() => handleDeleteTweet(tweet.id)}
+                          onReply={() => handleOpenReply(tweet.id)}
+                          onEdit={() => handleOpenEdit(tweet.id, tweet.content)}
+                        />
+
+                        {/* LÓGICA DE RESPOSTAS (IGUAL À HOME) */}
+                        {activeTab === "tweets" && tweet.replies && tweet.replies.length > 0 && (
+                          <TweetContainer>
+                            {tweet.replies.map((reply: any) => {
+                              const isReplyLiked = reply.likes?.some(
+                                (l: any) => l.userId === user?.id || l.author?.id === user?.id
+                              );
+                              return (
+                                <TweetCard
+                                  key={reply.id}
+                                  id={reply.id}
+                                  isReply
+                                  name={reply.author?.name}
+                                  username={reply.author?.username}
+                                  content={reply.content}
+                                  avatarUrl={reply.author?.imageUrl}
+                                  date={reply.createdAt}
+                                  likes={reply.likes?.length || 0}
+                                  isLiked={!!isReplyLiked}
+                                  isAuthor={String(reply.author?.id) === String(user?.id)}
+                                  onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
+                                  onEdit={() => handleOpenEdit(reply.id, reply.content)}
+                                  onDelete={() => handleDeleteTweet(reply.id)}
+                                  onReply={() => handleOpenReply(tweet.id)}
+                                />
+                              );
+                            })}
+                          </TweetContainer>
+                        )}
+                      </TweetWrapper>
+                    );
+                  })
               ) : (
-                <EmptyMessage>
-                  Nenhum {tabLabels[activeTab]} para exibir.
-                </EmptyMessage>
+                <EmptyMessage>Nenhum {tabLabels[activeTab]} para exibir.</EmptyMessage>
               )}
-            </div>
+            </FeedSection>
           </>
         )}
       </S.MainContent>
 
-      {/* Modal de Resposta importado da Home */}
+      {/* MODAIS DE TWEET (REPLY E EDIT) */}
       <TweetModal
-        isOpen={isTweetModalOpen}
-        onClose={handleCloseTweetModal}
+        isOpen={isReplyModalOpen}
+        onClose={() => setIsReplyModalOpen(false)}
         onSubmit={handleReplySubmit}
         value={replyContent}
         onChange={setReplyContent}
         isPublishing={isPublishing}
-        avatarUrl={
-          user?.imageUrl ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}`
-        }
         title="Responder Tweet"
+        avatarUrl={user?.imageUrl}
       />
+
+      <TweetModal
+        isOpen={isEditTweetModalOpen}
+        onClose={() => setIsEditTweetModalOpen(false)}
+        onSubmit={handleEditSubmit}
+        value={editContent}
+        onChange={setEditContent}
+        isPublishing={isPublishing}
+        title="Editar Tweet"
+        avatarUrl={user?.imageUrl}
+      />
+
+      {/* MODAL DE EDIÇÃO DE PERFIL */}
+      {isEditProfileModalOpen && (
+        <S.ModalOverlay>
+          <S.ModalContent>
+            <header>
+              <div className="left-content">
+                <button type="button" className="close-button" onClick={() => setIsEditProfileModalOpen(false)} title="Editar">
+                  <FiX size={22} />
+                </button>
+                <h3>Editar Perfil</h3>
+              </div>
+              <button className="save-button" onClick={handleSaveProfile} disabled={isSavingProfile}>
+                {isSavingProfile ? <StyledSpinner style={{ width: 16, height: 16 }} /> : <FiSave />}
+                Salvar
+              </button>
+            </header>
+            <form>
+              <Avatar src={tempImageUrl || user?.imageUrl} style={{ width: 133, height: 133, marginBottom: "1rem" }} />
+              <S.FloatingInputGroup>
+                <input type="text" value={tempName} onChange={(e) => setTempName(e.target.value)} placeholder=" " title="Nome" />
+                <label>Nome</label>
+              </S.FloatingInputGroup>
+              <S.FloatingInputGroup>
+                <input type="text" value={tempImageUrl} onChange={(e) => setTempImageUrl(e.target.value)} placeholder=" " title="URL da imagem" />
+                <label>URL da Imagem</label>
+              </S.FloatingInputGroup>
+            </form>
+          </S.ModalContent>
+        </S.ModalOverlay>
+      )}
     </S.Container>
   );
 };

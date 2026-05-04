@@ -36,7 +36,7 @@ export const SideBar = styled.aside`
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem;
-  
+
   @media (max-width: 1024px) {
     padding: 1rem;
   }
@@ -52,6 +52,8 @@ export const SideBar = styled.aside`
       props.theme.colors.backgroundColor};
     border-top: 1px solid
       ${(props) => props.theme.colors.border};
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
     z-index: 9999;
     display: block;
 
@@ -59,8 +61,6 @@ export const SideBar = styled.aside`
     .UserInfo,
     .theme-toggle {
       display: none !important;
-
-      
     }
 
     .tweet-button {
@@ -108,7 +108,7 @@ export const MainContent = styled.main`
 export const PageHeader = styled.header`
   padding: 1rem;
   background-color: ${(props) =>
-    props.theme.colors.backgroundColor}E6;
+    props.theme.colors.backgroundColor};
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
   position: fixed;
@@ -188,7 +188,7 @@ export const NavList = styled.ul`
 
   /* No desktop, empurra o último item (logout) para o final da sidebar */
   .logout-item {
-    margin-top: auto; 
+    margin-top: auto;
     color: #f91880; // Cor diferenciada opcional para o "Sair"
 
     @media (max-width: 500px) {
@@ -228,7 +228,6 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
     }
   }
   @media (max-width: 500px) {
-
     /* Quando o botão de logout tem uma classe específica, pode-se dar um margin-left auto */
     &.logout-button {
       margin-left: auto;
@@ -238,7 +237,7 @@ export const MenuItem = styled.li<{ $active?: boolean }>`
   @media (max-width: 500px) {
     padding: 0.5rem;
 
-    &.logout-button{
+    &.logout-button {
       color: #f91880;
     }
   }

@@ -213,7 +213,7 @@ export const UserProfile = () => {
             <FeedSection>
               {userTweets.length > 0 ? (
                 userTweets
-                  .filter((t) => activeTab !== "tweets" || !t.replyTo) // Lógica de filtro da sua Home
+                  .filter((t) => activeTab !== "tweets" || !t.replyTo) // Lógica de filtro da Home
                   .map((tweet: any) => {
                     const isLiked = tweet.likes?.some(
                       (l: any) => (l.userId || l.author?.id) === me?.id

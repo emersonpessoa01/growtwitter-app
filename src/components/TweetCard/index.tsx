@@ -27,6 +27,7 @@ interface TweetCardProps {
   isAuthor?: boolean;
   isReply?: boolean;
   onEdit?: () => void;
+  replies?: any[];
 }
 
 export const TweetCard: React.FC<TweetCardProps> = ({
