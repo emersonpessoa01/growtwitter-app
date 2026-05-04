@@ -35,7 +35,7 @@ export const PageTitle = styled.h2`
 
 export const UserRow = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   padding: 12px 16px;
   border-bottom: 1px solid
     ${(props) => props.theme.colors.border};
@@ -56,6 +56,8 @@ export const Avatar = styled.img`
   object-fit: cover;
   background-color: ${(props) =>
     props.theme.colors.backgroundColor};
+  border: 3px solid ${(props) => props.theme.colors.primary};
+  padding: 1px;
 `;
 
 export const UserDetails = styled.div`
