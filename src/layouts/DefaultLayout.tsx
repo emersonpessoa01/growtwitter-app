@@ -152,7 +152,7 @@ export const DefaultLayout = ({
           <Avatar
             src={
               user?.imageUrl ||
-              `https://ui-avatars.com/api/?name=${user?.name}`
+              `https://ui-avatars.com/api/?name=${user?.name}&background=random&color=random`
             }
             alt={user?.name}
           />
