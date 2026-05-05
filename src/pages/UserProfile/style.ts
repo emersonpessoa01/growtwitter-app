@@ -28,4 +28,5 @@ export const ProfileAvatar = styled(Avatar)`
   width: 133px;
   height: 133px;
   border: 4px solid white;
+  background-color: ${(props) => props.theme.colors.backgroundColor};
 `;

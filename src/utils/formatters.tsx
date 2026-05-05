@@ -75,6 +75,8 @@ export const formatCodeText = (text: string) => {
     "Redux",
     "ReduxToolkit",
     "Jest",
+    "DevLife",
+    "#"
   ];
 
   // Procura por essas palavras exatas em ordem crescente

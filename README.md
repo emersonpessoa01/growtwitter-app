@@ -2,98 +2,145 @@
 
 ![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript)
+![Styled Components](https://img.shields.io/badge/Styled--Components-6+-DB7093?logo=styled-components)
 ![Status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o
-bootcamp da Growdev, com foco em arquitetura moderna de front-end,
-tipagem forte e experiência do usuário.
+Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o bootcamp da Growdev, com foco em arquitetura moderna de front-end, tipagem forte e experiência do usuário.
 
-------------------------------------------------------------------------
+---
 
 ## 🌐 Demonstração
 
-> [growtweet](https://growtwitter-app-alpha.vercel.app/)
+| Camada | Link |
+|--------|------|
+| 🖥️ Frontend | [growtweet-app](https://growtwitter-app-alpha.vercel.app/) |
+| ⚙️ Backend API | [growtweet-api](https://growtwitter-api-xi.vercel.app/users) |
+| 📦 Repositório API | [github.com/emersonpessoa01/growtwitter-api](https://github.com/emersonpessoa01/growtwitter-api) |
 
-------------------------------------------------------------------------
+> Esta aplicação consome a **Growtwitter API** — uma REST API construída com Node.js, responsável por autenticação, tweets, likes, replies e followers.  
+> Acesse o repositório da API para instruções de instalação e documentação dos endpoints.
+
+---
 
 ## 📸 Preview
 
 > 💡 Tela do app logado
 
-![Descrição da imagem](./src/assets/images/readme.png)
+![Preview do Growtwitter](./src/assets/images/readme.png)
 
-
-------------------------------------------------------------------------
+---
 
 ## 🧠 Arquitetura & Conceitos
 
--   Componentização avançada com React
--   Gerenciamento de estado via Context API
--   Separação de responsabilidades (services, components, pages)
--   Interceptação de requisições com Axios
--   Tipagem forte com TypeScript
--   Sistema de temas (Dark/Light)
+- Componentização avançada com React
+- Gerenciamento de estado via Context API
+- Separação de responsabilidades (services, components, pages)
+- Interceptação de requisições com Axios
+- Tipagem forte com TypeScript
+- Sistema de temas (Dark/Light)
+- Consumo de API REST externa via Axios com interceptors de token
 
-------------------------------------------------------------------------
+---
 
 ## 📦 Tecnologias
 
-```markdown
-🛠️ Stack Tecnológica
+### 🖥️ Frontend
 
-  Camada        Tecnologia
-  ------------- -------------------
-  Frontend      React + Vite
-  Tipagem       TypeScript
-  Estilização   Styled Components
-  Roteamento    React Router DOM
-  HTTP Client   Axios
-  UI/UX         React Icons
+| Camada | Tecnologia |
+|---|---|
+| Frontend | React + Vite |
+| Tipagem | TypeScript |
+| Estilização | Styled Components |
+| Roteamento | React Router DOM |
+| HTTP Client | Axios |
+| UI/UX | Lucide React |
 
-```
+### ⚙️ Backend (API)
 
-------------------------------------------------------------------------
+| Camada | Tecnologia |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express |
+| Banco de Dados | PostgreSQL |
+| ORM | Prisma |
+| Autenticação | JWT |
+| Deploy | Vercel |
+
+> 📌 Consulte o repositório da API: [growtwitter-api](https://github.com/emersonpessoa01/growtwitter-api)
+
+---
 
 ## ⚙️ Funcionalidades
 
--   🔐 Autenticação completa (login/cadastro)
--   📰 Feed dinâmico com tweets
--   💬 Sistema de replies
--   ❤️ Curtidas (likes)
--   👤 Perfil do usuário
--   🌍 Página explorar
--   🌙 Dark Mode / ☀️ Light Mode
--   📱 Layout totalmente responsivo
+- 🔐 Autenticação completa (login/cadastro)
+- 📰 Feed dinâmico com tweets
+- 💬 Sistema de replies
+- ❤️ Curtidas (likes)
+- 👤 Perfil do usuário
+- 🌍 Página explorar
+- 👥 Sistema de followers reais
+- 🌙 Dark Mode / ☀️ Light Mode
+- 📱 Layout totalmente responsivo
 
-------------------------------------------------------------------------
+---
 
 ## 💡 Diferencial Técnico
 
-> Implementação de sistema de **followers reais**, substituindo o modelo
-> básico de comentários.
+> Implementação de sistema de **followers reais**, substituindo o modelo básico de comentários.
 
- Essa implementação é baseada em uma abordagem de **componentização
- mais complexa**, que envolve a criação de **componentes de alto nível**
- que podem ser reutilizados em diferentes partes do aplicativo.
+Esta implementação é baseada em uma abordagem de **componentização mais complexa**, que envolve a criação de **componentes de alto nível** que podem ser reutilizados em diferentes partes do aplicativo.
 
--   Relacionamentos mais complexos
--   Manipulação de estado mais robusta
--   Maior proximidade com aplicações reais
+- Relacionamentos mais complexos
+- Manipulação de estado mais robusta
+- Maior proximidade com aplicações reais
 
-------------------------------------------------------------------------
+---
+
+## 🔗 Integração com a API
+
+A comunicação com o backend é feita via **Axios** com interceptor automático de token JWT:
+
+```ts
+// src/services/api.ts
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("@Growtwitter:token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+```
+
+Configure o arquivo `.env` na raiz do projeto:
+
+```env
+VITE_API_URL=https://growtwitter-api-xi.vercel.app
+```
+
+---
 
 ## 🚀 Como executar
 
-``` bash
+```bash
 # Clone o projeto
-git clone https://github.com/seu-usuario/growtwitter-react.git
+git clone https://github.com/emersonpessoa01/growtwitter-app.git
 
 # Acesse a pasta
-cd growtwitter-react
+cd growtwitter-app
 
 # Instale dependências
 npm install
+
+# Configure o .env
+cp .env.example .env
+# Edite o VITE_API_URL com a URL da API
 
 # Execute
 npm run dev
@@ -101,70 +148,103 @@ npm run dev
 
 Acesse: http://localhost:5173
 
-------------------------------------------------------------------------
+---
+## 🗄️ Populando o Banco de Dados (Seed)
+Para facilitar os testes e a visualização da interface, este projeto utiliza um script de seed. Ele popula o banco de dados Neon com usuários iniciais (como Beatriz, Rodrigo, Tiago, Fernanda, Andrea, Edinalva, Emerson, Growdev e outros foram criados a partir da tela do cadastro), garantindo que o feed e a lista "Quem seguir" não fiquem vazios no primeiro acesso.
+
+Para rodar o seed, acesse a pasta do backend e execute na raiz do projeto growtwitter-api:
+
+```
+npx prisma db seed
+
+```
+> [!IMPORTANT]
+>
+> As senhas de todos os usuários do seed são: senha123.
+>
+> As senhas são armazenadas como hash utilizando bcrypt para garantir a segurança e o funcionamento correto do login.
+>
+---
 
 ## 📱 Responsividade
 
--   **Desktop:** layout em 3 colunas
--   **Tablet:** foco no feed (widgets ocultos)
--   **Mobile:** navegação otimizada por ícones
+| Breakpoint | Layout |
+|---|---|
+| Desktop (> 1024px) | 3 colunas: sidebar + feed + widgets |
+| Tablet (768px – 1024px) | 2 colunas: sidebar + feed |
+| Mobile (< 768px) | Feed em tela cheia + navegação inferior fixa |
 
-------------------------------------------------------------------------
+---
 
 ## 📁 Estrutura do Projeto
 
-``` text
+```text
 src/
 ├── assets/
 ├── components/
+│   ├── Button/
+│   ├── Spinner/
+│   ├── TweetCard/
+│   ├── TweetModal/
+│   └── WhoToFollow/
 ├── contexts/
+│   └── AuthContext.tsx
 ├── Global/
 ├── layouts/
+│   └── DefaultLayout.tsx
 ├── pages/
-├── routes/
+│   ├── Explorer/
+│   ├── Home/
+│   ├── Login/
+│   ├── Profile/
+│   ├── Signup/
+│   └── UserProfile/
 ├── services/
+│   └── api.ts
 ├── themes/
 ├── types/
 ├── styled.d.ts
 └── App.tsx
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 🧪 Possíveis Melhorias
 
--   Testes com Jest ou Vitest
--   Integração com backend real
--   Sistema de notificações
--   Upload de imagens
--   Infinite scroll
+- [ ] Testes com Jest ou Vitest
+- [ ] Sistema de notificações em tempo real (WebSocket)
+- [ ] Upload de imagens de perfil
+- [ ] Infinite scroll no feed
+- [ ] PWA (Progressive Web App)
+- [ ] Pesquisa de tweets e usuários
 
-------------------------------------------------------------------------
+---
 
 ## 🤝 Contribuição
 
-1.  Fork o projeto
-2.  Crie uma branch: `git checkout -b feature/minha-feature`
-3.  Commit: `git commit -m 'feat: minha feature'`
-4.  Push: `git push origin minha-feature`
-5.  Abra um Pull Request
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/minha-feature`
+3. Commit: `git commit -m 'feat: minha feature'`
+4. Push: `git push origin minha-feature`
+5. Abra um Pull Request
 
-------------------------------------------------------------------------
+---
 
 ## 📄 Licença
 
 Este projeto está sob licença MIT.
 
-------------------------------------------------------------------------
+---
 
 ## 👨‍💻 Autor
 
-**Emerson Pessoa**\
-[Linkedin](https://www.linkedin.com/in/emersonpessoa01/)
+**Emerson Pessoa**  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Emerson%20Pessoa-0A66C2?logo=linkedin)](https://www.linkedin.com/in/emersonpessoa01/)
+[![GitHub](https://img.shields.io/badge/GitHub-emersonpessoa01-181717?logo=github)](https://github.com/emersonpessoa01)
 
-Full Stack Developer\
-"Bring me to life... in code!" 🤘
+Full Stack Developer  
+*"Bring me to life... in code!"* 🤘
 
-------------------------------------------------------------------------
+---
 
-📅 Gerado em: 27/04/2026
+📅 Criado em: 27/04/2026
