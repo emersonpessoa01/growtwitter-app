@@ -12,11 +12,12 @@ Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o bootca
 
 ## 🌐 Demonstração
 
-| Camada | Link |
-|--------|------|
-| 🖥️ Frontend | [growtweet-app](https://growtwitter-app-alpha.vercel.app/) |
-| ⚙️ Backend API | [growtweet-api](https://growtwitter-api-xi.vercel.app/users) |
-| 📦 Repositório API | [github.com/emersonpessoa01/growtwitter-api](https://github.com/emersonpessoa01/growtwitter-api) |
+| Camada                  | Link                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| 🖥️ Frontend             | [growtweet-app](https://growtwitter-app-alpha.vercel.app/)                                       |
+| ⚙️ Backend API          | [growtweet-api](https://growtwitter-api-xi.vercel.app/users)                                     |
+| 📖 Documentação Swagger | [api-docs](https://growtwitter-api-syq8.onrender.com/api-docs/)                                  |
+| 📦 Repositório API      | [github.com/emersonpessoa01/growtwitter-api](https://github.com/emersonpessoa01/growtwitter-api) |
 
 > Esta aplicação consome a **Growtwitter API** — uma REST API construída com Node.js, responsável por autenticação, tweets, likes, replies e followers.  
 > Acesse o repositório da API para instruções de instalação e documentação dos endpoints.
@@ -47,25 +48,26 @@ Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o bootca
 
 ### 🖥️ Frontend
 
-| Camada | Tecnologia |
-|---|---|
-| Frontend | React + Vite |
-| Tipagem | TypeScript |
+| Camada      | Tecnologia        |
+| ----------- | ----------------- |
+| Frontend    | React + Vite      |
+| Tipagem     | TypeScript        |
 | Estilização | Styled Components |
-| Roteamento | React Router DOM |
-| HTTP Client | Axios |
-| UI/UX | Lucide React |
+| Roteamento  | React Router DOM  |
+| HTTP Client | Axios             |
+| UI/UX       | Lucide React      |
 
 ### ⚙️ Backend (API)
 
-| Camada | Tecnologia |
-|---|---|
-| Runtime | Node.js |
-| Framework | Express |
-| Banco de Dados | PostgreSQL |
-| ORM | Prisma |
-| Autenticação | JWT |
-| Deploy | Vercel |
+| Camada         | Tecnologia      |
+| -------------- | --------------- |
+| Runtime        | Node.js         |
+| Framework      | Express         |
+| Banco de Dados | PostgreSQL      |
+| ORM            | Prisma          |
+| Autenticação   | JWT             |
+| Documentação   | Swagger UI      |
+| Deploy         | Render + Vercel |
 
 > 📌 Consulte o repositório da API: [growtwitter-api](https://github.com/emersonpessoa01/growtwitter-api)
 
@@ -94,6 +96,19 @@ Esta implementação é baseada em uma abordagem de **componentização mais com
 - Relacionamentos mais complexos
 - Manipulação de estado mais robusta
 - Maior proximidade com aplicações reais
+
+---
+
+## 📖 Documentação da API
+
+A API possui documentação interativa gerada com **Swagger UI**, permitindo visualizar e testar todos os endpoints diretamente pelo navegador.
+
+| Ambiente             | URL                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| 🌐 Produção (Render) | [growtwitter-api-syq8.onrender.com/api-docs](https://growtwitter-api-syq8.onrender.com/api-docs/) |
+| 💻 Local             | [localhost:3030/api-docs](http://localhost:3030/api-docs)                                         |
+
+> 💡 Para testar os endpoints protegidos, faça login pela rota `/auth`, copie o token JWT retornado e clique em **Authorize** no Swagger para liberar o acesso.
 
 ---
 
@@ -149,30 +164,32 @@ npm run dev
 Acesse: http://localhost:5173
 
 ---
+
 ## 🗄️ Populando o Banco de Dados (Seed)
+
 Para facilitar os testes e a visualização da interface, este projeto utiliza um script de seed. Ele popula o banco de dados Neon com usuários iniciais (como Beatriz, Rodrigo, Tiago, Fernanda, Andrea, Edinalva, Emerson, Growdev e outros foram criados a partir da tela do cadastro), garantindo que o feed e a lista "Quem seguir" não fiquem vazios no primeiro acesso.
 
 Para rodar o seed, acesse a pasta do backend e execute na raiz do projeto growtwitter-api:
 
-```
+```bash
 npx prisma db seed
-
 ```
+
 > [!IMPORTANT]
 >
-> As senhas de todos os usuários do seed são: senha123.
+> As senhas de todos os usuários do seed são: **senha123**.
 >
 > As senhas são armazenadas como hash utilizando bcrypt para garantir a segurança e o funcionamento correto do login.
->
+
 ---
 
 ## 📱 Responsividade
 
-| Breakpoint | Layout |
-|---|---|
-| Desktop (> 1024px) | 3 colunas: sidebar + feed + widgets |
-| Tablet (768px – 1024px) | 2 colunas: sidebar + feed |
-| Mobile (< 768px) | Feed em tela cheia + navegação inferior fixa |
+| Breakpoint              | Layout                                       |
+| ----------------------- | -------------------------------------------- |
+| Desktop (> 1024px)      | 3 colunas: sidebar + feed + widgets          |
+| Tablet (768px – 1024px) | 2 colunas: sidebar + feed                    |
+| Mobile (< 768px)        | Feed em tela cheia + navegação inferior fixa |
 
 ---
 
@@ -243,8 +260,8 @@ Este projeto está sob licença MIT.
 [![GitHub](https://img.shields.io/badge/GitHub-emersonpessoa01-181717?logo=github)](https://github.com/emersonpessoa01)
 
 Full Stack Developer  
-*"Bring me to life... in code!"* 🤘
+_"Bring me to life... in code!"_ 🤘
 
 ---
 
-📅 Criado em: 27/04/2026
+📅 Atualizado em: 06/05/2026
