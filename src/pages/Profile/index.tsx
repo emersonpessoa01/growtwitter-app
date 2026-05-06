@@ -13,7 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { TweetModal } from "../../components/TweetModal";
 import { EmptyMessage } from "../UserProfile/style";
 // Importando os containers de estilo que fazem a linha vertical e o recuo das respostas
-import { FeedSection, TweetContainer, TweetWrapper } from "../Home/style";
+import {
+  FeedSection,
+  TweetContainer,
+  TweetWrapper,
+} from "../Home/style";
 
 const tabLabels: Record<string, string> = {
   tweets: "tweet",
@@ -29,15 +33,27 @@ export const Profile = () => {
   const [activeTab, setActiveTab] = useState("tweets");
 
   // --- ESTADOS DE EDIÇÃO DE PERFIL ---
-  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-  const [tempName, setTempName] = useState(user?.name || "");
-  const [tempImageUrl, setTempImageUrl] = useState(user?.imageUrl || "");
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [
+    isEditProfileModalOpen,
+    setIsEditProfileModalOpen,
+  ] = useState(false);
+  const [tempName, setTempName] = useState(
+    user?.name || "",
+  );
+  const [tempImageUrl, setTempImageUrl] = useState(
+    user?.imageUrl || "",
+  );
+  const [isSavingProfile, setIsSavingProfile] =
+    useState(false);
 
   // --- ESTADOS DE TWEETS (Lógica da Home) ---
-  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
-  const [isEditTweetModalOpen, setIsEditTweetModalOpen] = useState(false);
-  const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
+  const [isReplyModalOpen, setIsReplyModalOpen] =
+    useState(false);
+  const [isEditTweetModalOpen, setIsEditTweetModalOpen] =
+    useState(false);
+  const [selectedTweetId, setSelectedTweetId] = useState<
+    string | null
+  >(null);
   const [replyContent, setReplyContent] = useState("");
   const [editContent, setEditContent] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
@@ -50,19 +66,23 @@ export const Profile = () => {
 
         let response;
         if (activeTab === "tweets") {
-          response = await api.get(`/users/${user.id}/tweets`);
+          response = await api.get(
+            `/users/${user.id}/tweets`,
+          );
           setMyTweets(response.data.data || []);
         } else if (activeTab === "likes") {
           response = await api.get("/tweets");
           const all = response.data.data || [];
           const liked = all.filter((t: any) =>
-            t.likes?.some((l: any) => l.userId === user.id)
+            t.likes?.some((l: any) => l.userId === user.id),
           );
           setMyTweets(liked);
         } else {
-          response = await api.get(`/users/${user.id}/tweets`);
+          response = await api.get(
+            `/users/${user.id}/tweets`,
+          );
           const replies = response.data.data?.filter(
-            (t: any) => t.type === "REPLY" || !!t.replyTo
+            (t: any) => t.type === "REPLY" || !!t.replyTo,
           );
           setMyTweets(replies || []);
         }
@@ -72,7 +92,7 @@ export const Profile = () => {
         setLoading(false);
       }
     },
-    [user?.id, activeTab]
+    [user?.id, activeTab],
   );
 
   useEffect(() => {
@@ -80,7 +100,10 @@ export const Profile = () => {
   }, [loadProfileData]);
 
   // --- HANDLERS DE AÇÃO (Igual à Home) ---
-  const handleLikeTweet = async (tweetId: string, isCurrentlyLiked: boolean) => {
+  const handleLikeTweet = async (
+    tweetId: string,
+    isCurrentlyLiked: boolean,
+  ) => {
     try {
       if (isCurrentlyLiked) {
         await api.delete("/likes", { data: { tweetId } });
@@ -94,7 +117,8 @@ export const Profile = () => {
   };
 
   const handleDeleteTweet = async (tweetId: string) => {
-    if (!window.confirm("Deseja excluir este tweet?")) return;
+    if (!window.confirm("Deseja excluir este tweet?"))
+      return;
     try {
       await api.delete(`/tweets/${tweetId}`);
       loadProfileData(true);
@@ -120,7 +144,10 @@ export const Profile = () => {
     if (!replyContent.trim()) return;
     try {
       setIsPublishing(true);
-      await api.post("/replies", { content: replyContent, replyTo: selectedTweetId });
+      await api.post("/replies", {
+        content: replyContent,
+        replyTo: selectedTweetId,
+      });
       setIsReplyModalOpen(false);
       setReplyContent("");
       loadProfileData(true);
@@ -136,7 +163,9 @@ export const Profile = () => {
     if (!editContent.trim() || !selectedTweetId) return;
     try {
       setIsPublishing(true);
-      await api.put(`/tweets/${selectedTweetId}`, { content: editContent });
+      await api.put(`/tweets/${selectedTweetId}`, {
+        content: editContent,
+      });
       setIsEditTweetModalOpen(false);
       loadProfileData(true);
     } catch (error) {
@@ -150,7 +179,10 @@ export const Profile = () => {
     if (!user?.id) return;
     setIsSavingProfile(true);
     try {
-      const response = await api.put(`/users/${user.id}`, { name: tempName, imageUrl: tempImageUrl });
+      const response = await api.put(`/users/${user.id}`, {
+        name: tempName,
+        imageUrl: tempImageUrl,
+      });
       updateUser(response.data.data);
       setIsEditProfileModalOpen(false);
     } catch (error) {
@@ -164,7 +196,10 @@ export const Profile = () => {
     <S.Container>
       <S.MainContent>
         <S.TopNav>
-          <div className="back-button" onClick={() => navigate("/home")}>
+          <div
+            className="back-button"
+            onClick={() => navigate("/home")}
+          >
             <FiArrowLeft size={20} />
           </div>
           <div className="user-info">
@@ -174,7 +209,12 @@ export const Profile = () => {
         </S.TopNav>
 
         {loading ? (
-          <SpinnerContainer style={{ height: "300px", background: "transparent" }}>
+          <SpinnerContainer
+            style={{
+              height: "300px",
+              background: "transparent",
+            }}
+          >
             <StyledSpinner />
           </SpinnerContainer>
         ) : (
@@ -184,22 +224,46 @@ export const Profile = () => {
               <div className="info">
                 <div className="avatar-row">
                   <Avatar
-                    src={user?.imageUrl || `https://ui-avatars.com/api/?name=${user?.name}`}
-                    style={{ width: 133, height: 133, border: "4px solid white" }}
+                    src={
+                      user?.imageUrl ||
+                      `https://ui-avatars.com/api/?name=${user?.name} &background=random&color=random`
+                    }
+                    alt={user?.name}
+                    style={{
+                      width: 133,
+                      height: 133,
+                      border: "4px solid white",
+                    }}
                   />
-                  <S.EditButton onClick={() => setIsEditProfileModalOpen(true)}>
+                  <S.EditButton
+                    onClick={() =>
+                      setIsEditProfileModalOpen(true)
+                    }
+                  >
                     Editar Perfil
                   </S.EditButton>
                 </div>
                 <strong>{user?.name}</strong>
-                <span className="username">@{user?.username}</span>
+                <span className="username">
+                  @{user?.username}
+                </span>
               </div>
             </S.ProfileHeader>
 
             <S.TabsContainer>
               {["tweets", "replies", "likes"].map((tab) => (
-                <div key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)}>
-                  {tab === "tweets" ? "Tweets" : tab === "replies" ? "Respostas" : "Curtidas"}
+                <div
+                  key={tab}
+                  className={
+                    activeTab === tab ? "active" : ""
+                  }
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === "tweets"
+                    ? "Tweets"
+                    : tab === "replies"
+                      ? "Respostas"
+                      : "Curtidas"}
                 </div>
               ))}
             </S.TabsContainer>
@@ -207,65 +271,148 @@ export const Profile = () => {
             <FeedSection>
               {myTweets.length > 0 ? (
                 myTweets
-                  .filter((t) => activeTab !== "tweets" || !t.replyTo) // Lógica de filtro da Home
+                  .filter(
+                    (t) =>
+                      activeTab !== "tweets" || !t.replyTo,
+                  ) // Lógica de filtro da Home
                   .map((tweet: any) => {
                     const isLiked = tweet.likes?.some(
-                      (l: any) => l.userId === user?.id || l.author?.id === user?.id
+                      (l: any) =>
+                        l.userId === user?.id ||
+                        l.author?.id === user?.id,
                     );
 
                     return (
                       <TweetWrapper key={tweet.id}>
                         <TweetCard
                           id={tweet.id}
-                          name={tweet.author?.name || user?.name}
-                          username={tweet.author?.username || user?.username}
+                          name={
+                            tweet.author?.name || user?.name
+                          }
+                          username={
+                            tweet.author?.username ||
+                            user?.username
+                          }
                           content={tweet.content}
-                          avatarUrl={tweet.author?.imageUrl || user?.imageUrl}
+                          avatarUrl={
+                            tweet.author?.imageUrl ||
+                            user?.imageUrl
+                          }
                           date={tweet.createdAt}
                           likes={tweet.likes?.length || 0}
-                          comments={tweet.replies?.length || 0}
+                          comments={
+                            tweet.replies?.length || 0
+                          }
                           isLiked={!!isLiked}
-                          isAuthor={String(tweet.author?.id || tweet.authorId) === String(user?.id)}
-                          onLike={() => handleLikeTweet(tweet.id, !!isLiked)}
-                          onDelete={() => handleDeleteTweet(tweet.id)}
-                          onReply={() => handleOpenReply(tweet.id)}
-                          onEdit={() => handleOpenEdit(tweet.id, tweet.content)}
+                          isAuthor={
+                            String(
+                              tweet.author?.id ||
+                                tweet.authorId,
+                            ) === String(user?.id)
+                          }
+                          onLike={() =>
+                            handleLikeTweet(
+                              tweet.id,
+                              !!isLiked,
+                            )
+                          }
+                          onDelete={() =>
+                            handleDeleteTweet(tweet.id)
+                          }
+                          onReply={() =>
+                            handleOpenReply(tweet.id)
+                          }
+                          onEdit={() =>
+                            handleOpenEdit(
+                              tweet.id,
+                              tweet.content,
+                            )
+                          }
                         />
 
                         {/* LÓGICA DE RESPOSTAS (IGUAL À HOME) */}
-                        {activeTab === "tweets" && tweet.replies && tweet.replies.length > 0 && (
-                          <TweetContainer>
-                            {tweet.replies.map((reply: any) => {
-                              const isReplyLiked = reply.likes?.some(
-                                (l: any) => l.userId === user?.id || l.author?.id === user?.id
-                              );
-                              return (
-                                <TweetCard
-                                  key={reply.id}
-                                  id={reply.id}
-                                  isReply
-                                  name={reply.author?.name}
-                                  username={reply.author?.username}
-                                  content={reply.content}
-                                  avatarUrl={reply.author?.imageUrl}
-                                  date={reply.createdAt}
-                                  likes={reply.likes?.length || 0}
-                                  isLiked={!!isReplyLiked}
-                                  isAuthor={String(reply.author?.id) === String(user?.id)}
-                                  onLike={() => handleLikeTweet(reply.id, !!isReplyLiked)}
-                                  onEdit={() => handleOpenEdit(reply.id, reply.content)}
-                                  onDelete={() => handleDeleteTweet(reply.id)}
-                                  onReply={() => handleOpenReply(tweet.id)}
-                                />
-                              );
-                            })}
-                          </TweetContainer>
-                        )}
+                        {activeTab === "tweets" &&
+                          tweet.replies &&
+                          tweet.replies.length > 0 && (
+                            <TweetContainer>
+                              {tweet.replies.map(
+                                (reply: any) => {
+                                  const isReplyLiked =
+                                    reply.likes?.some(
+                                      (l: any) =>
+                                        l.userId ===
+                                          user?.id ||
+                                        l.author?.id ===
+                                          user?.id,
+                                    );
+                                  return (
+                                    <TweetCard
+                                      key={reply.id}
+                                      id={reply.id}
+                                      isReply
+                                      name={
+                                        reply.author?.name
+                                      }
+                                      username={
+                                        reply.author
+                                          ?.username
+                                      }
+                                      content={
+                                        reply.content
+                                      }
+                                      avatarUrl={
+                                        reply.author
+                                          ?.imageUrl
+                                      }
+                                      date={reply.createdAt}
+                                      likes={
+                                        reply.likes
+                                          ?.length || 0
+                                      }
+                                      isLiked={
+                                        !!isReplyLiked
+                                      }
+                                      isAuthor={
+                                        String(
+                                          reply.author?.id,
+                                        ) ===
+                                        String(user?.id)
+                                      }
+                                      onLike={() =>
+                                        handleLikeTweet(
+                                          reply.id,
+                                          !!isReplyLiked,
+                                        )
+                                      }
+                                      onEdit={() =>
+                                        handleOpenEdit(
+                                          reply.id,
+                                          reply.content,
+                                        )
+                                      }
+                                      onDelete={() =>
+                                        handleDeleteTweet(
+                                          reply.id,
+                                        )
+                                      }
+                                      onReply={() =>
+                                        handleOpenReply(
+                                          tweet.id,
+                                        )
+                                      }
+                                    />
+                                  );
+                                },
+                              )}
+                            </TweetContainer>
+                          )}
                       </TweetWrapper>
                     );
                   })
               ) : (
-                <EmptyMessage>Nenhum {tabLabels[activeTab]} para exibir.</EmptyMessage>
+                <EmptyMessage>
+                  Nenhum {tabLabels[activeTab]} para exibir.
+                </EmptyMessage>
               )}
             </FeedSection>
           </>
@@ -301,24 +448,69 @@ export const Profile = () => {
           <S.ModalContent>
             <header>
               <div className="left-content">
-                <button type="button" className="close-button" onClick={() => setIsEditProfileModalOpen(false)} title="Editar">
+                <button
+                  type="button"
+                  className="close-button"
+                  onClick={() =>
+                    setIsEditProfileModalOpen(false)
+                  }
+                  title="Editar"
+                >
                   <FiX size={22} />
                 </button>
                 <h3>Editar Perfil</h3>
               </div>
-              <button className="save-button" onClick={handleSaveProfile} disabled={isSavingProfile}>
-                {isSavingProfile ? <StyledSpinner style={{ width: 16, height: 16 }} /> : <FiSave />}
+              <button
+                className="save-button"
+                onClick={handleSaveProfile}
+                disabled={isSavingProfile}
+              >
+                {isSavingProfile ? (
+                  <StyledSpinner
+                    style={{ width: 16, height: 16 }}
+                  />
+                ) : (
+                  <FiSave />
+                )}
                 Salvar
               </button>
             </header>
             <form>
-              <Avatar src={tempImageUrl || user?.imageUrl} style={{ width: 133, height: 133, marginBottom: "1rem" }} />
+              <Avatar
+                src={
+                  tempImageUrl || user?.imageUrl
+                    ? tempImageUrl || user?.imageUrl
+                    : `https://ui-avatars.com/api/?name=${user?.name} &background=random&color=random`
+                }
+                style={{
+                  width: 133,
+                  height: 133,
+                  marginBottom: "1rem",
+                  margin: "0 auto",
+                }}
+              />
               <S.FloatingInputGroup>
-                <input type="text" value={tempName} onChange={(e) => setTempName(e.target.value)} placeholder=" " title="Nome" />
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={(e) =>
+                    setTempName(e.target.value)
+                  }
+                  placeholder=" "
+                  title="Nome"
+                />
                 <label>Nome</label>
               </S.FloatingInputGroup>
               <S.FloatingInputGroup>
-                <input type="text" value={tempImageUrl} onChange={(e) => setTempImageUrl(e.target.value)} placeholder=" " title="URL da imagem" />
+                <input
+                  type="text"
+                  value={tempImageUrl}
+                  onChange={(e) =>
+                    setTempImageUrl(e.target.value)
+                  }
+                  placeholder=" "
+                  title="URL da imagem"
+                />
                 <label>URL da Imagem</label>
               </S.FloatingInputGroup>
             </form>

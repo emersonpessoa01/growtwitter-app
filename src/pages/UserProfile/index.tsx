@@ -184,7 +184,7 @@ export const UserProfile = () => {
               <div className="banner" />
               <div className="info">
                 <div className="avatar-row">
-                  <ProfileAvatar src={userData?.imageUrl || `https://ui-avatars.com/api/?name=${userData?.name}`} />
+                  <ProfileAvatar src={userData?.imageUrl || `https://ui-avatars.com/api/?name=${userData?.name} &background=random&color=random`} alt={userData?.name} />
                   {id !== me?.id && (
                     <S.EditButton
                       onClick={handleFollow}
