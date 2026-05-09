@@ -28,7 +28,7 @@ Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o bootca
 
 > 💡 Tela do app logado
 
-![Preview do Growtwitter](./src/assets/images/readme.png)
+![Preview do Growtwitter](./src/assets/images/image-readme.png)
 
 ---
 
