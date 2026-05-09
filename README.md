@@ -1,3 +1,5 @@
+<div align=center><img src="./src/assets/images/logo.png" alt="Growtwitter" width="300px"></div>
+
 # 🚀 Growtwitter - Full Stack Project
 
 ![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react)
