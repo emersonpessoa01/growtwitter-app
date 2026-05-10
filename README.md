@@ -28,9 +28,11 @@ Uma aplicação completa inspirada no X (Twitter), desenvolvida durante o bootca
 
 ## 📸 Preview
 
-> 💡 Tela do app logado
+> 💡 Telas do app (Desktop, Tablet e Mobile)
 
-![Preview do Growtwitter](./src/assets/images/image-readme.png)
+<img src="./src/assets/images/image-readme.png" alt="Growtweet-desktop" width="300px"> &nbsp; &nbsp;
+<img src="./src/assets/images/readme-tablet.png" alt="Growtweet-tablet" width="180px"> &nbsp; &nbsp;
+<img src="./src/assets/images/readme-mobile.png" alt="Growtweet-mobile" width="100px">
 
 ---
 
